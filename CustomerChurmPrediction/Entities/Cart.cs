@@ -1,6 +1,6 @@
 ﻿namespace CustomerChurmPrediction.Entities
 {
-    public class Cart
+    public class Cart : AbstractEntity
     {
     }
 }

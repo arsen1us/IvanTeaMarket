@@ -1,12 +1,16 @@
-﻿namespace CustomerChurmPrediction.Services
+﻿using MongoDB.Driver;
+using CustomerChurmPrediction.Entities;
+using static CustomerChurmPrediction.Utils.CollectionName;
+
+namespace CustomerChurmPrediction.Services
 {
-    public interface IUserService
+    public interface IUserService : IBaseService<User>
     {
 
     }
 
     // Сервис для работы с пользователями
-    public class UserService
+    public class UserService(IMongoClient client, IConfiguration config) : BaseService<User>(client, config, Users), IUserService
     {
 
     }

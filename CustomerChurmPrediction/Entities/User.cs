@@ -1,6 +1,6 @@
 ﻿namespace CustomerChurmPrediction.Entities
 {
-    public class User
+    public class User : AbstractEntity
     {
     }
 }

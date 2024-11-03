@@ -1,6 +1,6 @@
 ﻿namespace CustomerChurmPrediction.Entities
 {
-    public class Favorite
+    public class Favorite : AbstractEntity
     {
     }
 }
