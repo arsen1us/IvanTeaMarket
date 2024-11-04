@@ -6,14 +6,16 @@ using Microsoft.AspNetCore.Http.HttpResults;
 namespace CustomerChurmPrediction.Controllers
 {
     [ApiController]
-    [Route("/user")]
+    [Route("/api/user")]
     public class UserController : ControllerBase
     {
         IUserService _userService;
+        ILogger<UserController> _logger;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, ILogger<UserController> logger)
         {
             _userService = userService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -22,6 +24,8 @@ namespace CustomerChurmPrediction.Controllers
             
             return NotFound("123");
         }
+
+
 
     }
 }

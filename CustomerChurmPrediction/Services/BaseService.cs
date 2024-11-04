@@ -36,11 +36,14 @@ namespace CustomerChurmPrediction.Services
         IMongoClient _client;
         IConfiguration _config;
         IMongoCollection<T> _collection;
+        ILogger _logger;
 
-        public BaseService(IMongoClient client, IConfiguration config, string collectionName)
+        public BaseService(IMongoClient client, IConfiguration config, ILogger logger, string collectionName)
         {
             _client = client;
             _config = config;
+            _logger = logger;
+
             var database = _client.GetDatabase(_config["DatabaseConnection:DatabaseName"]);
             _collection = database.GetCollection<T>(collectionName);
         }

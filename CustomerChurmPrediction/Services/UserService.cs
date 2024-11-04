@@ -10,7 +10,8 @@ namespace CustomerChurmPrediction.Services
     }
 
     // Сервис для работы с пользователями
-    public class UserService(IMongoClient client, IConfiguration config) : BaseService<User>(client, config, Users), IUserService
+    public class UserService(IMongoClient client, IConfiguration config, ILogger<UserService> logger) 
+        : BaseService<User>(client, config, logger, Users), IUserService
     {
 
     }

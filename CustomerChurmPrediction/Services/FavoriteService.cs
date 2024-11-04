@@ -10,7 +10,16 @@ namespace CustomerChurmPrediction.Services
     }
 
     // Сервис для работы со вкладкой избранное 
-    public class FavoriteService(IMongoClient client, IConfiguration config) : BaseService<Favorite>(client, config, Favorites), IFavoriteService
+    public class FavoriteService(IMongoClient client, IConfiguration config, ILogger<FavoriteService> logger) 
+        : BaseService<Favorite>(client, config, logger, Favorites), IFavoriteService
     {
+        // Получить все товары в списке избранного по id пользователя
+        public async Task<List<Favorite>> FindAllAsync(FilterDefinition<Favorite>? filter, string userId)
+        {
+            var resultFilter = filter ?? Builders<Favorite>.Filter.Eq(c => c.UserId, userId);
+            var result = await base.FindAllAsync(filter, default);
+
+            return result;
+        }
     }
 }
