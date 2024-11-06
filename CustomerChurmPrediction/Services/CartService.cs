@@ -7,7 +7,7 @@ namespace CustomerChurmPrediction.Services
 {
     public interface ICartService : IBaseService<Cart>
     {
-
+        public Task<List<Cart>> FindAllAsync(FilterDefinition<Cart>? filter, string userId);
     }
 
     // Сервис для работы с корзиной пользователей

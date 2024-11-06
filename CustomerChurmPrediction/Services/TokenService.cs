@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
-using CustomerChurmPrediction.Entities;
+using CustomerChurmPrediction.Entities.UserEntity;
 
 namespace CustomerChurmPrediction.Services
 {
@@ -33,7 +33,7 @@ namespace CustomerChurmPrediction.Services
             {
                 List<Claim> claims = new List<Claim>
                 {
-                    new Claim("Id", user.Id),
+                    new Claim("Id", user.Id.ToString()),
                     new Claim("Email", user.Email)
                 };
 
@@ -75,10 +75,10 @@ namespace CustomerChurmPrediction.Services
             try
             {
                 var principal = GetPrincipalExpiredToken(token);
-                if (principal != null)
+                if (principal == null)
                 {
                     // log ошибка счмтывания jwt-токен или он поддельный 
-                    return null;
+                    throw new Exception("Токен поддельный");
                 }
 
                 string _id = principal.FindFirst("Id").Value;
@@ -109,8 +109,10 @@ namespace CustomerChurmPrediction.Services
                 var tokenValidationParameter = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
+                    ValidIssuer = _config["TokenSettings:Issuer"],
                     ValidateAudience = true,
-                    ValidateLifetime = true,
+                    ValidAudience = _config["TokenSettings:Audience"],
+                    ValidateLifetime = false,
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["TokenSettings:Key"]))
                 };
@@ -131,7 +133,6 @@ namespace CustomerChurmPrediction.Services
             {
                 throw new Exception($"Unexpected error. Details: {ex.Message}");
             }
-
         }
     }
 }

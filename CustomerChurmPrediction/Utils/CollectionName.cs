@@ -17,5 +17,7 @@
         public readonly static string Promotions = "Promotions";
         // Отзывы
         public readonly static string Reviews = "Reviews";
+        // Вкладки сайта (страницы с товарами)
+        public readonly static string Pages = "Pages";
     }
 }

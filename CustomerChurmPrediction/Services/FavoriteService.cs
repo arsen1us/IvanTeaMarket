@@ -6,7 +6,7 @@ namespace CustomerChurmPrediction.Services
 {
     public interface IFavoriteService : IBaseService<Favorite>
     {
-
+        public Task<List<Favorite>> FindAllAsync(FilterDefinition<Favorite>? filter, string userId);
     }
 
     // Сервис для работы со вкладкой избранное 

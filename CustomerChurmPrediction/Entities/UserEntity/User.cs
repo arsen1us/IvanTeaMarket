@@ -1,11 +1,11 @@
-﻿namespace CustomerChurmPrediction.Entities
+﻿namespace CustomerChurmPrediction.Entities.UserEntity
 {
     public class User : AbstractEntity
     {
         // Имя
         public string FirstName { get; set; } = null!;
         // Фамилия
-        public string SecondName { get; set; } = null!;
+        public string LastName { get; set; } = null!;
         // Почта
         public string Email { get; set; } = null!;
         // Пароль
@@ -47,6 +47,15 @@
         // Олбратная связь от клиентов
         public int ReviewsGiven { get; set; }
         public double AverageRatingGiven { get; set; }
+
+        // Конструктор с использованием полей UserReg
+        public User(UserReg userReg)
+        {
+            FirstName = userReg.FirstName;
+            LastName = userReg.LastName;
+            Email = userReg.Email;
+            Password = userReg.Password;
+        }
     }
 
     public class PurchaseHistory

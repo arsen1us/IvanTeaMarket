@@ -6,6 +6,14 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+options.AddPolicy("default", policy =>
+{
+    policy.AllowAnyHeader();
+    policy.AllowAnyMethod();
+    policy.AllowAnyOrigin();
+}));
+
 var configuration = builder.Configuration;
 
 // Подключение к базе данных
@@ -35,10 +43,13 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<ICouponService, CouponService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IFavoriteService, FavoriteService>();
+builder.Services.AddScoped<IPageService, PageService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IPromotionService, PromotionService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
 // Подключение логирования
@@ -48,6 +59,8 @@ builder.Services.AddLogging();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.UseCors("default");
 
 app.MapControllers();
 

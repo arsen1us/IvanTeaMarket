@@ -23,13 +23,14 @@ namespace CustomerChurmPrediction.Controllers
         {
             try
             {
-                var jwtToken = HttpContext.Request.Headers["Authorization"].ToString();
+                var authToken = HttpContext.Request.Headers["Authorization"].ToString();
+
+                var token = authToken.Replace("Bearer ", "");
+
                 var refreshToken = HttpContext.Request.Cookies["RefreshToken"];
 
-                string newJwtToken = await _tokenService.UpdateJwtTokenAsync(jwtToken);
+                string newJwtToken = "Bearer" + await _tokenService.UpdateJwtTokenAsync(token);
                 string newRefreshToken = _tokenService.GenerateRefreshToken();
-
-                Response.Headers.Add("Authorization", $"Bearer {newJwtToken}");
 
                 Response.Cookies.Append("RefreshToken", newRefreshToken, new CookieOptions
                 {
@@ -39,7 +40,7 @@ namespace CustomerChurmPrediction.Controllers
                     Expires = DateTimeOffset.UtcNow.AddHours(1)
                 });
 
-                return Ok("Bearer " + newJwtToken);
+                return Ok(new { token = newJwtToken });
             }
             catch (Exception ex)
             {

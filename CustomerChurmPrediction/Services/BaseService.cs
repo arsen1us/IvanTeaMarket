@@ -9,26 +9,38 @@ namespace CustomerChurmPrediction.Services
         public List<T> FindAll(FilterDefinition<T>? filter);
 
         // Получить все сущности (async)
-        public Task<List<T>> FindAllAsync(FilterDefinition<T>? filter, CancellationToken? cancellationToken);
+        public Task<List<T>> FindAllAsync(FilterDefinition<T>? filter, CancellationToken? cancellationToken = default);
 
         // Получить сущность по id
         public T FindById(string entityId);
 
         // Получить сущность по id (async)
-        public Task<T> FindByIdAsync(string entityId, CancellationToken? cancellationToken);
+        public Task<T> FindByIdAsync(string entityId, CancellationToken? cancellationToken = default);
+
+        // Получить количество сущностей
+        public long FindCount(FilterDefinition<T>? filter);
+
+        // Получить количество сущностей (async)
+        public Task<long> FindCountAsync(FilterDefinition<T>? filter, CancellationToken? cancellationToken = default);
+
+        // Получить количество сущностей по id сущности
+        public long FindCountById(string entityId);
+
+        // Получить количество сущностей по id сущности (async)
+        public Task<long> FindCountByIdAsync(string entityId, CancellationToken? cancellationToken = default);
 
         // Сохранить или обновить сущность
         public bool SaveOrUpdate(T entity);
         public bool SaveOrUpdate(List<T> entities);
 
         // Сохранить или обновить сущность (async)
-        public Task<bool> SaveOrUpdateAsync(T entity, CancellationToken? cancellationToken);
-        public Task<bool> SaveOrUpdateAsync(List<T> entity, CancellationToken? cancellationToken);
+        public Task<bool> SaveOrUpdateAsync(T entity, CancellationToken? cancellationToken = default);
+        public Task<bool> SaveOrUpdateAsync(List<T> entity, CancellationToken? cancellationToken = default);
         // Удалить сущность по id
         public long Delete(string entityId);
 
         // Удалить сущность по id (async)
-        public Task<long> DeleteAsync(string entityId, CancellationToken? cancellationToken);
+        public Task<long> DeleteAsync(string entityId, CancellationToken? cancellationToken = default);
     }
 
     public class BaseService<T> : IBaseService<T> where T : AbstractEntity
@@ -65,7 +77,7 @@ namespace CustomerChurmPrediction.Services
         }
 
         // Получить все сущности (async)
-        public virtual async Task<List<T>> FindAllAsync(FilterDefinition<T>? filter, CancellationToken? cancellationToken)
+        public virtual async Task<List<T>> FindAllAsync(FilterDefinition<T>? filter, CancellationToken? cancellationToken = default)
         {
             try
             {
@@ -95,7 +107,7 @@ namespace CustomerChurmPrediction.Services
         }
 
         // Получить сущность по id (async)
-        public virtual async Task<T> FindByIdAsync(string entityId, CancellationToken? cancellationToken)
+        public virtual async Task<T> FindByIdAsync(string entityId, CancellationToken? cancellationToken = default)
         {
             try
             {
@@ -107,6 +119,38 @@ namespace CustomerChurmPrediction.Services
             {
                 throw new NotImplementedException();
             }
+        }
+
+        // Получить количество сущностей
+        public long FindCount(FilterDefinition<T>? filter)
+        {
+            var resultFilter = filter ?? Builders<T>.Filter.Empty;
+            var result = _collection.CountDocuments(filter);
+            return result;
+        }
+
+        // Получить количество сущностей (async)
+        public async Task<long> FindCountAsync(FilterDefinition<T>? filter, CancellationToken? cancellationToken = default)
+        {
+            var resultFilter = filter ?? Builders<T>.Filter.Empty;
+            var result = await _collection.CountDocumentsAsync(filter);
+            return result;
+        }
+
+        // Получить количество сущностей по id сущности
+        public long FindCountById(string entityId)
+        {
+            var filter = Builders<T>.Filter.Eq(e => e.Id, entityId);
+            var result = _collection.CountDocuments(filter);
+            return result;
+        }
+
+        // Получить количество сущностей по id сущности (async)
+        public async Task<long> FindCountByIdAsync(string entityId, CancellationToken? cancellationToken = default)
+        {
+            var filter = Builders<T>.Filter.Eq(e => e.Id, entityId);
+            var result = await _collection.CountDocumentsAsync(filter);
+            return result;
         }
 
         // Сохранить или обновить сущность
@@ -165,7 +209,7 @@ namespace CustomerChurmPrediction.Services
         }
 
         // Сохранить или обновить сущность (async)
-        public virtual async Task<bool> SaveOrUpdateAsync(T entity, CancellationToken? cancellationToken)
+        public virtual async Task<bool> SaveOrUpdateAsync(T entity, CancellationToken? cancellationToken = default)
         {
             try
             {
@@ -183,7 +227,7 @@ namespace CustomerChurmPrediction.Services
         }
 
         // Сохранить или обновить список сущностей (async)
-        public virtual async Task<bool> SaveOrUpdateAsync(List<T> entities, CancellationToken? cancellationToken)
+        public virtual async Task<bool> SaveOrUpdateAsync(List<T> entities, CancellationToken? cancellationToken = default)
         {
             try
             {
@@ -249,7 +293,7 @@ namespace CustomerChurmPrediction.Services
         }
 
         // Удалить сущность по id (async)
-        public virtual async Task<long> DeleteAsync(string entityId, CancellationToken? cancellationToken)
+        public virtual async Task<long> DeleteAsync(string entityId, CancellationToken? cancellationToken = default)
         {
             try
             {
