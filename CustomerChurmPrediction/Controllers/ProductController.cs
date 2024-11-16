@@ -61,10 +61,34 @@ namespace CustomerChurmPrediction.Controllers
 				throw new Exception(ex.Message);
 			}
         }
-        // Добавить сущность
-		// POST: api/product
 
-		[HttpPost]
+        // Получить сущность по id категории
+        // GET: api/product/category/{categoryId}
+
+        [HttpGet]
+        [Route("category/{categoryId}")]
+        public async Task<IActionResult> GetByCategoryIdAsync(string categoryId)
+        {
+            if (string.IsNullOrEmpty(categoryId))
+                return BadRequest();
+            try
+            {
+                List<Product> productList = await _productService.FindByCategoryIdAsync(categoryId);
+                if (productList is null)
+                    return NotFound();
+
+                return Ok(new { productList = productList });
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        // Добавить сущность
+        // POST: api/product
+
+        [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] ProductAdd productAdd)
         {
             if(productAdd is null)
