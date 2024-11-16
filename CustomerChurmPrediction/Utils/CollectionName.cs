@@ -5,6 +5,8 @@
     {
         // Корзина
         public readonly static string Carts = "Carts";
+        // Категории
+        public readonly static string Categories = "Categories";
         // Избранное
         public readonly static string Favorites = "Favorites";
         // Пользователи

@@ -1,6 +1,6 @@
 ﻿using MongoDB.Driver;
-using CustomerChurmPrediction.Entities;
 using static CustomerChurmPrediction.Utils.CollectionName;
+using CustomerChurmPrediction.Entities.FavoriteEntity;
 
 namespace CustomerChurmPrediction.Services
 {

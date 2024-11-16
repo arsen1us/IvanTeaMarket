@@ -1,6 +1,6 @@
-﻿namespace CustomerChurmPrediction.Entities
+﻿namespace CustomerChurmPrediction.Entities.FavoriteEntity
 {
-    public class Cart : AbstractEntity
+    public class FavoriteDelete
     {
         public string ProductId { get; set; } = null!;
         public string UserId { get; set; } = null!;

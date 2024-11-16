@@ -1,4 +1,4 @@
-﻿namespace CustomerChurmPrediction.Entities
+﻿namespace CustomerChurmPrediction.Entities.ReviewEntity
 {
     // Отзыв
     public class Review : AbstractEntity

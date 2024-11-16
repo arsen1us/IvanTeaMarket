@@ -125,12 +125,22 @@ namespace CustomerChurmPrediction.Controllers
             {
                 if(string.IsNullOrEmpty(userId))
                 {
-                    return BadRequest();
+                    throw new ArgumentNullException();
                 }
 
                 User user = await _userService.FindByIdAsync(userId, default);
 
-                return Ok(user);
+                if(user is null)
+                {
+
+                }
+
+                return Ok(new
+                {
+                    firstName = user.FirstName,
+                    lastName = user.LastName,
+                    email = user.Email,
+                });
             }
             catch (Exception ex)
             {

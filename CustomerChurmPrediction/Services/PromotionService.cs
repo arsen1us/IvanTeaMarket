@@ -1,4 +1,4 @@
-﻿using CustomerChurmPrediction.Entities;
+﻿using CustomerChurmPrediction.Entities.PromotionEntity;
 using MongoDB.Driver;
 using static CustomerChurmPrediction.Utils.CollectionName;
 
