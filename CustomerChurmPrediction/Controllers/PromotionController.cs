@@ -137,5 +137,24 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
         }
+        // GET: /api/promotion/random
+
+        [Authorize]
+        [HttpGet]
+        [Route("first")]
+        public async Task<IActionResult> GetFirstPromotionAsync()
+        {
+            var filter = Builders<Promotion>.Filter.Empty;
+
+            var promotions = await _promotionService.FindAllAsync(filter, default);
+
+            var promotion = promotions.FirstOrDefault();
+
+            if(promotion != null)
+            {
+                return Ok( new {promotion = promotion});
+            }
+            return NotFound();
+        }
     }
 }

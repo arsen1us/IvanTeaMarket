@@ -2,6 +2,7 @@
 using CustomerChurmPrediction.Services;
 using MongoDB.Driver;
 using CustomerChurmPrediction.Entities.ProductEntity;
+using System.Linq;
 
 namespace CustomerChurmPrediction.Controllers
 {
@@ -85,8 +86,36 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
         }
-        // Добавить сущность
-        // POST: api/product
+
+        // Получить определённое число записей
+        // GET: api/product/{pageSize, pageNumber}
+        [HttpGet]
+        [Route("{pageNumber}/{pageSize}")]
+        public async Task<IActionResult> FetchProductsAsync(string pageNumber, string pageSize)
+        {
+            if (string.IsNullOrEmpty(pageNumber) && string.IsNullOrEmpty(pageSize))
+                return BadRequest();
+            try
+            {
+                if(Int32.TryParse(pageNumber, out int number) && Int32.TryParse(pageSize, out int size))
+                {
+                    List<Product> productList = await _productService.FindAllAsync(default, default);
+                    if (productList is not null)
+                    {
+                        var resultList = productList
+                            .Skip(number * size)
+                            .Take(size)
+                            .ToList();
+                        return Ok(new {productList = resultList});
+                    }
+                }
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
 
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] ProductAdd productAdd)
