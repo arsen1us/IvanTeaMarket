@@ -3,23 +3,56 @@
     // Название таблиц MongoDb
     public static class CollectionName
     {
-        // Корзина
+        /// <summary>
+        /// Корзина
+        /// </summary>
         public readonly static string Carts = "Carts";
-        // Категории
+
+        /// <summary>
+        /// Категории
+        /// </summary>
         public readonly static string Categories = "Categories";
-        // Избранное
+
+        /// <summary>
+        /// Избранное
+        /// </summary>
         public readonly static string Favorites = "Favorites";
-        // Пользователи
+
+        /// <summary>
+        /// Пользователи
+        /// </summary>
         public readonly static string Users = "Users";
-        // Товары
+
+        /// <summary>
+        /// Товары
+        /// </summary>
         public readonly static string Products = "Products";
-        // Купоны
+
+        /// <summary>
+        /// Купоны
+        /// </summary>
         public readonly static string Coupons = "Coupons";
-        // Реклама
+
+        /// <summary>
+        /// Реклама
+        /// </summary>
         public readonly static string Promotions = "Promotions";
-        // Отзывы
+
+        /// <summary>
+        /// Отзывы
+        /// </summary>
         public readonly static string Reviews = "Reviews";
-        // Вкладки сайта (страницы с товарами)
+
+        /// <summary>
+        /// Вкладки сайта (страницы с товарами)
+        /// </summary>
         public readonly static string Pages = "Pages";
+
+        
+        /// <summary>
+        /// Компании
+        /// </summary>
+        public readonly static string Companies = "Companies";
+        
     }
 }

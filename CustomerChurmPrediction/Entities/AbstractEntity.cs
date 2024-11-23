@@ -6,13 +6,20 @@ namespace CustomerChurmPrediction.Entities
 {
     public class AbstractEntity
     {
+        /// <summary>
+        /// Id сущности
+        /// </summary>
         [BsonId]
         public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
 
-        // Время обновления сущности
-        public DateTime LastTimeUserUpdate { get; set; }
-        
-        // Время создания сущности
-        public DateTime CreateTime { get; set; }
+        /// <summary>
+        /// Время обновления сущности
+        /// </summary>
+        public DateTime LastTimeUserUpdate { get; set; } = DateTime.Now;
+
+        /// <summary>
+        /// Время создания сущности
+        /// </summary>
+        public DateTime CreateTime { get; set; } = DateTime.Now;
     }
 }
