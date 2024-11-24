@@ -62,8 +62,7 @@ namespace CustomerChurmPrediction.Controllers
 				throw new Exception(ex.Message);
 			}
         }
-
-        // Получить сущность по id категории
+        // Получить список продуктов по id категории
         // GET: api/product/category/{categoryId}
 
         [HttpGet]
@@ -80,6 +79,29 @@ namespace CustomerChurmPrediction.Controllers
 
                 return Ok(new { productList = productList });
 
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        // Получить список продуктов по id компании
+        // GET: api/product/company/{companyId}
+
+        [HttpGet]
+        [Route("company/{companyId}")]
+        public async Task<IActionResult> GetByCompanyIdAsync(string companyId)
+        {
+            if (string.IsNullOrEmpty(companyId))
+                return BadRequest();
+            try
+            {
+                var productList = await _productService.FindByCompanyIdAsync(companyId, default);
+
+                if (productList is not null)
+                    return Ok(new { productList = productList });
+
+                return NotFound();
             }
             catch (Exception ex)
             {

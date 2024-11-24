@@ -43,7 +43,7 @@ namespace CustomerChurmPrediction.Controllers
             try
             {
                 var company = await _companyService.FindByIdAsync(companyId, default);
-                if (company is null)
+                if (company is not null)
                     return Ok(new { company = company });
 
                 return NotFound();

@@ -24,9 +24,16 @@ namespace CustomerChurmPrediction.Controllers
         [Route("company/{companyId}")]
         public async Task<IActionResult> GetOrderListByCompanyIdAsync(string companyId)
         {
+            if (string.IsNullOrEmpty(companyId))
+                return BadRequest();
             try
             {
-                return Ok();
+                var orderList = await _orderService.FindByCompanyIdAsync(companyId, default);
+                if(orderList is not null)
+                {
+                    return Ok(new { orderList = orderList });
+                }
+                return NotFound();
             }
             catch (Exception ex)
             {
