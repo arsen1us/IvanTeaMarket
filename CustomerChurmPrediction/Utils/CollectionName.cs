@@ -53,6 +53,11 @@
         /// Компании
         /// </summary>
         public readonly static string Companies = "Companies";
-        
+
+        /// <summary>
+        /// Заказы
+        /// </summary>
+        public readonly static string Orders = "Orders";
+
     }
 }
