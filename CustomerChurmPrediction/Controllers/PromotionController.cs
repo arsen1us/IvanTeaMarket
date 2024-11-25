@@ -11,11 +11,13 @@ namespace CustomerChurmPrediction.Controllers
     public class PromotionController : Controller
     {
         IPromotionService _promotionService;
+        ICompanyService _companyService;
         ILogger<PromotionController> _logger;
 
-        public PromotionController(IPromotionService promotionService, ILogger<PromotionController> logger)
+        public PromotionController(IPromotionService promotionService, ICompanyService companyService, ILogger<PromotionController> logger)
         {
             _promotionService = promotionService;
+            _companyService = companyService;
             _logger = logger;
 
         }
@@ -40,6 +42,40 @@ namespace CustomerChurmPrediction.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("company/{companyId}")]
+        public async Task<IActionResult> GetPromotionListByCompanyIdAsync(string companyId)
+        {
+            if(string.IsNullOrEmpty(companyId))
+                throw new ArgumentNullException(nameof(companyId));
+            try
+            {
+                // Проверка, существует ли компани с данным id
+                var company = await _companyService.FindByIdAsync(companyId, default);
+                if(company is not null)
+                {
+                    var promotionList = await _promotionService.GetByCompanyIdAsync(companyId, default);
+
+                    if(promotionList is not null)
+                    {
+                        return Ok(new { promotionList = promotionList });
+                    }
+                    else
+                    {
+                        return StatusCode(500, "Не удалось получить список рекламных постов по id компании");
+                    }
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         // [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddPromotionAsync(PromotionAdd promotionAdd)
@@ -57,7 +93,8 @@ namespace CustomerChurmPrediction.Controllers
                     ImageUrl = promotionAdd.ImageUrl,
                     LinkUrl = promotionAdd.LinkUrl,
                     StartDate = promotionAdd.StartDate,
-                    EndDate = promotionAdd.EndDate
+                    EndDate = promotionAdd.EndDate,
+                    CompanyId = promotionAdd.CompanyId
                 };
 
                 bool isSuccess = await _promotionService.SaveOrUpdateAsync(promotion);
