@@ -1,4 +1,5 @@
 ﻿using CustomerChurmPrediction.Entities.ProductEntity;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using static CustomerChurmPrediction.Utils.CollectionName;
 
@@ -16,6 +17,10 @@ namespace CustomerChurmPrediction.Services
         /// </summary>
         public Task<List<Product>> FindByCompanyIdAsync(string companyId, CancellationToken? cancellationToken = default);
 
+        /// <summary>
+        ///  Получить список продуктов по строке ввода
+        /// </summary>
+        public Task<List<Product>> FindBySearchStringAsync(string input, CancellationToken? cancellationToken = default);
     }
     public class ProductService(IMongoClient client, IConfiguration config, ILogger<ProductService> logger) 
         : BaseService<Product>(client, config, logger, Products), IProductService
@@ -47,6 +52,29 @@ namespace CustomerChurmPrediction.Services
                 var products = await base.FindAllAsync(filter, cancellationToken);
 
                 return products;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+
+        public async Task<List<Product>> FindBySearchStringAsync(string input, CancellationToken? cancellationToken = default)
+        {
+            if(string.IsNullOrEmpty(input))
+                throw new ArgumentNullException(nameof(input));
+            try
+            {
+                // Регилярки для поиска по имени и описанию
+                var filter = Builders<Product>.Filter.Or(
+                    Builders<Product>.Filter.Regex(p => p.Name, new BsonRegularExpression(input, "i")),
+                    Builders<Product>.Filter.Regex(p => p.Description, new BsonRegularExpression(input, "i"))
+);
+                var products = await base.FindAllAsync(filter);
+
+                return products;
+
             }
             catch (Exception ex)
             {

@@ -139,6 +139,28 @@ namespace CustomerChurmPrediction.Controllers
             }
         }
 
+        // GET: /api/product/search/{input}
+
+        [HttpGet]
+        [Route("search/{input}")]
+        public async Task<IActionResult> GetBySearchStringAsync(string input)
+        {
+            if(string.IsNullOrEmpty(input))
+                return BadRequest();
+            try
+            {
+                var productList = await _productService.FindBySearchStringAsync(input, default);
+
+                if (productList is not null)
+                    return Ok(new { productList = productList });
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] ProductAdd productAdd)
         {
