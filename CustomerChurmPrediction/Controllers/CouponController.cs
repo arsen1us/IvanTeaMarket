@@ -4,6 +4,7 @@ using CustomerChurmPrediction.Entities.ProductEntity;
 using MongoDB.Driver;
 using CustomerChurmPrediction.Entities.CouponEntity;
 using ZstdSharp.Unsafe;
+using Renci.SshNet.Security;
 
 namespace CustomerChurmPrediction.Controllers
 {
@@ -31,9 +32,9 @@ namespace CustomerChurmPrediction.Controllers
 			try
 			{
 				var filter = Builders<Coupon>.Filter.Empty;
-				List<Coupon> coupons = await _couponService.FindAllAsync(filter, default);
+				List<Coupon> couponList = await _couponService.FindAllAsync(filter, default);
 
-				return Ok(new { coupons = coupons });
+				return Ok(new { couponList = couponList });
 			}
 			catch (Exception ex)
 			{
@@ -64,10 +65,36 @@ namespace CustomerChurmPrediction.Controllers
 				throw new Exception(ex.Message);
 			}
 		}
-		// Добавить сущность
-		// POST: api/coupon
+        
+		[HttpGet]
+		[Route("company/{companyId}")]
+        public async Task<IActionResult> GetByCompanyIdAsync(string companyId)
+		{
+            if (string.IsNullOrEmpty(companyId))
+                return BadRequest();
 
-		[HttpPost]
+            try
+            {
+				var filter = Builders<Coupon>.Filter.Eq(c => c.CompanyId, companyId);
+
+				var couponList = await _couponService.FindAllAsync(filter, default);
+
+				if(couponList is not null)
+					return Ok(new {couponList = couponList});
+
+                return NotFound();
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        // Добавить сущность
+        // POST: api/coupon
+
+        [HttpPost]
 		public async Task<IActionResult> AddAsync([FromBody] CouponAdd couponAdd)
 		{
 			if (couponAdd is null)
@@ -78,7 +105,8 @@ namespace CustomerChurmPrediction.Controllers
 				{
 					Key = couponAdd.Key,
 					ProductIds = couponAdd.ProductIds,
-					CategoriesIds = couponAdd.CategoriesIds
+					CategoriesIds = couponAdd.CategoriesIds,
+					CompanyId = couponAdd.CompanyId
 				};
 
 				bool isSuccess = await _couponService.SaveOrUpdateAsync(coupon);
@@ -103,12 +131,12 @@ namespace CustomerChurmPrediction.Controllers
 				return BadRequest();
 			try
 			{
-                Coupon coupon = new Coupon
-                {
-                    Key = couponUpdate.Key,
-                    ProductIds = couponUpdate.ProductIds,
-                    CategoriesIds = couponUpdate.CategoriesIds
-                };
+				var coupon = await _couponService.FindByIdAsync(couponId, default);
+
+				coupon.Key = couponUpdate.Key;
+				coupon.ProductIds = couponUpdate.ProductIds;
+				coupon.CategoriesIds = couponUpdate.CategoriesIds;
+				coupon.CompanyId = couponUpdate.CompanyId;
 
                 bool isSuccess = await _couponService.SaveOrUpdateAsync(coupon);
                 if (isSuccess)
