@@ -1,4 +1,7 @@
-﻿using CustomerChurmPrediction.Services;
+﻿using CustomerChurmPrediction.Entities.UserEntity;
+using CustomerChurmPrediction.Services;
+using CustomerChurmPrediction.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CustomerChurmPrediction.Controllers
@@ -8,13 +11,18 @@ namespace CustomerChurmPrediction.Controllers
     public class TokenController : Controller
     {
         ITokenService _tokenService;
+        IUserService _userService;
         ILogger<UserController> _logger;
 
-        public TokenController(ITokenService tokenService, ILogger<UserController> logger)
+        public TokenController(ITokenService tokenService, IUserService userService, ILogger<UserController> logger)
         {
             _tokenService = tokenService;
+            _userService = userService;
             _logger = logger;
         }
+        /// <summary>
+        /// Обновить jwt-токен
+        /// </summary>
         // GET: api/token/refresh-token
 
         [HttpGet]

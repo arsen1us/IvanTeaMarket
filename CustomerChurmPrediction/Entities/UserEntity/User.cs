@@ -4,16 +4,42 @@ namespace CustomerChurmPrediction.Entities.UserEntity
 {
     public class User : AbstractEntity
     {
-        // Имя
+        /// <summary>
+        /// Имя
+        /// </summary>
         public string FirstName { get; set; } = null!;
-        // Фамилия
+
+        /// <summary>
+        /// Фамилия
+        /// </summary>
         public string LastName { get; set; } = null!;
-        // Почта
+
+        /// <summary>
+        /// Почта
+        /// </summary>
         public string Email { get; set; } = null!;
-        // Пароль
+
+        /// <summary>
+        /// Пароль
+        /// </summary>
         public string Password { get; set; } = null!;
-        // День рождения
+
+        /// <summary>
+        /// День рождения
+        /// </summary>
         public DateTime DateOfBirth { get; set; }
+
+        /// <summary>
+        /// Роль
+        /// </summary>
+        public string Role { get; set; } = null!;
+
+        /// <summary>
+        /// Id компании, с которой может работать пользователь (на основе роли)
+        /// </summary>
+        public string? CompanyId { get; set; } = null;
+        // Мб, нужен List<string>, так как пользователь может работать с несколькими компаниями
+        //public List<string>? CompanyIds { get; set; } = null;
 
         // Данные о покупках
         public int TotalPurchases { get; set; }

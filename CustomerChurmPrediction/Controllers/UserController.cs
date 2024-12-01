@@ -2,6 +2,7 @@
 using CustomerChurmPrediction.Services;
 using CustomerChurmPrediction.Entities.UserEntity;
 using Microsoft.AspNetCore.Authorization;
+using CustomerChurmPrediction.Utils;
 
 
 namespace CustomerChurmPrediction.Controllers
@@ -20,7 +21,9 @@ namespace CustomerChurmPrediction.Controllers
             _tokenService = tokenService;
             _logger = logger;
         }
-        // Регистрация
+        /// <summary>
+        /// Регистрация
+        /// </summary>
         // POST: /api/user/reg
 
         [HttpPost]
@@ -38,6 +41,9 @@ namespace CustomerChurmPrediction.Controllers
                     return BadRequest();
                 }
                 User user = new User(userReg);
+
+                // Выдаю роль - "Пользователь"
+                user.Role = UserRoles.Admin;
 
                 var successSave = await _userService.SaveOrUpdateAsync(user, default);
 
@@ -70,8 +76,10 @@ namespace CustomerChurmPrediction.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        // Аутентификация
-        // POST: /api/user/reg
+        /// <summary>
+        /// Аутентификация
+        /// </summary>
+        // POST: /api/user/auth
 
         [HttpPost]
         [Route("auth")]
@@ -116,6 +124,10 @@ namespace CustomerChurmPrediction.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        /// <summary>
+        /// Получить пользователя по id
+        /// </summary>
+        // GET: /api/user/{userId}
 
         [Authorize]
         [HttpGet("{userId}")]
@@ -163,6 +175,8 @@ namespace CustomerChurmPrediction.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+
 
     }
 }

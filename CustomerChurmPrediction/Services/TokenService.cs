@@ -4,13 +4,25 @@ using System.Security.Cryptography;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using CustomerChurmPrediction.Entities.UserEntity;
+using CustomerChurmPrediction.Utils;
 
 namespace CustomerChurmPrediction.Services
 {
     public interface ITokenService
     {
+        /// <summary>
+        /// Генерация jwt-токена
+        /// </summary>
         public string GenerateJwtToken(User user);
+
+        /// <summary>
+        /// Генерация refresh-токена
+        /// </summary>
         public string GenerateRefreshToken();
+
+        /// <summary>
+        /// Обновиль jwt-токен
+        /// </summary>
         public Task<string> UpdateJwtTokenAsync(string token);
     }
     public class TokenService : ITokenService
@@ -34,7 +46,9 @@ namespace CustomerChurmPrediction.Services
                 List<Claim> claims = new List<Claim>
                 {
                     new Claim("Id", user.Id.ToString()),
-                    new Claim("Email", user.Email)
+                    new Claim("Email", user.Email),
+                    // Если у пользователя нет роли - присвоить роль - "Пользователь"
+                    new Claim(ClaimTypes.Role, user.Role ?? UserRoles.User)
                 };
 
                 JwtSecurityToken token = new JwtSecurityToken
@@ -56,7 +70,6 @@ namespace CustomerChurmPrediction.Services
             }
         }
 
-        // Генерация Refresh токна
         // Получается токен вида: RA2Isc+d/w51Y1vttEk2/rx1DUuOi7CLCvHu41rjbpI=
         public string GenerateRefreshToken()
         {
@@ -68,7 +81,6 @@ namespace CustomerChurmPrediction.Services
                 return Convert.ToBase64String(randomNumber);
             }
         }
-        // Обновить jwt-токен
 
         public async Task<string> UpdateJwtTokenAsync(string token)
         {
@@ -83,8 +95,12 @@ namespace CustomerChurmPrediction.Services
 
                 string _id = principal.FindFirst("Id").Value;
                 string email = principal.FindFirst("Email").Value;
+                string role = principal.FindFirst(ClaimTypes.Role).Value;
 
-                if (_id is null || email is null)
+                // по умолчанию у пользователя должен быть id, email, role
+                if (string.IsNullOrEmpty(_id)
+                    || string.IsNullOrEmpty(email)
+                    || string.IsNullOrEmpty(role))
                 {
                     // log ошибка счмтывания jwt-токен или он поддельный 
                     return null;

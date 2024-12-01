@@ -5,6 +5,7 @@ using MongoDB.Driver;
 using CustomerChurmPrediction.Entities.CouponEntity;
 using ZstdSharp.Unsafe;
 using Renci.SshNet.Security;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CustomerChurmPrediction.Controllers
 {
@@ -94,6 +95,7 @@ namespace CustomerChurmPrediction.Controllers
         // Добавить сущность
         // POST: api/coupon
 
+        [Authorize(Roles = "Admin, Owner")]
         [HttpPost]
 		public async Task<IActionResult> AddAsync([FromBody] CouponAdd couponAdd)
 		{
@@ -120,10 +122,11 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
 		}
-		// Изменить сущность
-		// Put: api/coupon/{couponId}
+        // Изменить сущность
+        // Put: api/coupon/{couponId}
 
-		[HttpPut]
+        [Authorize(Roles = "Admin, Owner")]
+        [HttpPut]
 		[Route("{couponId}")]
 		public async Task<IActionResult> UpdateAsync(string couponId, [FromBody] CouponUpdate couponUpdate)
 		{
@@ -149,10 +152,11 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
 		}
-		// Удалить сущность
-		// Delete: api/coupon/{couponId}
+        // Удалить сущность
+        // Delete: api/coupon/{couponId}
 
-		[HttpDelete]
+        [Authorize(Roles = "Admin, Owner")]
+        [HttpDelete]
 		[Route("{couponId}")]
 		public async Task<IActionResult> DeleteAsync(string couponId)
 		{

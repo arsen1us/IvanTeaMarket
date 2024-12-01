@@ -1,5 +1,24 @@
 ﻿namespace CustomerChurmPrediction.Utils
 {
+    // Роли пользователей
+    public static class UserRoles
+    {
+        /// <summary>
+        /// Пользователь
+        /// </summary>
+        public static readonly string User = "User";
+
+        /// <summary>
+        /// Администатор
+        /// </summary>
+        public static readonly string Admin = "Admin";
+
+        /// <summary>
+        /// Владелец
+        /// </summary>
+        public static readonly string Owner = "Owner";
+    }
+
     // Название таблиц MongoDb
     public static class CollectionName
     {
@@ -48,7 +67,7 @@
         /// </summary>
         public readonly static string Pages = "Pages";
 
-        
+
         /// <summary>
         /// Компании
         /// </summary>
@@ -58,6 +77,7 @@
         /// Заказы
         /// </summary>
         public readonly static string Orders = "Orders";
-
     }
 }
+
+    

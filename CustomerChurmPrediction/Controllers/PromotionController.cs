@@ -75,8 +75,12 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
         }
+        /// <summary>
+        /// Добавить рекламу
+        /// </summary>
+        // POST: /api/promotion
 
-        // [Authorize]
+        [Authorize(Roles = "Admin, Owner")]
         [HttpPost]
         public async Task<IActionResult> AddPromotionAsync(PromotionAdd promotionAdd)
         {
@@ -111,8 +115,12 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
         }
+        /// <summary>
+        /// Изменить рекламу
+        /// </summary>
+        // PUT: /api/promotion/{promotionId}
 
-        [Authorize]
+        [Authorize(Roles = "Admin, Owner")]
         [HttpPut("{promotionId}")]
         public async Task<IActionResult> UpdatePromotionAsync(string promotionId, PromotionUpdate promotionUpdate)
         {
@@ -150,8 +158,12 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
         }
+        /// <summary>
+        /// Изменить рекламу
+        /// </summary>
+        // DELETE: /api/promotion/{promotionId}
 
-        [Authorize]
+        [Authorize(Roles = "Admin, Owner")]
         [HttpDelete]
         [Route("{promotionId}")]
         public async Task<IActionResult> DeletePromotionAsync(string promotionId)

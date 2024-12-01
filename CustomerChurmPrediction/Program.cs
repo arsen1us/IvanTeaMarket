@@ -9,9 +9,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors(options =>
 options.AddPolicy("default", policy =>
 {
+    policy.WithOrigins("http://localhost:3000");
     policy.AllowAnyHeader();
     policy.AllowAnyMethod();
-    policy.AllowAnyOrigin();
+    // policy.AllowAnyOrigin();
 }));
 
 var configuration = builder.Configuration;
@@ -64,7 +65,8 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 app.UseCors("default");
-
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 
 app.UseSwagger();
