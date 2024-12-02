@@ -15,6 +15,10 @@ namespace CustomerChurmPrediction.Controllers
         {
             _categoryService = categoryService;
         }
+        /// <summary>
+        /// Получить список всех категорий
+        /// </summary>
+        // GET: /api/category
 
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
@@ -34,6 +38,11 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
         }
+        /// <summary>
+        /// Получить категорию по id
+        /// </summary>
+        // GET: /api/category/{categoryId}
+
         [HttpGet]
         [Route("{categoryId}")]
         public async Task<IActionResult> GetByIdAsync(string categoryId)
@@ -54,6 +63,11 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
         }
+        /// <summary>
+        /// Добавить категорию
+        /// </summary>
+        // POST: /api/category
+
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] CategoryAdd categoryAdd)
         {
@@ -79,6 +93,11 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
         }
+        /// <summary>
+        /// Изменить категорию
+        /// </summary>
+        // PUT: /api/category/{categoryId}
+
         [HttpPut]
         [Route("{categoryId}")]
         public async Task<IActionResult> UpdateAsync(string categoryId, [FromBody] Category categoryUpdate)
@@ -107,6 +126,10 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
         }
+        /// <summary>
+        /// Удвлить категорию
+        /// </summary>
+        // DELETE: /api/category/{categoryId}
 
         [HttpDelete]
         [Route("{categoryId}")]

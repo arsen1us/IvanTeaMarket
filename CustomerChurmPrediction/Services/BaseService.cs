@@ -77,7 +77,7 @@ namespace CustomerChurmPrediction.Services
         }
 
         // Получить все сущности (async)
-        public virtual async Task<List<T>> FindAllAsync(FilterDefinition<T>? filter, CancellationToken? cancellationToken = default)
+        public virtual async Task<List<T>> FindAllAsync(FilterDefinition<T>? filter = null, CancellationToken? cancellationToken = default)
         {
             try
             {

@@ -107,9 +107,10 @@ namespace CustomerChurmPrediction.Controllers
 				{
 					Key = couponAdd.Key,
 					ProductIds = couponAdd.ProductIds,
-					CategoriesIds = couponAdd.CategoriesIds,
-					CompanyId = couponAdd.CompanyId
-				};
+					CompanyId = couponAdd.CompanyId,
+					StardDate = couponAdd.StartDate.ToUniversalTime(),
+					EndDate = couponAdd.EndDate.ToUniversalTime()
+                };
 
 				bool isSuccess = await _couponService.SaveOrUpdateAsync(coupon);
 				if(isSuccess)

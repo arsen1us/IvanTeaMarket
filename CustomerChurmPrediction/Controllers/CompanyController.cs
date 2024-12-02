@@ -13,11 +13,13 @@ namespace CustomerChurmPrediction.Controllers
     {
         ICompanyService _companyService;
         IUserService _userService;
+        ITokenService _tokenService;
 
-        public CompanyController(ICompanyService companyService, IUserService userService)
+        public CompanyController(ICompanyService companyService, IUserService userService, ITokenService tokenService)
         {
             _companyService = companyService;
             _userService = userService;
+            _tokenService = tokenService;
         }
         // Получить список компаний
         // GET: /api/company
@@ -86,22 +88,61 @@ namespace CustomerChurmPrediction.Controllers
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] CompanyAdd companyAdd)
         {
-            if (companyAdd is null)
+            if (companyAdd is null
+                || string.IsNullOrEmpty(companyAdd.Name)
+                || string.IsNullOrEmpty(companyAdd.Description)
+                || string.IsNullOrEmpty(companyAdd.UserId))
+            {
                 return BadRequest();
+            }
             try
             {
                 Company company = new Company
                 {
                     Name = companyAdd.Name,
-                    Story = companyAdd.Story,
                     Description = companyAdd.Description,
-                    OwnerIds = companyAdd.OwnerIds
                 };
 
                 bool isSuccess = await _companyService.SaveOrUpdateAsync(company);
                 if (isSuccess)
-                    return Ok(new { company = company });
-                return StatusCode(500);
+                {
+                    var user = await _userService.FindByIdAsync(companyAdd.UserId);
+                    if(user is not null)
+                    {
+                        // Присваиваю компанию пользователю
+                        user.CompanyId = company.Id;
+                        // Делаю его владжельцем компании
+                        user.Role = UserRoles.Owner;
+
+                        isSuccess = await _userService.SaveOrUpdateAsync(user);
+                        if (isSuccess)
+                        {
+                            // Создать новый jwt-токен на основе новой роли пользователя
+                            string token = _tokenService.GenerateJwtToken(user);
+
+                            // Создать новый refresh-токен
+                            string refreshToken = _tokenService.GenerateRefreshToken();
+
+                            Response.Cookies.Append("RefreshToken", refreshToken, new CookieOptions
+                            {
+                                HttpOnly = true,
+                                Secure = true,
+                                SameSite = SameSiteMode.Strict,
+                                Expires = DateTimeOffset.UtcNow.AddHours(1)
+                            });
+
+                            return Ok(new 
+                            { 
+                                token = token,
+                                company = company 
+                            });
+                        }
+                        return StatusCode(500, "При создании компании произошла ошибка. Не удалось присвоить пользователю новую роль!");
+                    }
+                    return NotFound("Не удалось найти пользователя!");
+
+                }
+                return StatusCode(500, "Не удалось создать компанию!");
             }
             catch (Exception ex)
             {
@@ -170,139 +211,139 @@ namespace CustomerChurmPrediction.Controllers
         // GET: /api/company/add-role
 
         // Роль пользователя будет обновлена после того, как пользователь снова войдёт на сайт, или когда потребуется обновить jwt-токен
-        [Authorize]
-        [HttpPost]
-        [Route("add-role")]
-        public async Task<IActionResult> AddRoleToUserAsync([FromBody] UserRoleAdd userAddRole)
-        {
-            if (userAddRole is null
-                || string.IsNullOrEmpty(userAddRole.UserId)
-                || string.IsNullOrEmpty(userAddRole.Role)
-                || string.IsNullOrEmpty(userAddRole.CompanyId))
-                return BadRequest();
-            try
-            {
-                var user = await _userService.FindByIdAsync(userAddRole.UserId, default);
+        //[Authorize]
+        //[HttpPost]
+        //[Route("add-role")]
+        //public async Task<IActionResult> AddRoleToUserAsync([FromBody] UserRoleAdd userAddRole)
+        //{
+            //if (userAddRole is null
+                //|| string.IsNullOrEmpty(userAddRole.UserId)
+                //|| string.IsNullOrEmpty(userAddRole.Role)
+                //|| string.IsNullOrEmpty(userAddRole.CompanyId))
+                //return BadRequest();
+            //try
+            //{
+                //var user = await _userService.FindByIdAsync(userAddRole.UserId, default);
 
-                if (user is null)
-                    return NotFound();
+                //if (user is null)
+                    //return NotFound();
 
-                // Добавить роль
-                user.Role = userAddRole.Role;
-                // Добавить id компании
-                user.CompanyId = userAddRole.CompanyId;
+                //// Добавить роль
+                //user.Role = userAddRole.Role;
+                //// Добавить id компании
+                //user.CompanyId = userAddRole.CompanyId;
 
-                bool isSuccess = await _userService.SaveOrUpdateAsync(user, default);
+                //bool isSuccess = await _userService.SaveOrUpdateAsync(user, default);
 
-                if (isSuccess) return Ok(new { user = user });
+                //if (isSuccess) return Ok(new { user = user });
 
-                return StatusCode(500, "Произошла ошибка во время добавления роли пользователю");
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
+                //return StatusCode(500, "Произошла ошибка во время добавления роли пользователю");
+            //}
+            //catch (Exception ex)
+            //{
+                //throw new Exception(ex.Message);
+            //}
+        //}
 
-        /// <summary>
-        /// Добавить пользователя в работники компании
-        /// </summary>
-        public async Task<IActionResult> AddUserToCompanyEmployeesAsync(string userId, string companyId)
-        {
-            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(companyId))
-                return BadRequest();
-            try
-            {
-                var user = await _userService.FindByIdAsync(userId, default);
+        ///// <summary>
+        ///// Добавить пользователя в работники компании
+        ///// </summary>
+        //public async Task<IActionResult> AddUserToCompanyEmployeesAsync(string userId, string companyId)
+        //{
+            //if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(companyId))
+                //return BadRequest();
+            //try
+            //{
+                //var user = await _userService.FindByIdAsync(userId, default);
 
-                // Если id компании совпадает с переданным id - удаляю его
-                if (user.CompanyId == companyId)
-                    user.CompanyId = null;
+                //// Если id компании совпадает с переданным id - удаляю его
+                //if (user.CompanyId == companyId)
+                    //user.CompanyId = null;
 
-                bool isSuccess = await _userService.SaveOrUpdateAsync(user, default);
+                //bool isSuccess = await _userService.SaveOrUpdateAsync(user, default);
 
-                if (isSuccess)
-                    return Ok(new { user = user });
+                //if (isSuccess)
+                    //return Ok(new { user = user });
 
-                return StatusCode(500, "Не удалось удалить пользователя из списка работников компании!");
+                //return StatusCode(500, "Не удалось удалить пользователя из списка работников компании!");
 
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
+            //}
+            //catch (Exception ex)
+            //{
+                //throw new Exception(ex.Message);
+            //}
+        //}
 
-        /// <summary>
-        /// Обновить поль работника компании
-        /// </summary>
-        [Authorize]
-        [HttpPut]
-        [Route("update-role/{userId}")]
-        public async Task<IActionResult> DeleteRoleFromUserAsync(string userId, [FromBody] UserRoleUpdate userRoleUpdate)
-        {
-            if (userRoleUpdate is null
-                || string.IsNullOrEmpty(userId)
-                || string.IsNullOrEmpty(userRoleUpdate.UserId)
-                || string.IsNullOrEmpty(userRoleUpdate.Role)
-                || string.IsNullOrEmpty(userRoleUpdate.CompanyId))
-                return BadRequest();
-            try
-            {
-                var user = await _userService.FindByIdAsync(userId, default);
+        ///// <summary>
+        ///// Обновить поль работника компании
+        ///// </summary>
+        //[Authorize]
+        //[HttpPut]
+        //[Route("update-role/{userId}")]
+        //public async Task<IActionResult> DeleteRoleFromUserAsync(string userId, [FromBody] UserRoleUpdate userRoleUpdate)
+        //{
+            //if (userRoleUpdate is null
+                //|| string.IsNullOrEmpty(userId)
+                //|| string.IsNullOrEmpty(userRoleUpdate.UserId)
+                //|| string.IsNullOrEmpty(userRoleUpdate.Role)
+                //|| string.IsNullOrEmpty(userRoleUpdate.CompanyId))
+                //return BadRequest();
+            //try
+            //{
+                //var user = await _userService.FindByIdAsync(userId, default);
 
-                if (user is null)
-                    return NotFound();
+                //if (user is null)
+                    //return NotFound();
 
-                // Добавить роль
-                user.Role = userRoleUpdate.Role;
+                //// Добавить роль
+                //user.Role = userRoleUpdate.Role;
 
-                // Обновить компанию
-                // Если роль пользователя - "Пользователь"
-                if (userRoleUpdate.Role == UserRoles.User)
-                {
-                    user.CompanyId = null;
-                }
+                //// Обновить компанию
+                //// Если роль пользователя - "Пользователь"
+                //if (userRoleUpdate.Role == UserRoles.User)
+                //{
+                    //user.CompanyId = null;
+                //}
 
-                bool isSuccess = await _userService.SaveOrUpdateAsync(user, default);
+                //bool isSuccess = await _userService.SaveOrUpdateAsync(user, default);
 
-                if (isSuccess) return Ok(new { user = user });
+                //if (isSuccess) return Ok(new { user = user });
 
-                return StatusCode(500, "Произошла ошибка во время добавления роли пользователю");
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
+                //return StatusCode(500, "Произошла ошибка во время добавления роли пользователю");
+            //}
+            //catch (Exception ex)
+            //{
+                //throw new Exception(ex.Message);
+            //}
+        //}
 
-        /// <summary>
-        /// Удалить пользователя из работников компании
-        /// </summary>
-        public async Task<IActionResult> DeleteUserFromCompanyEmployeesAsync(string userId, string companyId)
-        {
-            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(companyId))
-                return BadRequest();
-            try
-            {
-                var user = await _userService.FindByIdAsync(userId, default);
+        ///// <summary>
+        ///// Удалить пользователя из работников компании
+        ///// </summary>
+        //public async Task<IActionResult> DeleteUserFromCompanyEmployeesAsync(string userId, string companyId)
+        //{
+            //if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(companyId))
+                //return BadRequest();
+            //try
+            //{
+                //var user = await _userService.FindByIdAsync(userId, default);
 
-                // Если id компании совпадает с переданным id - удаляю его
-                if (user.CompanyId == companyId)
-                    user.CompanyId = null;
+                //// Если id компании совпадает с переданным id - удаляю его
+                //if (user.CompanyId == companyId)
+                    //user.CompanyId = null;
 
-                bool isSuccess = await _userService.SaveOrUpdateAsync(user, default);
+                //bool isSuccess = await _userService.SaveOrUpdateAsync(user, default);
 
-                if (isSuccess)
-                    return Ok(new { user = user });
+                //if (isSuccess)
+                    //return Ok(new { user = user });
 
-                return StatusCode(500, "Не удалось удалить пользователя из списка работников компании!");
+                //return StatusCode(500, "Не удалось удалить пользователя из списка работников компании!");
 
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
+            //}
+            //catch (Exception ex)
+            //{
+                //throw new Exception(ex.Message);
+            //}
+        //}
     }
 }

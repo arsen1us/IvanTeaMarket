@@ -48,7 +48,9 @@ namespace CustomerChurmPrediction.Services
                     new Claim("Id", user.Id.ToString()),
                     new Claim("Email", user.Email),
                     // Если у пользователя нет роли - присвоить роль - "Пользователь"
-                    new Claim(ClaimTypes.Role, user.Role ?? UserRoles.User)
+                    new Claim(ClaimTypes.Role, user.Role ?? UserRoles.User),
+                    // Id компании, с которой может работать пользователь
+                    new Claim("CompanyId", user.CompanyId ?? "")
                 };
 
                 JwtSecurityToken token = new JwtSecurityToken

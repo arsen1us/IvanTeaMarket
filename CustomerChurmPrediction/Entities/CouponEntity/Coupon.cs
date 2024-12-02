@@ -30,12 +30,12 @@ namespace CustomerChurmPrediction.Entities.CouponEntity
         public string CompanyId { get; set; } = null!;
 
         /// <summary>
-        /// Дата начала
+        /// Дата начала действия купона
         /// </summary>
-        public DateTime StartDate { get; set; }
+        public DateTime StardDate { get; set; }
 
         /// <summary>
-        /// Дата окончания
+        /// Дата окончания действия купона
         /// </summary>
         public DateTime EndDate { get; set; }
 

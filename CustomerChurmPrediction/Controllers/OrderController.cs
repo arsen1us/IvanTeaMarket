@@ -1,5 +1,6 @@
 ﻿using CustomerChurmPrediction.Entities.OrderEntity;
 using CustomerChurmPrediction.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 
@@ -10,30 +11,41 @@ namespace CustomerChurmPrediction.Controllers
     public class OrderController : Controller
     {
         IOrderService _orderService;
-        public OrderController(IOrderService orderService) 
+        ICompanyService _companyService;
+        public OrderController(IOrderService orderService, ICompanyService companyService) 
         {
+            _companyService = companyService;
             _orderService = orderService;
         }
 
         /// <summary>
         /// Получить спиок заказов по id компании
         /// </summary>
-        /// <param name="companyId">Id компании</param>
         // GET: /api/order/company/{companyId}
+
+        // [Authorize(Roles = "Admin, Owner")]
         [HttpGet]
         [Route("company/{companyId}")]
-        public async Task<IActionResult> GetOrderListByCompanyIdAsync(string companyId)
+        public async Task<IActionResult> GetByCompanyIdAsync(string companyId)
         {
             if (string.IsNullOrEmpty(companyId))
                 return BadRequest();
             try
             {
-                var orderList = await _orderService.FindByCompanyIdAsync(companyId, default);
-                if(orderList is not null)
+                var company = _companyService.FindByIdAsync(companyId, default);
+
+                if(company is null)
                 {
-                    return Ok(new { orderList = orderList });
+                    return NotFound();
                 }
-                return NotFound();
+
+                var orderList = await _orderService.FindByCompanyIdAsync(companyId, default);
+
+                if(orderList is null)
+                {
+                    return NotFound();
+                }
+                return Ok(new { orderList = orderList });
             }
             catch (Exception ex)
             {

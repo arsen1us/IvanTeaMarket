@@ -3,6 +3,7 @@ using CustomerChurmPrediction.Services;
 using MongoDB.Driver;
 using CustomerChurmPrediction.Entities.ProductEntity;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CustomerChurmPrediction.Controllers
 {
@@ -12,12 +13,18 @@ namespace CustomerChurmPrediction.Controllers
     {
         IUserService _userService;
         IProductService _productService;
+        ICompanyService _companyService;
         ILogger<ProductController> _logger;
 
-        public ProductController(IUserService userService, IProductService productService, ILogger<ProductController> logger)
+        public ProductController(
+            IUserService userService,
+            IProductService productService,
+            ICompanyService companyService,
+            ILogger<ProductController> logger)
         {
             _userService = userService;
             _productService = productService;
+            _companyService = companyService;
             _logger = logger;
         }
         // Получить список сущностей
@@ -38,10 +45,13 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
         }
+        /// <summary>
+        /// Получить продукт по id
+        /// </summary>
         // Получить сущность по id
-		// GET: api/product/{productId}
+        // GET: api/product/{productId}
 
-		[HttpGet]
+        [HttpGet]
         [Route("{productId}")]
         public async Task<IActionResult> GetByIdAsync(string productId)
         {
@@ -62,7 +72,9 @@ namespace CustomerChurmPrediction.Controllers
 				throw new Exception(ex.Message);
 			}
         }
-        // Получить список продуктов по id категории
+        /// <summary>
+        /// Получить список продуктов по id категории
+        /// </summary>
         // GET: api/product/category/{categoryId}
 
         [HttpGet]
@@ -85,32 +97,11 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
         }
-        // Получить список продуктов по id компании
-        // GET: api/product/company/{companyId}
-
-        [HttpGet]
-        [Route("company/{companyId}")]
-        public async Task<IActionResult> GetByCompanyIdAsync(string companyId)
-        {
-            if (string.IsNullOrEmpty(companyId))
-                return BadRequest();
-            try
-            {
-                var productList = await _productService.FindByCompanyIdAsync(companyId, default);
-
-                if (productList is not null)
-                    return Ok(new { productList = productList });
-
-                return NotFound();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        // Получить определённое число записей
+        /// <summary>
+        /// Получить определённое число продуктов
+        /// </summary>
         // GET: api/product/{pageSize, pageNumber}
+
         [HttpGet]
         [Route("{pageNumber}/{pageSize}")]
         public async Task<IActionResult> FetchProductsAsync(string pageNumber, string pageSize)
@@ -160,6 +151,10 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
         }
+        /// <summary>
+        /// Добавить продукт
+        /// </summary>
+        // POST: api/product/{productId}
 
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] ProductAdd productAdd)
@@ -188,10 +183,12 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
 		}
-        // Изменить сущность
-		// Put: api/product/{productId}
+        /// <summary>
+        /// Изменить продукт
+        /// </summary>
+        // PUT: api/product/{productId}
 
-		[HttpPut]
+        [HttpPut]
         [Route("{productId}")]
         public async Task<IActionResult> UpdateAsync(string productId, [FromBody] ProductUpdate productUpdate)
         {
@@ -217,7 +214,9 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
 		}
-        // Удалить сущность
+        /// <summary>
+        /// Удалить продукт
+        /// </summary>
         // Delete: api/product/{productId}
 
         [HttpDelete]
@@ -239,5 +238,38 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
 		}
+
+        // https://localhost:7299/api/product/company/${companyId}
+
+        /// <summary>
+        /// Получить список продуктов по id компании
+        /// </summary>
+        // GET: api/product/company/{companyId}
+
+        [Authorize(Roles = "Admin, Owner")]
+        [HttpGet]
+        [Route("company/{companyId}")]
+        public async Task<IActionResult> GetByCompanyIdAsync(string companyId)
+        {
+            if(string.IsNullOrEmpty(companyId))
+                return BadRequest();
+            try
+            {
+                var company = await _companyService.FindByIdAsync(companyId, default);
+                if (company is null)
+                    return NotFound();
+
+                var productList = await _productService.FindByCompanyIdAsync(companyId, default);
+
+                if(productList is null)
+                    return NotFound();
+
+                return Ok(new { productList = productList });
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

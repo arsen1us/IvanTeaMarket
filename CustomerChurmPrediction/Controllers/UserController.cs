@@ -43,7 +43,7 @@ namespace CustomerChurmPrediction.Controllers
                 User user = new User(userReg);
 
                 // Выдаю роль - "Пользователь"
-                user.Role = UserRoles.Admin;
+                user.Role = UserRoles.User;
 
                 var successSave = await _userService.SaveOrUpdateAsync(user, default);
 
