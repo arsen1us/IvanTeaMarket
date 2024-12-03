@@ -1,6 +1,7 @@
 ﻿using CustomerChurmPrediction.Entities.ProductEntity;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using System.Linq;
 using static CustomerChurmPrediction.Utils.CollectionName;
 
 namespace CustomerChurmPrediction.Services
@@ -22,9 +23,10 @@ namespace CustomerChurmPrediction.Services
         /// </summary>
         public Task<List<Product>> FindBySearchStringAsync(string input, CancellationToken? cancellationToken = default);
     }
-    public class ProductService(IMongoClient client, IConfiguration config, ILogger<ProductService> logger) 
+    public class ProductService(IMongoClient client, IConfiguration config, ILogger<ProductService> logger, IWebHostEnvironment _environment) 
         : BaseService<Product>(client, config, logger, Products), IProductService
     {
+
         public async Task<List<Product>> FindByCategoryIdAsync(string categoryId, CancellationToken? cancellationToken = default)
         {
             if(string.IsNullOrEmpty(categoryId))
@@ -74,6 +76,53 @@ namespace CustomerChurmPrediction.Services
                 var products = await base.FindAllAsync(filter);
 
                 return products;
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<List<string>> UploadImagesAsync(List<IFormFile> images)
+        {
+            if (images is null || images.Count == 0)
+                // возвращаю пустой список
+                return new List<string>();
+
+            var uploadFilePaths = new List<string>();
+
+            try
+            {
+                // Путь к папке uploads
+                var updoadsFolder = Path.Combine(_environment.WebRootPath, "uploads");
+
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+
+                foreach (var image in images)
+                {
+                    var fileExtension = Path.GetExtension(image.FileName).ToLower();
+
+                    // Если у файла другое расширение 
+                    if (!allowedExtensions.Contains(fileExtension))
+                        // возвращаю пустой список
+                        return new List<string>();
+
+                    var filePath = Guid.NewGuid() + fileExtension;
+
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await image.CopyToAsync(fileStream);
+                    }
+
+                    // Добавление ссылки на фото
+                    uploadFilePaths.Add(filePath);
+                }
+                // Если успешно
+                if(uploadFilePaths is not null)
+                    return uploadFilePaths;
+                // возвращаю пустой список
+                return new List<string>();
 
             }
             catch (Exception ex)

@@ -64,6 +64,8 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+app.UseStaticFiles();
+
 app.UseCors("default");
 app.UseAuthentication();
 app.UseAuthorization();
