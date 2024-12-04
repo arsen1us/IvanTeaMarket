@@ -27,8 +27,10 @@ namespace CustomerChurmPrediction.Controllers
             _companyService = companyService;
             _logger = logger;
         }
-        // Получить список сущностей
-		// GET: api/product
+        /// <summary>
+        /// Получить список всех продуктов
+        /// </summary>
+        // GET: api/product
 
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
@@ -48,7 +50,6 @@ namespace CustomerChurmPrediction.Controllers
         /// <summary>
         /// Получить продукт по id
         /// </summary>
-        // Получить сущность по id
         // GET: api/product/{productId}
 
         [HttpGet]
@@ -129,7 +130,9 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
         }
-
+        /// <summary>
+        /// Получить список продуктов по строке поиска
+        /// </summary>
         // GET: /api/product/search/{input}
 
         [HttpGet]
@@ -145,6 +148,36 @@ namespace CustomerChurmPrediction.Controllers
                 if (productList is not null)
                     return Ok(new { productList = productList });
                 return NotFound();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        /// <summary>
+        /// Получить список продуктов по id компании
+        /// </summary>
+        // GET: api/product/company/{companyId}
+
+        [Authorize(Roles = "Admin, Owner")]
+        [HttpGet]
+        [Route("company/{companyId}")]
+        public async Task<IActionResult> GetByCompanyIdAsync(string companyId)
+        {
+            if (string.IsNullOrEmpty(companyId))
+                return BadRequest();
+            try
+            {
+                var company = await _companyService.FindByIdAsync(companyId, default);
+                if (company is null)
+                    return NotFound();
+
+                var productList = await _productService.FindByCompanyIdAsync(companyId, default);
+
+                if (productList is null)
+                    return NotFound();
+
+                return Ok(new { productList = productList });
             }
             catch (Exception ex)
             {
@@ -239,38 +272,5 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
 		}
-
-        // https://localhost:7299/api/product/company/${companyId}
-
-        /// <summary>
-        /// Получить список продуктов по id компании
-        /// </summary>
-        // GET: api/product/company/{companyId}
-
-        [Authorize(Roles = "Admin, Owner")]
-        [HttpGet]
-        [Route("company/{companyId}")]
-        public async Task<IActionResult> GetByCompanyIdAsync(string companyId)
-        {
-            if(string.IsNullOrEmpty(companyId))
-                return BadRequest();
-            try
-            {
-                var company = await _companyService.FindByIdAsync(companyId, default);
-                if (company is null)
-                    return NotFound();
-
-                var productList = await _productService.FindByCompanyIdAsync(companyId, default);
-
-                if(productList is null)
-                    return NotFound();
-
-                return Ok(new { productList = productList });
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
     }
 }

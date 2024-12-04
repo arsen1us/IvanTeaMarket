@@ -3,12 +3,24 @@
     // Отзыв
     public class Review : AbstractEntity
     {
+        /// <summary>
+        /// Id пользователя
+        /// </summary>
         public string UserId { get; set; } = null!;
+
+        /// <summary>
+        /// Id продукта
+        /// </summary>
         public string ProductId { get; set; } = null!;
-        // Текст отзыва
+
+        /// <summary>
+        /// Текст отзыва
+        /// </summary>
         public string Text { get; set; } = null!;
 
-        // Оценка от 1 до 5
+        /// <summary>
+        /// Оценка от (1 до 5)
+        /// </summary>
         public int Grade { get; set; }
     }
 }

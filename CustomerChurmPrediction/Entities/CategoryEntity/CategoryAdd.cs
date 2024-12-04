@@ -2,6 +2,9 @@
 {
 	public class CategoryAdd
 	{
-		public string Name { get; set; } = null!;
+        /// <summary>
+        /// Название категории
+        /// </summary>
+        public string Name { get; set; } = null!;
 	}
 }

@@ -6,10 +6,12 @@ namespace CustomerChurmPrediction.Services
 {
     public interface IUserService : IBaseService<User>
     {
+        /// <summary>
+        /// Получить пользователя по почте и паролю
+        /// </summary>
         public Task<User> FindByEmailAndPassword(string email, string password, CancellationToken? cancellationToken = default);
     }
 
-    // Сервис для работы с пользователями
     public class UserService(IMongoClient client, IConfiguration config, ILogger<UserService> logger) 
         : BaseService<User>(client, config, logger, Users), IUserService
     {

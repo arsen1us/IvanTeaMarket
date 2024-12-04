@@ -5,41 +5,64 @@ namespace CustomerChurmPrediction.Services
 {
     public interface IBaseService<T> where T : AbstractEntity
     {
-        // Получить все сущности
+        /// <summary>
+        /// Получить список всех сущностей
+        /// </summary>
         public List<T> FindAll(FilterDefinition<T>? filter);
 
-        // Получить все сущности (async)
+        /// <summary>
+        /// Получить список всех сущностей (async)
+        /// </summary>
         public Task<List<T>> FindAllAsync(FilterDefinition<T>? filter, CancellationToken? cancellationToken = default);
 
-        // Получить сущность по id
+        /// <summary>
+        /// Получить сущность по id
+        /// </summary>
         public T FindById(string entityId);
 
-        // Получить сущность по id (async)
+        /// <summary>
+        /// Получить сущность по id (async)
+        /// </summary>
         public Task<T> FindByIdAsync(string entityId, CancellationToken? cancellationToken = default);
 
-        // Получить количество сущностей
+        /// <summary>
+        /// Получить количество сущностей
+        /// </summary>
         public long FindCount(FilterDefinition<T>? filter);
 
-        // Получить количество сущностей (async)
+        /// <summary>
+        /// Получить количество сущностей (async)
+        /// </summary>
         public Task<long> FindCountAsync(FilterDefinition<T>? filter, CancellationToken? cancellationToken = default);
 
-        // Получить количество сущностей по id сущности
-        public long FindCountById(string entityId);
-
-        // Получить количество сущностей по id сущности (async)
-        public Task<long> FindCountByIdAsync(string entityId, CancellationToken? cancellationToken = default);
-
-        // Сохранить или обновить сущность
+        /// <summary>
+        /// Сохранить или обновить сущность
+        /// </summary>
         public bool SaveOrUpdate(T entity);
+
+        /// <summary>
+        /// Сохранить или обновить список сущностей
+        /// </summary>
         public bool SaveOrUpdate(List<T> entities);
 
-        // Сохранить или обновить сущность (async)
+        /// <summary>
+        /// Сохранить или обновить сущность (async)
+        /// </summary>
         public Task<bool> SaveOrUpdateAsync(T entity, CancellationToken? cancellationToken = default);
+
+        /// <summary>
+        /// Сохранить или обновить список сущностей (async)
+        /// </summary>
         public Task<bool> SaveOrUpdateAsync(List<T> entity, CancellationToken? cancellationToken = default);
-        // Удалить сущность по id
+
+        /// <summary>
+        /// Удалить сущность по id
+        /// </summary>
         public long Delete(string entityId);
 
-        // Удалить сущность по id (async)
+        /// <summary>
+        /// Удалить сущность по id (async)
+        /// </summary>
         public Task<long> DeleteAsync(string entityId, CancellationToken? cancellationToken = default);
     }
 
@@ -62,7 +85,6 @@ namespace CustomerChurmPrediction.Services
             Table = Database.GetCollection<T>(collectionName);
         }
 
-        // Получить все сущности
         public virtual List<T> FindAll(FilterDefinition<T>? filter)
         {
             try
@@ -78,7 +100,6 @@ namespace CustomerChurmPrediction.Services
             }
         }
 
-        // Получить все сущности (async)
         public virtual async Task<List<T>> FindAllAsync(FilterDefinition<T>? filter = null, CancellationToken? cancellationToken = default)
         {
             try
@@ -93,7 +114,6 @@ namespace CustomerChurmPrediction.Services
             }
         }
 
-        // Получить сущность по id
         public virtual T FindById(string entityId)
         {
             try
@@ -108,7 +128,6 @@ namespace CustomerChurmPrediction.Services
             }
         }
 
-        // Получить сущность по id (async)
         public virtual async Task<T> FindByIdAsync(string entityId, CancellationToken? cancellationToken = default)
         {
             try
@@ -123,39 +142,34 @@ namespace CustomerChurmPrediction.Services
             }
         }
 
-        // Получить количество сущностей
         public long FindCount(FilterDefinition<T>? filter)
         {
-            var resultFilter = filter ?? Builders<T>.Filter.Empty;
-            var result = Table.CountDocuments(filter);
-            return result;
+            try
+            {
+                var resultFilter = filter ?? Builders<T>.Filter.Empty;
+                var result = Table.CountDocuments(filter);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
         }
 
-        // Получить количество сущностей (async)
         public async Task<long> FindCountAsync(FilterDefinition<T>? filter, CancellationToken? cancellationToken = default)
         {
-            var resultFilter = filter ?? Builders<T>.Filter.Empty;
-            var result = await Table.CountDocumentsAsync(filter);
-            return result;
+            try
+            {
+                var resultFilter = filter ?? Builders<T>.Filter.Empty;
+                var result = await Table.CountDocumentsAsync(filter);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
         }
 
-        // Получить количество сущностей по id сущности
-        public long FindCountById(string entityId)
-        {
-            var filter = Builders<T>.Filter.Eq(e => e.Id, entityId);
-            var result = Table.CountDocuments(filter);
-            return result;
-        }
-
-        // Получить количество сущностей по id сущности (async)
-        public async Task<long> FindCountByIdAsync(string entityId, CancellationToken? cancellationToken = default)
-        {
-            var filter = Builders<T>.Filter.Eq(e => e.Id, entityId);
-            var result = await Table.CountDocumentsAsync(filter);
-            return result;
-        }
-
-        // Сохранить или обновить сущность
         public virtual bool SaveOrUpdate(T entity)
         {
             if(entity != null)
@@ -166,7 +180,6 @@ namespace CustomerChurmPrediction.Services
             return false;
         }
 
-        // Сохранить или обновить список сущностей
         public virtual bool SaveOrUpdate(List<T> entities)
         {
             try
@@ -210,7 +223,6 @@ namespace CustomerChurmPrediction.Services
             }
         }
 
-        // Сохранить или обновить сущность (async)
         public virtual async Task<bool> SaveOrUpdateAsync(T entity, CancellationToken? cancellationToken = default)
         {
             try
@@ -228,7 +240,6 @@ namespace CustomerChurmPrediction.Services
             }
         }
 
-        // Сохранить или обновить список сущностей (async)
         public virtual async Task<bool> SaveOrUpdateAsync(List<T> entities, CancellationToken? cancellationToken = default)
         {
             try
@@ -270,7 +281,6 @@ namespace CustomerChurmPrediction.Services
             }
         }
 
-        // Удалить сущность по id
         public virtual long Delete(string entityId)
         {
             try
@@ -294,7 +304,6 @@ namespace CustomerChurmPrediction.Services
             }
         }
 
-        // Удалить сущность по id (async)
         public virtual async Task<long> DeleteAsync(string entityId, CancellationToken? cancellationToken = default)
         {
             try

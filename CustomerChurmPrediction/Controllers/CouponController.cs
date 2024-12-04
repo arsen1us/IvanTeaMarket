@@ -23,11 +23,12 @@ namespace CustomerChurmPrediction.Controllers
             _userService = userService;
             _logger = logger;
         }
+        /// <summary>
+        /// Получить список купонов
+        /// </summary>
+        // GET: api/coupon
 
-		// Получить список сущностей
-		// GET: api/coupon
-
-		[HttpGet]
+        [HttpGet]
 		public async Task<IActionResult> GetAllAsync()
 		{
 			try
@@ -42,10 +43,12 @@ namespace CustomerChurmPrediction.Controllers
 				throw new Exception(ex.Message);
 			}
 		}
-		// Получить сущность по id
-		// GET: api/coupon/{couponId}
+        /// <summary>
+        /// Получить купон по id
+        /// </summary>
+        // GET: api/coupon/{couponId}
 
-		[HttpGet]
+        [HttpGet]
 		[Route("{couponId}")]
 		public async Task<IActionResult> GetByIdAsync(string couponId)
 		{
@@ -66,8 +69,12 @@ namespace CustomerChurmPrediction.Controllers
 				throw new Exception(ex.Message);
 			}
 		}
-        
-		[HttpGet]
+        /// <summary>
+        /// Получить список купонов по id компании
+        /// </summary>
+        // GET: api/coupon/company/{companyId}
+
+        [HttpGet]
 		[Route("company/{companyId}")]
         public async Task<IActionResult> GetByCompanyIdAsync(string companyId)
 		{
@@ -91,8 +98,9 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
         }
-
-        // Добавить сущность
+        /// <summary>
+        /// Добавить купон
+        /// </summary>
         // POST: api/coupon
 
         [Authorize(Roles = "Admin, Owner")]
@@ -123,8 +131,10 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
 		}
-        // Изменить сущность
-        // Put: api/coupon/{couponId}
+        /// <summary>
+        /// Изменить купон
+        /// </summary>
+        // PUT: api/coupon/{couponId}
 
         [Authorize(Roles = "Admin, Owner")]
         [HttpPut]
@@ -153,8 +163,10 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
 		}
-        // Удалить сущность
-        // Delete: api/coupon/{couponId}
+        /// <summary>
+        /// Удалить купон
+        /// </summary>
+        // DELETE: api/coupon/{couponId}
 
         [Authorize(Roles = "Admin, Owner")]
         [HttpDelete]

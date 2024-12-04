@@ -22,7 +22,9 @@ namespace CustomerChurmPrediction.Controllers
 
         }
 
-        // Получить список рекламных постов
+        /// <summary>
+        /// Получить список всех рекламных постов
+        /// </summary>
         // GET: api/promotion
 
         [Authorize]
@@ -41,6 +43,10 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
         }
+        /// <summary>
+        /// Добавить список рекламы по id компании
+        /// </summary>
+        // GET: api/promotion/{companyId}
 
         [HttpGet]
         [Route("company/{companyId}")]
@@ -186,6 +192,9 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
         }
+        /// <summary>
+        /// Используется для тестов
+        /// </summary>
         // GET: /api/promotion/random
 
         [Authorize]

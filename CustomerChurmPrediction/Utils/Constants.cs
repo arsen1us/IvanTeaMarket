@@ -1,6 +1,5 @@
 ﻿namespace CustomerChurmPrediction.Utils
 {
-    // Роли пользователей
     public static class UserRoles
     {
         /// <summary>
@@ -19,7 +18,6 @@
         public static readonly string Owner = "Owner";
     }
 
-    // Название таблиц MongoDb
     public static class CollectionName
     {
         /// <summary>

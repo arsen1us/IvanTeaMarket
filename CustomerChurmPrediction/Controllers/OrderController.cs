@@ -159,13 +159,11 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
         }
-
-        private decimal CalculateTotalOrderPrice(decimal pricePerOne, int count) => pricePerOne * count;
-        
         /// <summary>
         /// Удалить заказ по id
         /// </summary>
         // GET: /api/order/company/{companyId}
+
         [HttpDelete]
         [Route("{companyId}")]
         public async Task<IActionResult> AddOrderAsync(string companyId)

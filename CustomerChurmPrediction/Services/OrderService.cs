@@ -15,7 +15,7 @@ namespace CustomerChurmPrediction.Services
         public Task<List<OrderModel>> GetOrderModelsByCompanyIdAsync(string companyId, CancellationToken? cancellationToken = default);
 
         /// <summary>
-        /// Тестовая малышечка
+        /// Получить список заказов по id пользователя
         /// </summary>
         public Task<List<OrderModel>> GetOrderModelsByUserIdAsync(string userId, CancellationToken? cancellationToken = default);
     }

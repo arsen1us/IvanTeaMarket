@@ -9,9 +9,6 @@ namespace CustomerChurmPrediction.Services
 
     }
 
-    /// <summary>
-    /// Сервис для работы с действиями пользователей
-    /// </summary>
     public class UserActionService(IMongoClient client, IConfiguration config, ILogger<UserActionService> logger, IWebHostEnvironment _environment)
         : BaseService<UserAction>(client, config, logger, UserActions), IUserActionService
     {

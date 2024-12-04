@@ -21,7 +21,7 @@ namespace CustomerChurmPrediction.Controllers
             _logger = logger;
         }
         /// <summary>
-        /// Обновить jwt-токен
+        /// Обновить jwt-токен и refresh-токен
         /// </summary>
         // GET: api/token/refresh-token
 
@@ -55,6 +55,9 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
         }
+        /// <summary>
+        /// Метод для проверки авторизации пользователя
+        /// </summary>
 
         [Authorize(Roles = "User, Owner, Admin")]
         [HttpGet]

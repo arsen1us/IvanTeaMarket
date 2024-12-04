@@ -48,9 +48,6 @@ namespace CustomerChurmPrediction.Entities.CouponEntity
         /// Время окончания
         /// </summary>
         public TimeOnly EndTime { get; set; }
-        public Coupon()
-        {
-
-        }
+        public Coupon() { }
     }
 }

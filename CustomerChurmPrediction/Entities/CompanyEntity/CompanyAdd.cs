@@ -16,7 +16,5 @@
         /// Id пользователя, кто добавляет компанию
         /// </summary>
         public string UserId { get; set; } = null!;
-        // public string Story { get; set; } = null!;
-        // public List<string> OwnerIds { get; set; } = new List<string>();
     }
 }

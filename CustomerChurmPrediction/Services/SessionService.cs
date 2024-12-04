@@ -9,9 +9,7 @@ namespace CustomerChurmPrediction.Services
     {
 
     }
-    /// <summary>
-    /// Сервис для работы с сессиями
-    /// </summary>
+
     public class SessionService(IMongoClient client, IConfiguration config, ILogger<SessionService> logger, IWebHostEnvironment _environment)
         : BaseService<Session>(client, config, logger, Sessions), ISessionService
     {
