@@ -67,7 +67,6 @@
         /// </summary>
         public readonly static string Pages = "Pages";
 
-
         /// <summary>
         /// Компании
         /// </summary>
@@ -77,6 +76,16 @@
         /// Заказы
         /// </summary>
         public readonly static string Orders = "Orders";
+
+        /// <summary>
+        /// Сессии пользователей
+        /// </summary>
+        public readonly static string Sessions = "Sessions";
+
+        /// <summary>
+        /// Действия пользователей
+        /// </summary>
+        public readonly static string UserActions = "UserActions";
     }
 }
 
