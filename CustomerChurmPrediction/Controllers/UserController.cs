@@ -45,14 +45,11 @@ namespace CustomerChurmPrediction.Controllers
                 // Выдаю роль - "Пользователь"
                 user.Role = UserRoles.User;
 
-                var successSave = await _userService.SaveOrUpdateAsync(user, default);
+                bool isSuccess = await _userService.SaveOrUpdateAsync(user, default);
 
-                if(successSave)
+                if(isSuccess)
                 {
                     string token = _tokenService.GenerateJwtToken(user);
-
-                    // HttpContext.Response.Headers.Add("Authorization", token);
-                    // HttpContext.Response.Headers["Authorization"] = token;
 
                     string refreshToken = _tokenService.GenerateRefreshToken();
                     Response.Cookies.Append("RefreshToken", refreshToken, new CookieOptions
@@ -67,7 +64,6 @@ namespace CustomerChurmPrediction.Controllers
                 }
                 else
                 {
-                    // Возвращаю Enternal Error (ошибка сервера)
                     return StatusCode(500);
                 }
             }
@@ -129,54 +125,26 @@ namespace CustomerChurmPrediction.Controllers
         /// </summary>
         // GET: /api/user/{userId}
 
-        [Authorize]
+        [Authorize(Roles = "Admin, Owner, User")]
         [HttpGet("{userId}")]
         public async Task<IActionResult> FindByIdAsync(string userId)
         {
             try
             {
                 if(string.IsNullOrEmpty(userId))
-                {
-                    throw new ArgumentNullException();
-                }
+                    return BadRequest();
 
                 User user = await _userService.FindByIdAsync(userId, default);
 
-                if(user is null)
-                {
+                if (user is null)
+                    return NotFound();
 
-                }
-
-                return Ok(new
-                {
-                    firstName = user.FirstName,
-                    lastName = user.LastName,
-                    email = user.Email,
-                });
+                return Ok(new { user = user });
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
-
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> FindAllAsync()
-        {
-            try
-            {
-                List<User> users = await _userService.FindAllAsync(default, default);
-
-                return Ok(users);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-
-
     }
 }

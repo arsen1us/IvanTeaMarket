@@ -47,8 +47,10 @@ namespace CustomerChurmPrediction.Services
     {
         IMongoClient _client;
         IConfiguration _config;
-        IMongoCollection<T> _collection;
+        public IMongoCollection<T> Table;
         ILogger _logger;
+
+        public IMongoDatabase Database;
 
         public BaseService(IMongoClient client, IConfiguration config, ILogger logger, string collectionName)
         {
@@ -56,8 +58,8 @@ namespace CustomerChurmPrediction.Services
             _config = config;
             _logger = logger;
 
-            var database = _client.GetDatabase(_config["DatabaseConnection:DatabaseName"]);
-            _collection = database.GetCollection<T>(collectionName);
+            Database = _client.GetDatabase(_config["DatabaseConnection:DatabaseName"]);
+            Table = Database.GetCollection<T>(collectionName);
         }
 
         // Получить все сущности
@@ -67,7 +69,7 @@ namespace CustomerChurmPrediction.Services
             {
                 var resultFilter = filter ?? Builders<T>.Filter.Empty;
 
-                var result = _collection.Find(resultFilter);
+                var result = Table.Find(resultFilter);
                 return result.ToList();
             }
             catch(Exception ex)
@@ -82,7 +84,7 @@ namespace CustomerChurmPrediction.Services
             try
             {
                 var resultFilter = filter ?? Builders<T>.Filter.Empty;
-                var result = await _collection.FindAsync(resultFilter);
+                var result = await Table.FindAsync(resultFilter);
                 return await result.ToListAsync();
             }
             catch (Exception ex)
@@ -97,7 +99,7 @@ namespace CustomerChurmPrediction.Services
             try
             {
                 var filter = Builders<T>.Filter.Eq(e => e.Id, entityId);
-                var result = _collection.Find(filter).First();
+                var result = Table.Find(filter).First();
                 return result;
             }
             catch (Exception ex)
@@ -112,7 +114,7 @@ namespace CustomerChurmPrediction.Services
             try
             {
                 var filter = Builders<T>.Filter.Eq(e => e.Id, entityId);
-                var result = (await _collection.FindAsync(filter)).First();
+                var result = (await Table.FindAsync(filter)).First();
                 return result;
             }
             catch (Exception ex)
@@ -125,7 +127,7 @@ namespace CustomerChurmPrediction.Services
         public long FindCount(FilterDefinition<T>? filter)
         {
             var resultFilter = filter ?? Builders<T>.Filter.Empty;
-            var result = _collection.CountDocuments(filter);
+            var result = Table.CountDocuments(filter);
             return result;
         }
 
@@ -133,7 +135,7 @@ namespace CustomerChurmPrediction.Services
         public async Task<long> FindCountAsync(FilterDefinition<T>? filter, CancellationToken? cancellationToken = default)
         {
             var resultFilter = filter ?? Builders<T>.Filter.Empty;
-            var result = await _collection.CountDocumentsAsync(filter);
+            var result = await Table.CountDocumentsAsync(filter);
             return result;
         }
 
@@ -141,7 +143,7 @@ namespace CustomerChurmPrediction.Services
         public long FindCountById(string entityId)
         {
             var filter = Builders<T>.Filter.Eq(e => e.Id, entityId);
-            var result = _collection.CountDocuments(filter);
+            var result = Table.CountDocuments(filter);
             return result;
         }
 
@@ -149,7 +151,7 @@ namespace CustomerChurmPrediction.Services
         public async Task<long> FindCountByIdAsync(string entityId, CancellationToken? cancellationToken = default)
         {
             var filter = Builders<T>.Filter.Eq(e => e.Id, entityId);
-            var result = await _collection.CountDocumentsAsync(filter);
+            var result = await Table.CountDocumentsAsync(filter);
             return result;
         }
 
@@ -192,7 +194,7 @@ namespace CustomerChurmPrediction.Services
                 {
                     // Выполняем пакетную запись (bulk write) с использованием сессии
                     // var result = await _collection.BulkWriteAsync(session, bulkOps);
-                    var result = _collection.BulkWrite(bulkOps);
+                    var result = Table.BulkWrite(bulkOps);
 
                     // Проверяем, все ли операции были успешными (либо обновлены, либо вставлены)
                     if (result.Upserts.Count() + result.MatchedCount == abstractEntities.Count)
@@ -254,7 +256,7 @@ namespace CustomerChurmPrediction.Services
                 {
                     // Выполняем пакетную запись (bulk write) с использованием сессии
                     // var result = await _collection.BulkWriteAsync(session, bulkOps);
-                    var result = await _collection.BulkWriteAsync(bulkOps);
+                    var result = await Table.BulkWriteAsync(bulkOps);
 
                     // Проверяем, все ли операции были успешными (либо обновлены, либо вставлены)
                     if (result.Upserts.Count() + result.MatchedCount == abstractEntities.Count)
@@ -276,7 +278,7 @@ namespace CustomerChurmPrediction.Services
                 if (entityId != null)
                 {
                     var filter = Builders<T>.Filter.Eq(e => e.Id, entityId);
-                    var result = _collection.DeleteOne(filter);
+                    var result = Table.DeleteOne(filter);
                     if (result.DeletedCount > 0)
                         return result.DeletedCount;
                     return 0;
@@ -300,7 +302,7 @@ namespace CustomerChurmPrediction.Services
                 if (entityId != null)
                 {
                     var filter = Builders<T>.Filter.Eq(e => e.Id, entityId);
-                    var result = await _collection.DeleteOneAsync(filter);
+                    var result = await Table.DeleteOneAsync(filter);
                     if (result.DeletedCount > 0)
                         return result.DeletedCount;
                     return 0;

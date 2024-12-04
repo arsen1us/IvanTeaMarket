@@ -55,5 +55,13 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
         }
+
+        [Authorize(Roles = "User, Owner, Admin")]
+        [HttpGet]
+        [Route("check")]
+        public async Task<IActionResult> CheckAuthorization()
+        {
+            return Ok();
+        }
     }
 }

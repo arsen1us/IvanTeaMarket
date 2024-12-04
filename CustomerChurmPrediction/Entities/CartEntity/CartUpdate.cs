@@ -1,6 +1,6 @@
 ﻿namespace CustomerChurmPrediction.Entities.CartEntity
 {
-    public class Cart : AbstractEntity
+    public class CartUpdate
     {
         /// <summary>
         /// Id продукта

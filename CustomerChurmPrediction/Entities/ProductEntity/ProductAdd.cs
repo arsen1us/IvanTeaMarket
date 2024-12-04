@@ -28,6 +28,11 @@
 		public decimal Price { get; set; }
 
         /// <summary>
+		/// Количество
+		/// </summary>
+		public int Count { get; set; }
+
+        /// <summary>
 		/// Id фотографий
 		/// </summary>
         public List<IFormFile>? ImageIds { get; set; }

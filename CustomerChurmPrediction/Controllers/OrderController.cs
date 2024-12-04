@@ -12,10 +12,19 @@ namespace CustomerChurmPrediction.Controllers
     {
         IOrderService _orderService;
         ICompanyService _companyService;
-        public OrderController(IOrderService orderService, ICompanyService companyService) 
+        IUserService _userService;
+        IProductService _productService;
+
+        public OrderController(
+            IOrderService orderService,
+            ICompanyService companyService,
+            IUserService userService,
+            IProductService productService) 
         {
             _companyService = companyService;
             _orderService = orderService;
+            _userService = userService;
+            _productService = productService;
         }
 
         /// <summary>
@@ -23,7 +32,7 @@ namespace CustomerChurmPrediction.Controllers
         /// </summary>
         // GET: /api/order/company/{companyId}
 
-        // [Authorize(Roles = "Admin, Owner")]
+        [Authorize(Roles = "Admin, Owner")]
         [HttpGet]
         [Route("company/{companyId}")]
         public async Task<IActionResult> GetByCompanyIdAsync(string companyId)
@@ -39,7 +48,7 @@ namespace CustomerChurmPrediction.Controllers
                     return NotFound();
                 }
 
-                var orderList = await _orderService.FindByCompanyIdAsync(companyId, default);
+                var orderList = await _orderService.GetOrderModelsByCompanyIdAsync(companyId, default);
 
                 if(orderList is null)
                 {
@@ -54,35 +63,95 @@ namespace CustomerChurmPrediction.Controllers
         }
 
         /// <summary>
-        /// Добавить новый заказ
+        /// Получить спиок заказов по id пользователя
         /// </summary>
-        /// <param name="orderAdd">Новый заказ</param>
-        // POST: /api/order
-        [HttpPost]
-        public async Task<IActionResult> AddOrderAsync([FromBody] OrderAdd orderAdd)
+        // GET: /api/order/company/{companyId}
+
+        [Authorize(Roles = "Admin, Owner")]
+        [HttpGet]
+        [Route("user/{userId}")]
+        public async Task<IActionResult> GetByUserIdAsync(string userId)
         {
-            if (orderAdd is null)
+            if (string.IsNullOrEmpty(userId))
                 return BadRequest();
             try
             {
+                var user = _userService.FindByIdAsync(userId, default);
 
-                Order order = new Order
-                {
-                    ProductId = orderAdd.ProductId,
-                    ProductCount = orderAdd.ProductCount,
-                    CompanyId = orderAdd.CompanyId,
-                    UserId = orderAdd.UserId,
-                    TotalPrice = CalculateTotalOrderPrice(orderAdd.Price, orderAdd.ProductCount)
-                };
+                if (user is null)
+                    return NotFound();
 
-                if(order is not null)
+                var orderList = await _orderService.GetOrderModelsByUserIdAsync(userId, default);
+
+                if (orderList is null)
                 {
-                    bool isSuccess = await _orderService.SaveOrUpdateAsync(order, default);
-                    if(isSuccess)
-                        return Ok(new {orderStatus = isSuccess});
+                    return NotFound();
+                }
+                return Ok(new { orderList = orderList });
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Добавить новый заказ
+        /// </summary>
+        // POST: /api/order
+        [HttpPost]
+        public async Task<IActionResult> AddOrderAsync([FromBody] OrderListDto orderAdd)
+        {
+            if (orderAdd is null
+                || !orderAdd.OrderList.Any()
+                || string.IsNullOrEmpty(orderAdd.UserId))
+                return BadRequest("Переданные аргументы is null or empty");
+
+            List<Order> orderList = new List<Order>();
+            Order order;
+
+            try
+            {
+                var user = await _userService.FindByIdAsync(orderAdd.UserId);
+                if (user is null)
+                    return BadRequest("Пользователь с данным id не найден");
+                
+                foreach(var item in orderAdd.OrderList)
+                {
+                    var product = await _productService.FindByIdAsync(item.ProductId, default);
+                    // Продукт не найден
+                    if (product is null)
+                        return BadRequest();
+
+                    // Количество товара на складе меньше чем в заказе
+                    if (product.Count < item.Quantity)
+                        return BadRequest();
+
+                    order = new Order
+                    {
+                        UserId = user.Id,
+                        CompanyId = product.CompanyId,
+                        ProductId = product.Id,
+                        ProductCount = item.Quantity,
+                        CreateTime = DateTime.Now,
+                        LastTimeUserUpdate = DateTime.Now,
+                        TotalPrice = product.Price * item.Quantity,
+                    };
+
+                    if (order is not null)
+                        orderList.Add(order);
+                }
+
+                if(orderList is not null)
+                {
+                    bool isSuccess = await _orderService.SaveOrUpdateAsync(orderList, default);
+
+                    if (isSuccess)
+                        return Ok(new { orderStatus = isSuccess });
 
                     return StatusCode(500, "Произошла ошибка во время сохранения заказа. Деньги будут возвращены на счёт!");
                 }
+                
                 return StatusCode(500, "Произошла ошибка во время создания заказа. Деньги будут возвращены на счёт!");
             }
             catch (Exception ex)
@@ -96,7 +165,6 @@ namespace CustomerChurmPrediction.Controllers
         /// <summary>
         /// Удалить заказ по id
         /// </summary>
-        /// <param name="companyId">Id компании</param>
         // GET: /api/order/company/{companyId}
         [HttpDelete]
         [Route("{companyId}")]

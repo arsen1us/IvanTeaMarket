@@ -28,10 +28,14 @@
 		public decimal Price { get; set; }
 
         /// <summary>
+		/// Количество
+		/// </summary>
+		public int Count { get; set; }
+
+        /// <summary>
 		/// Id фотографий
 		/// </summary>
         public List<string>? ImageIds { get; set; }
-
 
         public DiscountInfo Discount { get; set; }
 

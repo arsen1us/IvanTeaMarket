@@ -169,6 +169,7 @@ namespace CustomerChurmPrediction.Controllers
                     Description = productAdd.Description,
                     CategoryId = productAdd.CategoryId,
                     CompanyId = productAdd.CompanyId,
+                    Count = productAdd.Count,
                     Price = productAdd.Price
                 };
                 bool isSuccess = await _productService.SaveOrUpdateAsync(product, default);
