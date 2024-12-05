@@ -146,5 +146,51 @@ namespace CustomerChurmPrediction.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        /// <summary>
+        /// Изменить пользователя
+        /// </summary>
+        // PUT: /api/user/{userId}
+
+        [Authorize(Roles = "Admin, Owner, User")]
+        [HttpPut("{userId}")]
+        public async Task<IActionResult> UpdateAsync(string userId, [FromForm] UserUpdate userUpdate)
+        {
+            if (string.IsNullOrEmpty(userId) || userUpdate is null)
+                return BadRequest();
+            try
+            {
+                User user = await _userService.FindByIdAsync(userId, default);
+
+                if (user is null)
+                    return NotFound();
+
+                user.FirstName = userUpdate.FirstName;
+                user.LastName = userUpdate.LastName;
+                user.Email = userUpdate.Email;
+                user.Password = userUpdate.Password;
+
+                if (userUpdate.Images is null || userUpdate.Images.Count == 0)
+                    return BadRequest();
+
+                var userImageSrc = await _userService.UploadImagesAsync(userUpdate.Images, default);
+
+                if (userImageSrc is null)
+                    return StatusCode(500);
+
+                user.ImageSrcs = userImageSrc;
+
+                bool isSuccess = await _userService.SaveOrUpdateAsync(user, default);
+
+                if (isSuccess)
+                    return Ok(new { user = user });
+
+                return StatusCode(500);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

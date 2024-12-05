@@ -67,7 +67,7 @@ namespace CustomerChurmPrediction.Controllers
         /// </summary>
         // GET: /api/order/company/{companyId}
 
-        [Authorize(Roles = "Admin, Owner")]
+        [Authorize(Roles = "User, Admin, Owner")]
         [HttpGet]
         [Route("user/{userId}")]
         public async Task<IActionResult> GetByUserIdAsync(string userId)

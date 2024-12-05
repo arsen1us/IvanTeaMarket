@@ -38,6 +38,12 @@ namespace CustomerChurmPrediction.Entities.UserEntity
         /// Id компании, с которой может работать пользователь (на основе роли)
         /// </summary>
         public string? CompanyId { get; set; } = null;
+
+        /// <summary>
+        /// Ссылка на фото пользователя
+        /// </summary>
+        public List<string> ImageSrcs { get; set; } = new List<string>();
+
         // Мб, нужен List<string>, так как пользователь может работать с несколькими компаниями
         //public List<string>? CompanyIds { get; set; } = null;
 
