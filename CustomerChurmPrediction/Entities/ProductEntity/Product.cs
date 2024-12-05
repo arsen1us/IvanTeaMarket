@@ -35,7 +35,7 @@
         /// <summary>
 		/// Id фотографий
 		/// </summary>
-        public List<string>? ImageIds { get; set; }
+        public List<string>? ImageSrcs { get; set; }
 
         public DiscountInfo Discount { get; set; }
 

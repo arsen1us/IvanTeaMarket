@@ -191,17 +191,17 @@ namespace CustomerChurmPrediction.Controllers
 
         public class ProductDto
         {
-            public string Name { get; set; }
-            public string Description { get; set; }
-            public int CategoryId { get; set; }
+            public string Name { get; set; } = null!;
+            public string Description { get; set; } = null!;
+            public string CategoryId { get; set; } = null!;
             public int Count { get; set; }
             public decimal Price { get; set; }
-            public int CompanyId { get; set; }
-            public IFormFile Images { get; set; } // Для загрузки изображений
+            public string CompanyId { get; set; } = null!;
+            public IFormFileCollection? Images { get; set; }
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAsync([FromBody] ProductAdd productDto)
+        public async Task<IActionResult> AddAsync([FromForm] ProductDto productDto)
         {
             if(productDto is null)
                 return BadRequest();
@@ -209,16 +209,28 @@ namespace CustomerChurmPrediction.Controllers
 			{
                 Product product = new Product
                 {
-                    // Name = productDto.Name,
-                    // Description = productDto.Description,
-                    // CategoryId = productDto.CategoryId,
-                    // CompanyId = productDto.CompanyId,
-                    // Count = productDto.Count,
-                    // Price = productDto.Price,
+                    Name = productDto.Name,
+                    Description = productDto.Description,
+                    CategoryId = productDto.CategoryId,
+                    CompanyId = productDto.CompanyId,
+                    Count = productDto.Count,
+                    Price = productDto.Price,
                 };
+
+                // Получение и запись изображений
+                if (productDto.Images is null || productDto.Images.Count == 0)
+                    return BadRequest();
+
+                List<string> imageSrcs = await _productService.UploadImagesAsync(productDto.Images, default);
+
+                if (imageSrcs is null)
+                    return StatusCode(500);
+
+                product.ImageSrcs = imageSrcs;
+
                 bool isSuccess = await _productService.SaveOrUpdateAsync(product, default);
                 if(isSuccess)
-                    return Ok(new {product = product} );
+                    return Ok(new { product = product} );
                 
                 // Возвращаю ошибку сервера
                 return StatusCode(500);

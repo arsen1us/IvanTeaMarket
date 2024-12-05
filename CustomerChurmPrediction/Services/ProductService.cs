@@ -22,6 +22,11 @@ namespace CustomerChurmPrediction.Services
         ///  Получить список продуктов по строке ввода
         /// </summary>
         public Task<List<Product>> FindBySearchStringAsync(string input, CancellationToken? cancellationToken = default);
+
+        /// <summary>
+        /// Сохранить ссылки на изображения
+        /// </summary>
+        public Task<List<string>> UploadImagesAsync(IFormFileCollection images, CancellationToken? cancellationToken = default);
     }
     public class ProductService(IMongoClient client, IConfiguration config, ILogger<ProductService> logger, IWebHostEnvironment _environment) 
         : BaseService<Product>(client, config, logger, Products), IProductService
@@ -84,7 +89,7 @@ namespace CustomerChurmPrediction.Services
             }
         }
 
-        public async Task<List<string>> UploadImagesAsync(List<IFormFile> images)
+        public async Task<List<string>> UploadImagesAsync(IFormFileCollection images, CancellationToken? cancellationToken = default)
         {
             if (images is null || images.Count == 0)
                 // возвращаю пустой список
@@ -101,6 +106,7 @@ namespace CustomerChurmPrediction.Services
 
                 foreach (var image in images)
                 {
+
                     var fileExtension = Path.GetExtension(image.FileName).ToLower();
 
                     // Если у файла другое расширение 
@@ -108,9 +114,14 @@ namespace CustomerChurmPrediction.Services
                         // возвращаю пустой список
                         return new List<string>();
 
-                    var filePath = Guid.NewGuid() + fileExtension;
+                    // Id изображения
+                    var imageId = Guid.NewGuid();
+                    // Для продукта
+                    var filePath = Path.Combine(imageId + fileExtension);
+                    // Для сохранения в файл
+                    var folderToSave = Path.Combine(updoadsFolder, imageId + fileExtension);
 
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    using (var fileStream = new FileStream(folderToSave, FileMode.Create))
                     {
                         await image.CopyToAsync(fileStream);
                     }
