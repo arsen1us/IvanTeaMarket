@@ -37,7 +37,15 @@ namespace CustomerChurmPrediction.Controllers
 
                 var refreshToken = HttpContext.Request.Cookies["RefreshToken"];
 
+                if (string.IsNullOrEmpty(refreshToken))
+                    return Unauthorized();
+
                 string newJwtToken = "Bearer" + await _tokenService.UpdateJwtTokenAsync(token);
+
+                // Если не удалосб создать токен возвращаю 401
+                if (string.IsNullOrEmpty(newJwtToken))
+                    return Unauthorized();
+
                 string newRefreshToken = _tokenService.GenerateRefreshToken();
 
                 Response.Cookies.Append("RefreshToken", newRefreshToken, new CookieOptions

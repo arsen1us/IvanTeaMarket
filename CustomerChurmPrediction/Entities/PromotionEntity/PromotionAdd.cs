@@ -30,12 +30,12 @@
         /// <summary>
         /// Дата и время начала публикации
         /// </summary>
-        public string StartDate { get; set; } = null!;
+        public DateTime StartDate { get; set; }
 
         /// <summary>
         /// Дата и время окончания публикации
         /// </summary>
-        public string EndDate { get; set; } = null!;
+        public DateTime EndDate { get; set; }
 
         public PromotionAdd() { }
     }

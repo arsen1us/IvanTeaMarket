@@ -84,7 +84,7 @@ namespace CustomerChurmPrediction.Controllers
         /// </summary>
         // POST: /api/company
 
-        [Authorize(Roles = "Admin, Owner")]
+        [Authorize(Roles = "User, Admin, Owner")]
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] CompanyAdd companyAdd)
         {
@@ -164,7 +164,6 @@ namespace CustomerChurmPrediction.Controllers
                 var company = await _companyService.FindByIdAsync(companyId, default);
 
                 company.Name = companyUpdate.Name;
-                company.Story = companyUpdate.Story;
                 company.Description = companyUpdate.Description;
                 company.OwnerIds = companyUpdate.OwnerIds;
 

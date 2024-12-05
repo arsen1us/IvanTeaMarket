@@ -11,9 +11,9 @@
         // Ссылка, куда ведёт реклама(например, на товар или внешнюю страницу).
         public string LinkUrl { get; set; } = null!;
         // Дата и время начала публикации.
-        public string StartDate { get; set; } = null!;
+        public DateTime StartDate { get; set; }
         // Дата и время начала публикации.
-        public string EndDate { get; set; } = null!;
+        public DateTime EndDate { get; set; }
 
         // Логическое поле для определения активности поста.
         // public string IsActive { get; set; } = null!;

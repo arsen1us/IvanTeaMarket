@@ -95,6 +95,11 @@ namespace CustomerChurmPrediction.Services
                     throw new Exception("Токен поддельный");
                 }
 
+                if (principal.FindFirst("Id") is null || principal.FindFirst("Email") is null || principal.FindFirst(ClaimTypes.Role) is null)
+                {
+                    return null;
+                }
+
                 string _id = principal.FindFirst("Id").Value;
                 string email = principal.FindFirst("Email").Value;
                 string role = principal.FindFirst(ClaimTypes.Role).Value;

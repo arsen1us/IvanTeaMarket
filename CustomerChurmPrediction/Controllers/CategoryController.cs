@@ -28,10 +28,10 @@ namespace CustomerChurmPrediction.Controllers
                 var filter = Builders<Category>.Filter.Empty;
                 var categoryList = await _categoryService.FindAllAsync(filter, default);
 
-                if (categoryList != null && categoryList.Count > 0)
-                    return Ok(new { categoryList = categoryList });
+                if (categoryList is null)
+                    return NotFound();
 
-                return NotFound();
+                return Ok(new { categoryList = categoryList });
             }
             catch (Exception ex)
             {
