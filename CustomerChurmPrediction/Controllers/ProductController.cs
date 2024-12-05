@@ -189,21 +189,32 @@ namespace CustomerChurmPrediction.Controllers
         /// </summary>
         // POST: api/product/{productId}
 
-        [HttpPost]
-        public async Task<IActionResult> AddAsync([FromBody] ProductAdd productAdd)
+        public class ProductDto
         {
-            if(productAdd is null)
+            public string Name { get; set; }
+            public string Description { get; set; }
+            public int CategoryId { get; set; }
+            public int Count { get; set; }
+            public decimal Price { get; set; }
+            public int CompanyId { get; set; }
+            public IFormFile Images { get; set; } // Для загрузки изображений
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddAsync([FromBody] ProductAdd productDto)
+        {
+            if(productDto is null)
                 return BadRequest();
 			try
 			{
                 Product product = new Product
                 {
-                    Name = productAdd.Name,
-                    Description = productAdd.Description,
-                    CategoryId = productAdd.CategoryId,
-                    CompanyId = productAdd.CompanyId,
-                    Count = productAdd.Count,
-                    Price = productAdd.Price
+                    // Name = productDto.Name,
+                    // Description = productDto.Description,
+                    // CategoryId = productDto.CategoryId,
+                    // CompanyId = productDto.CompanyId,
+                    // Count = productDto.Count,
+                    // Price = productDto.Price,
                 };
                 bool isSuccess = await _productService.SaveOrUpdateAsync(product, default);
                 if(isSuccess)

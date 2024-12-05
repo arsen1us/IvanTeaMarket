@@ -33,8 +33,8 @@
 		public int Count { get; set; }
 
         /// <summary>
-		/// Id фотографий
+		/// Фотографии
 		/// </summary>
-        public List<IFormFile>? ImageIds { get; set; }
+        public IFormCollection Images { get; set; }
     }
 }
