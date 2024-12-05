@@ -35,6 +35,6 @@
         /// <summary>
 		/// Фотографии
 		/// </summary>
-        public IFormCollection Images { get; set; }
+        public IFormCollection? Images { get; set; }
     }
 }
