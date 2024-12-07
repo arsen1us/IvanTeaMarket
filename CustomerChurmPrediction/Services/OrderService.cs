@@ -20,8 +20,8 @@ namespace CustomerChurmPrediction.Services
         public Task<List<OrderModel>> GetOrderModelsByUserIdAsync(string userId, CancellationToken? cancellationToken = default);
     }
 
-    public class OrderService(IMongoClient client, IConfiguration config, ILogger<OrderService> logger) 
-        : BaseService<Order>(client, config, logger, Orders), IOrderService
+    public class OrderService(IMongoClient client, IConfiguration config, ILogger<OrderService> logger, IWebHostEnvironment _environment) 
+        : BaseService<Order>(client, config, logger, _environment, Orders), IOrderService
     {
         public async Task<List<OrderModel>> GetOrderModelsByCompanyIdAsync(string companyId, CancellationToken? cancellationToken = default)
         {

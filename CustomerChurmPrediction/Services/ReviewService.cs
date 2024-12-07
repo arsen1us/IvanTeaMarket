@@ -13,8 +13,8 @@ namespace CustomerChurmPrediction.Services
         /// </summary>
         public Task<List<ReviewModel>> GetReviewModelsByProductIdAsync(string productId, CancellationToken? cancellationToken = default);
     }
-    public class ReviewService(IMongoClient client, IConfiguration config, ILogger<ReviewService> logger) 
-        : BaseService<Review>(client, config, logger, Reviews), IReviewService
+    public class ReviewService(IMongoClient client, IConfiguration config, ILogger<ReviewService> logger, IWebHostEnvironment _environment) 
+        : BaseService<Review>(client, config, logger, _environment, Reviews), IReviewService
     {
         public async Task<List<ReviewModel>> GetReviewModelsByProductIdAsync(string productId, CancellationToken? cancellationToken = default)
         {

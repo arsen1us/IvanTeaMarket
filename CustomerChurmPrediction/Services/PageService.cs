@@ -9,8 +9,8 @@ namespace CustomerChurmPrediction.Services
         public Task<bool> IsPageViewedAsync(string userId, string pageId);
     }
 
-    public class PageService(IMongoClient client, IConfiguration config, ILogger<Page> logger)
-        : BaseService<Page>(client, config, logger, Pages), IPageService
+    public class PageService(IMongoClient client, IConfiguration config, ILogger<Page> logger, IWebHostEnvironment _environment)
+        : BaseService<Page>(client, config, logger, _environment, Pages), IPageService
     {
         // Проверить, просмотрена ли страница данным пользователем или нет
         public async Task<bool> IsPageViewedAsync(string userId, string pageId)

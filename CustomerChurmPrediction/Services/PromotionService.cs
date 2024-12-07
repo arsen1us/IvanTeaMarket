@@ -11,8 +11,8 @@ namespace CustomerChurmPrediction.Services
         /// </summary>
         public Task<List<Promotion>> GetByCompanyIdAsync(string companyId, CancellationToken? cancellationToken = default);
     }
-    public class PromotionService(IMongoClient client, IConfiguration config, ILogger<PromotionService> logger) 
-        : BaseService<Promotion>(client, config, logger, Promotions), IPromotionService
+    public class PromotionService(IMongoClient client, IConfiguration config, ILogger<PromotionService> logger, IWebHostEnvironment _environment) 
+        : BaseService<Promotion>(client, config, logger, _environment, Promotions), IPromotionService
     {
         public async Task<List<Promotion>> GetByCompanyIdAsync(string companyId, CancellationToken? cancellationToken = default)
         {

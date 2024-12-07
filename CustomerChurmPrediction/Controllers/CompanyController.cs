@@ -63,22 +63,31 @@ namespace CustomerChurmPrediction.Controllers
         }
 
         // Надо-не надо, пока не знаю
-        // Получить список компаний, которые продают продукт в данной категории
-        // GET: api/company/category/{categoryId}
+        // Получить компанию по id продукта
+        // GET: api/company/product/{productId}
 
         [HttpGet]
-        [Route("category/{categoryId}")]
-        public async Task<IActionResult> GetByCategoryIdAsync(string categoryId)
+        [Route("product/{productId}")]
+        public async Task<IActionResult> GetByProductIdAsync(string productId)
         {
+            if (string.IsNullOrEmpty(productId))
+                return BadRequest();
             try
             {
-                throw new Exception();
+                var company = await _companyService.GetByProductIdAsync(productId, default);
+                if (company is null)
+                    return BadRequest();
+
+                return Ok(new { company = company });
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
         }
+
+
+
         /// <summary>
         /// Создать компанию
         /// </summary>
@@ -86,7 +95,7 @@ namespace CustomerChurmPrediction.Controllers
 
         [Authorize(Roles = "User, Admin, Owner")]
         [HttpPost]
-        public async Task<IActionResult> AddAsync([FromBody] CompanyAdd companyAdd)
+        public async Task<IActionResult> AddAsync([FromForm] CompanyAdd companyAdd)
         {
             if (companyAdd is null
                 || string.IsNullOrEmpty(companyAdd.Name)
@@ -103,7 +112,15 @@ namespace CustomerChurmPrediction.Controllers
                     Description = companyAdd.Description,
                 };
 
-                bool isSuccess = await _companyService.SaveOrUpdateAsync(company);
+                var companyImageSrc = await _companyService.UploadImagesAsync(companyAdd.Images, default);
+
+                if (companyImageSrc is null)
+                    return StatusCode(500);
+
+                company.ImageSrcs = companyImageSrc;
+
+                bool isSuccess = await _companyService.SaveOrUpdateAsync(company, default);
+
                 if (isSuccess)
                 {
                     var user = await _userService.FindByIdAsync(companyAdd.UserId);

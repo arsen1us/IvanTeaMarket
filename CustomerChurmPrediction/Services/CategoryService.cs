@@ -8,8 +8,8 @@ namespace CustomerChurmPrediction.Services
     {
 
     }
-    public class CategoryService(IMongoClient client, IConfiguration config, ILogger<CategoryService> logger)
-        : BaseService<Category>(client, config, logger, Categories), ICategoryService
+    public class CategoryService(IMongoClient client, IConfiguration config, ILogger<CategoryService> logger, IWebHostEnvironment _environment)
+        : BaseService<Category>(client, config, logger, _environment, Categories), ICategoryService
     {
     }
 }

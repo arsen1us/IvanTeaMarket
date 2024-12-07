@@ -64,6 +64,11 @@ namespace CustomerChurmPrediction.Services
         /// Удалить сущность по id (async)
         /// </summary>
         public Task<long> DeleteAsync(string entityId, CancellationToken? cancellationToken = default);
+
+        /// <summary>
+        /// Сохранить ссылки на изображения
+        /// </summary>
+        public Task<List<string>> UploadImagesAsync(IFormFileCollection images, CancellationToken? cancellationToken = default);
     }
 
     public class BaseService<T> : IBaseService<T> where T : AbstractEntity
@@ -72,14 +77,16 @@ namespace CustomerChurmPrediction.Services
         IConfiguration _config;
         public IMongoCollection<T> Table;
         ILogger _logger;
+        IWebHostEnvironment environment;
 
         public IMongoDatabase Database;
 
-        public BaseService(IMongoClient client, IConfiguration config, ILogger logger, string collectionName)
+        public BaseService(IMongoClient client, IConfiguration config, ILogger logger, IWebHostEnvironment _environment, string collectionName)
         {
             _client = client;
             _config = config;
             _logger = logger;
+            environment = _environment;
 
             Database = _client.GetDatabase(_config["DatabaseConnection:DatabaseName"]);
             Table = Database.GetCollection<T>(collectionName);
@@ -324,6 +331,59 @@ namespace CustomerChurmPrediction.Services
             catch (Exception ex)
             {
                 throw new NotImplementedException();
+            }
+        }
+
+        public async Task<List<string>> UploadImagesAsync(IFormFileCollection images, CancellationToken? cancellationToken = default)
+        {
+            if (images is null || images.Count == 0)
+                // возвращаю пустой список
+                return new List<string>();
+
+            var uploadFilePaths = new List<string>();
+
+            try
+            {
+                // Путь к папке uploads
+                var updoadsFolder = Path.Combine(environment.WebRootPath, "uploads");
+
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+
+                foreach (var image in images)
+                {
+
+                    var fileExtension = Path.GetExtension(image.FileName).ToLower();
+
+                    // Если у файла другое расширение 
+                    if (!allowedExtensions.Contains(fileExtension))
+                        // возвращаю пустой список
+                        return new List<string>();
+
+                    // Id изображения
+                    var imageId = Guid.NewGuid();
+                    // Для пользователя
+                    var filePath = Path.Combine(imageId + fileExtension);
+                    // Для сохранения в файл
+                    var folderToSave = Path.Combine(updoadsFolder, imageId + fileExtension);
+
+                    using (var fileStream = new FileStream(folderToSave, FileMode.Create))
+                    {
+                        await image.CopyToAsync(fileStream);
+                    }
+
+                    // Добавление ссылки на фото
+                    uploadFilePaths.Add(filePath);
+                }
+                // Если успешно
+                if (uploadFilePaths is not null)
+                    return uploadFilePaths;
+                // возвращаю пустой список
+                return new List<string>();
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
     }

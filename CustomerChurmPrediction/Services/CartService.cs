@@ -22,8 +22,8 @@ namespace CustomerChurmPrediction.Services
         public Task<List<Product>> FindProductsFromCardByUserId(string userId, CancellationToken? cancellationToken = default);
     }
 
-    public class CartService(IMongoClient client, IConfiguration config, ILogger<CartService> logger, IProductService _productService) 
-        : BaseService<Cart>(client, config, logger, Carts), ICartService
+    public class CartService(IMongoClient client, IConfiguration config, ILogger<CartService> logger, IProductService _productService, IWebHostEnvironment _environment) 
+        : BaseService<Cart>(client, config, logger, _environment, Carts), ICartService
     {
         public async Task<List<Cart>> FindAllAsync(string userId, CancellationToken? cancellationToken = default)
         {

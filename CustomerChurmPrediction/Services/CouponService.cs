@@ -8,8 +8,8 @@ namespace CustomerChurmPrediction.Services
     {
 
     }
-    public class CouponService(IMongoClient client, IConfiguration config, ILogger<CouponService> logger) 
-        : BaseService<Coupon>(client, config, logger, Coupons), ICouponService
+    public class CouponService(IMongoClient client, IConfiguration config, ILogger<CouponService> logger, IWebHostEnvironment _environment) 
+        : BaseService<Coupon>(client, config, logger, _environment, Coupons), ICouponService
     {
 
     }

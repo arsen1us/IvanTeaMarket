@@ -16,5 +16,10 @@
         /// Id пользователя, кто добавляет компанию
         /// </summary>
         public string UserId { get; set; } = null!;
+
+        /// <summary>
+		/// Фотографии
+		/// </summary>
+        public IFormFileCollection? Images { get; set; }
     }
 }
