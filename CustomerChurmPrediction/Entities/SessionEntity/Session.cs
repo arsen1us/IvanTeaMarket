@@ -1,4 +1,4 @@
-﻿namespace CustomerChurmPrediction.Entities
+﻿namespace CustomerChurmPrediction.Entities.SessionEntity
 {
     public class Session : AbstractEntity
     {
@@ -11,11 +11,11 @@
         /// Время начала сессии
         /// </summary>
         public DateTime SessionTimeStart { get; set; }
-        
+
         /// <summary>
         /// Время окончания сессии
         /// </summary>
-        public DateTime SessionTimeEnd { get; set;}
+        public DateTime SessionTimeEnd { get; set; }
 
         /// <summary>
         /// Id действий пользователя

@@ -74,14 +74,6 @@
         public DateTime ValidUntil { get; set; }
     }
 
-    // Взаимодействие с корзиной
-    public class CartInteraction
-    {
-        public int AddedToCartCount { get; set; }
-        public int RemovedFromCartCount { get; set; }
-        public double CartToPurchaseConversionRate { get; set; }
-    }
-
     // Взаимодействие с избранным
     public class FavoriteInteraction
     {

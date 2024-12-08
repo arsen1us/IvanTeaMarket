@@ -9,9 +9,9 @@ namespace CustomerChurmPrediction.Controllers
     public class UserActionController : Controller
     {
         /// <summary>
-        /// Добавить действие пользователя
+        /// Создать действие пользователя
         /// </summary>
-        // POST: api/product/{productId}
+        // POST: api/user-action
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] UserActionAdd userActionAdd)
         {

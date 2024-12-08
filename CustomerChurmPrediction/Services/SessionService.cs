@@ -1,5 +1,5 @@
-﻿using CustomerChurmPrediction.Entities;
-using CustomerChurmPrediction.Entities.ProductEntity;
+﻿using CustomerChurmPrediction.Entities.ProductEntity;
+using CustomerChurmPrediction.Entities.SessionEntity;
 using MongoDB.Driver;
 using static CustomerChurmPrediction.Utils.CollectionName;
 

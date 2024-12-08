@@ -1,4 +1,5 @@
 ﻿using CustomerChurmPrediction.Entities.ProductEntity;
+using CustomerChurmPrediction.Entities.OrderEntity;
 
 namespace CustomerChurmPrediction.Entities.UserEntity
 {
@@ -42,45 +43,120 @@ namespace CustomerChurmPrediction.Entities.UserEntity
         /// <summary>
         /// Ссылка на фото пользователя
         /// </summary>
-        public List<string> ImageSrcs { get; set; } = new List<string>();
-
         // Мб, нужен List<string>, так как пользователь может работать с несколькими компаниями
         //public List<string>? CompanyIds { get; set; } = null;
+        public List<string> ImageSrcs { get; set; } = new List<string>();
 
-        // Данные о покупках
+        /// <summary>
+        /// Поле показывает, нужно ли применять меры по удержанию пользователя или нет
+        /// </summary>
+        public bool IsLikelyToChurn { get; set; }
+
+
+        // Информация о пакупках пользователей =============================================
+        /// <summary>
+        /// Общее количество покупок
+        /// </summary>
         public int TotalPurchases { get; set; }
+
+        /// <summary>
+        /// Сколько всего потрачено 
+        /// </summary>
         public decimal TotalSpent { get; set; }
-        public List<PurchaseHistory> PurchaseHistory { get; set; } = new();
+
+        /// <summary>
+        /// Список Id заказов
+        /// </summary>
+        public List<string> OrderIds { get; set; } = new();
+
+        /// <summary>
+        /// Средняя цена заказа
+        /// </summary>
         public int AverageOrderValue { get; set; }
 
-        // Информация о посещаемости сайта
+        /// <summary>
+        /// Частота покупок
+        /// </summary>
+        public double PurchaseFrequency { get; set; }
+        // Информация о пакупках пользователей =============================================
+
+
+        // Информация о регистрации и аутентификации и сессиях пользователей ===============
+        /// <summary>
+        /// Частота входа на сайт
+        /// </summary>
         public double LoginFrequency { get; set; }
+
+        /// <summary>
+        /// Среднее время сессии
+        /// </summary>
         public TimeSpan AverageSessionDuration { get; set; }
+
+        /// <summary>
+        /// Количество попыток регистрации
+        /// </summary>
+        public int RegistrationTries { get; set; }
+
+        /// <summary>
+        /// Количество попыток входа
+        /// </summary>
+        public int AuthenticationTries { get; set; }
+        // Информация о регистрации и аутентификации и сессиях пользователей ===============
+
+
+        // Взаимодействие со страницами ====================================================
+        /// <summary>
+        /// Число просмотренных страниц
+        /// </summary>
         public int TotalPageViews { get; set; }
-        public double BounceRate { get; set; }
+        // Взаимодействие со страницами ====================================================
 
-        // Взаимодействие с корзиной
+
+        // Взаимодействие с корзиной =======================================================
+        /// <summary>
+        /// Информация о взаимодействии с корзиной 
+        /// </summary>
+        // Возможно надо вынести в отдельную таблицу
         public CartInteraction CartInteraction { get; set; } = new();
+        // Взаимодействие с корзиной =======================================================
 
-        // Взаимодействие со списком избранного
-        public FavoriteInteraction WishlistInteraction { get; set; } = new();
 
-        // Предпочтения клиентов
-        public List<string> PreferredCategories { get; set; } = new();
-        public bool ReceivesPromotions { get; set; }
+        // Взаимодействия с рекламой =======================================================
+        public int AdClicks { get; set; }
+
+        /// <summary>
+        /// Колво рекламы, на которую перешёл пользователь
+        /// </summary>
+        public int PromotionClicksCount { get; set; }
+
+        /// <summary>
+        /// Id рекламы, на которую перешёл пользователь
+        /// </summary>
+        public List<string> PromotionIdClicksList { get; set; }
+        // Взаимодействия с рекламой =======================================================
+
+
+        // Обратная связь клиентов =========================================================
+        /// <summary>
+        /// Кол-во отзывов
+        /// </summary>
+        public int ReviewsCount { get; set; }
+
+        /// <summary>
+        /// Средняя оценка отзывов
+        /// </summary>
+        public double AverageRatingGiven { get; set; }
+
+        /// <summary>
+        /// Список отзывов пользователей
+        /// </summary>
+        public List<string> UserReviewIds { get; set; }
+        // Обратная связь клиентов =========================================================
+
 
         // Данные о поведении и сегментации
         public List<string> Segments { get; set; } = new(); // e.g., "High Spender", "Frequent Buyer"
         public decimal LifetimeValue { get; set; }
-        public bool IsLikelyToChurn { get; set; }
-
-        // Взаимодействия с рекламой 
-        public int AdClicks { get; set; }
-        public int CouponUses { get; set; }
-
-        // Олбратная связь от клиентов
-        public int ReviewsGiven { get; set; }
-        public double AverageRatingGiven { get; set; }
 
         // Конструктор с использованием полей UserReg
         public User(UserReg userReg)
@@ -92,11 +168,11 @@ namespace CustomerChurmPrediction.Entities.UserEntity
         }
     }
 
-    public class PurchaseHistory
+    // Взаимодействие с корзиной
+    public class CartInteraction
     {
-        public string ProductID { get; set; }
-        public DateTime PurchaseDate { get; set; }
-        public decimal AmountSpent { get; set; }
-        public int Quantity { get; set; }
+        public int AddedToCartCount { get; set; }
+        public int RemovedFromCartCount { get; set; }
+        public double CartToPurchaseConversionRate { get; set; }
     }
 }
