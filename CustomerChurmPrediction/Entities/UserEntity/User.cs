@@ -52,17 +52,12 @@ namespace CustomerChurmPrediction.Entities.UserEntity
         /// </summary>
         public bool IsLikelyToChurn { get; set; }
 
-
-        // Информация о пакупках пользователей =============================================
-        /// <summary>
-        /// Общее количество покупок
-        /// </summary>
-        public int TotalPurchases { get; set; }
+        // Информация о заказах ============================================================
 
         /// <summary>
-        /// Сколько всего потрачено 
+        /// Общее количество заказов
         /// </summary>
-        public decimal TotalSpent { get; set; }
+        public int TotalOrder { get; set; }
 
         /// <summary>
         /// Список Id заказов
@@ -73,6 +68,30 @@ namespace CustomerChurmPrediction.Entities.UserEntity
         /// Средняя цена заказа
         /// </summary>
         public int AverageOrderValue { get; set; }
+
+        /// <summary>
+        /// Частота заказов
+        /// </summary>
+        public double OrderFrequency { get; set; }
+
+        // Информация о заказах ============================================================
+
+
+        // Информация о пакупках пользователей =============================================
+        /// <summary>
+        /// Общее количество купленных товаров
+        /// </summary>
+        public int TotalPurchases { get; set; }
+
+        /// <summary>
+        /// Сколько всего потрачено
+        /// </summary>
+        public decimal TotalSpent { get; set; }
+
+        /// <summary>
+        /// Средняя цена покупки
+        /// </summary>
+        public decimal AveragePurchase { get; set; }
 
         /// <summary>
         /// Частота покупок
@@ -154,6 +173,31 @@ namespace CustomerChurmPrediction.Entities.UserEntity
         // Обратная связь клиентов =========================================================
 
 
+        // Информация о страницах, которые посещал пользователей ===========================
+        // Добавить отслеживание информации в период 1 сесии
+
+        /// <summary>
+        /// Количество ссылко на которые переходил пользователь
+        /// </summary>
+        public int PageUrlsCount { get; set; }
+
+        /// <summary>
+        /// Ссылки на страницы, которые посещал пользователь
+        /// </summary>
+        public List<string> PageUrls { get; set; } = new List<string>();
+
+        /// <summary>
+        /// Ссылка на страницу
+        /// </summary>
+        public string Url { get; set; } = null!;
+
+        /// <summary>
+        /// Среднее время просмотра страницы
+        /// </summary>
+        public DateTime AverageViewDuration { get; set; }
+
+        // Информация о страницах, которые посещал пользователей ===========================
+
         // Данные о поведении и сегментации
         public List<string> Segments { get; set; } = new(); // e.g., "High Spender", "Frequent Buyer"
         public decimal LifetimeValue { get; set; }
@@ -166,13 +210,5 @@ namespace CustomerChurmPrediction.Entities.UserEntity
             Email = userReg.Email;
             Password = userReg.Password;
         }
-    }
-
-    // Взаимодействие с корзиной
-    public class CartInteraction
-    {
-        public int AddedToCartCount { get; set; }
-        public int RemovedFromCartCount { get; set; }
-        public double CartToPurchaseConversionRate { get; set; }
     }
 }
