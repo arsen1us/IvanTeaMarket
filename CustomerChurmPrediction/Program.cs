@@ -3,6 +3,7 @@ using CustomerChurmPrediction.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using CustomerChurmPrediction;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,6 +62,8 @@ builder.Services.AddLogging();
 // Подключение Swagger
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddSignalR();
+
 var app = builder.Build();
 
 app.UseStaticFiles();
@@ -69,6 +72,8 @@ app.UseCors("default");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+app.MapHub<NotificationHub>("/notification-hub");
 
 app.UseSwagger();
 app.UseSwaggerUI();
