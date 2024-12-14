@@ -9,13 +9,13 @@ namespace CustomerChurmPrediction.Entities
         /// <summary>
         /// Id сущности
         /// </summary>
-        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
 
         /// <summary>
         /// Время обновления сущности
         /// </summary>
-        public DateTime LastTimeUserUpdate { get; set; } = DateTime.Now;
+        public DateTime LastTimeUserUpdate { get; set; } 
 
         /// <summary>
         /// Время создания сущности

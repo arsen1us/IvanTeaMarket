@@ -10,6 +10,6 @@
         /// <summary>
         /// Время действия пользователя в текущей сессии
         /// </summary>
-        public DateTime UserActivityDateTimeInCurrentSession { get; set; }
+        public DateTime UpdateTime { get; set; }
     }
 }

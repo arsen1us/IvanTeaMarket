@@ -11,6 +11,5 @@
         /// Время начала сессии
         /// </summary>
         public DateTime SessionTimeStart { get; set; }
-
     }
 }

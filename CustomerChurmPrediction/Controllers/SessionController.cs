@@ -10,10 +10,12 @@ namespace CustomerChurmPrediction.Controllers
     public class SessionController : Controller
     {
         ISessionService _sessionService;
+        IUserService _userService;
 
-        public SessionController(ISessionService sessionService)
+        public SessionController(ISessionService sessionService, IUserService userService)
         {
             _sessionService = sessionService;
+            _userService = userService;
         }
 
         /// <summary>
@@ -25,14 +27,21 @@ namespace CustomerChurmPrediction.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateSessionAsync(SessionAdd sessionAdd)
         {
-            if (sessionAdd is null)
+            if (sessionAdd is null || string.IsNullOrEmpty(sessionAdd.UserId))
                 return BadRequest();
             try
             {
+                var user = await _userService.FindByIdAsync(sessionAdd.UserId);
+
                 var session = new Session
                 {
                     UserId = sessionAdd.UserId,
                     SessionTimeStart = sessionAdd.SessionTimeStart,
+                    CreateTime = sessionAdd.SessionTimeStart,
+
+                    CreatorId = sessionAdd.UserId,
+                    UserIdLastUpdate = sessionAdd.UserId,
+
                 };
 
                 bool isSuccess = await _sessionService.SaveOrUpdateAsync(session, default);
@@ -52,6 +61,7 @@ namespace CustomerChurmPrediction.Controllers
         /// <summary>
         /// Обновление времени сессии
         /// </summary>
+        // PUT: api/session/{userId}
 
         [Authorize(Roles = "User, Admin, Owner")]
         [HttpPut]
@@ -66,7 +76,7 @@ namespace CustomerChurmPrediction.Controllers
 
                 if (lastSession is null) return NotFound();
 
-                lastSession.SessionTimeEnd = sessionUpdate.UserActivityDateTimeInCurrentSession;
+                lastSession.SessionTimeEnd = sessionUpdate.UpdateTime;
 
                 bool isSuccess = await _sessionService.SaveOrUpdateAsync(lastSession, default);
 
