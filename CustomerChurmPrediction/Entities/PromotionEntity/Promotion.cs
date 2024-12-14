@@ -70,7 +70,7 @@
         public string ClickCount {get; set;} = null!;
 
         /// <summary>
-        /// Количество просмотров поста.
+        /// Количество просмотров
         /// </summary>
         public string ViewCount {get; set;} = null!;
 
@@ -78,11 +78,6 @@
         /// Показатель кликабельности
         /// </summary>
         public string CTR {get; set;} = null!;
-
-        /// <summary>
-        /// Логическое поле для закрепления поста в верхней части страницы.
-        /// </summary>
-        public string IsPinned {get; set;} = null!;
 
         public Promotion() { }
     }

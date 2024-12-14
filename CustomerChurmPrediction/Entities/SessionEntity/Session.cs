@@ -15,11 +15,6 @@
         /// <summary>
         /// Время окончания сессии
         /// </summary>
-        public DateTime SessionTimeEnd { get; set; }
-
-        /// <summary>
-        /// Id действий пользователя
-        /// </summary>
-        public List<string> UserActionIds { get; set; }
+        public DateTime? SessionTimeEnd { get; set; }
     }
 }

@@ -23,6 +23,5 @@ namespace CustomerChurmPrediction.Entities.UserActionEntity
         /// Ссылка на страницу, где было выполнено действие
         /// </summary>
         public string Path { get; set; }
-
     }
 }

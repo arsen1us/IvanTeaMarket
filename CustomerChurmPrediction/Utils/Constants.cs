@@ -84,6 +84,16 @@
         /// Действия пользователей
         /// </summary>
         public readonly static string UserActions = "UserActions";
+
+        /// <summary>
+        /// Уведомления
+        /// </summary>
+        public readonly static string Notifications = "Notifications";
+
+        /// <summary>
+        /// Предсказания оттока
+        /// </summary>
+        public readonly static string ChurnPredictions = "ChurnPredictions";
     }
 }
 

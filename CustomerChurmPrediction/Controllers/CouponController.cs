@@ -149,7 +149,6 @@ namespace CustomerChurmPrediction.Controllers
 
 				coupon.Key = couponUpdate.Key;
 				coupon.ProductIds = couponUpdate.ProductIds;
-				coupon.CategoriesIds = couponUpdate.CategoriesIds;
 				coupon.CompanyId = couponUpdate.CompanyId;
 
                 bool isSuccess = await _couponService.SaveOrUpdateAsync(coupon);

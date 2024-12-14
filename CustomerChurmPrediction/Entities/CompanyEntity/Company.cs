@@ -21,5 +21,30 @@
 		/// Id фотографий
 		/// </summary>
         public List<string>? ImageSrcs { get; set; }
+
+        /// <summary>
+		/// Электронная почта
+		/// </summary>
+        public string Email { get; set; } = null!;
+
+        /// <summary>
+		/// Номер телефона
+		/// </summary>
+        public string PhonuNumber { get; set; } = null!;
+
+        /// <summary>
+		/// Адрес
+		/// </summary>
+        public string Address { get; set; } = null!;
+
+        /// <summary>
+		/// Регистрационный номер
+		/// </summary>
+        public string RegistrationNumber { get; set; } = null!;
+
+        /// <summary>
+		/// Отрасль
+		/// </summary>
+        public string Inducstry { get; set; } = null!;
     }
 }

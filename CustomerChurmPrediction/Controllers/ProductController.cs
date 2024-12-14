@@ -4,6 +4,8 @@ using MongoDB.Driver;
 using CustomerChurmPrediction.Entities.ProductEntity;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
+using System.Threading;
 
 namespace CustomerChurmPrediction.Controllers
 {
@@ -15,17 +17,20 @@ namespace CustomerChurmPrediction.Controllers
         IProductService _productService;
         ICompanyService _companyService;
         ILogger<ProductController> _logger;
+        IHubContext<NotificationHub> _hubContext;
 
         public ProductController(
             IUserService userService,
             IProductService productService,
             ICompanyService companyService,
-            ILogger<ProductController> logger)
+            ILogger<ProductController> logger,
+            IHubContext<NotificationHub> hubContext)
         {
             _userService = userService;
             _productService = productService;
             _companyService = companyService;
             _logger = logger;
+            _hubContext = hubContext;
         }
         /// <summary>
         /// Получить список всех продуктов
@@ -229,8 +234,11 @@ namespace CustomerChurmPrediction.Controllers
                 product.ImageSrcs = imageSrcs;
 
                 bool isSuccess = await _productService.SaveOrUpdateAsync(product, default);
-                if(isSuccess)
-                    return Ok(new { product = product} );
+                if (isSuccess)
+                {
+                    await _hubContext.Clients.All.SendAsync("ReceiveNotification", "Продукт успешно добавлен!");
+                    return Ok(new { product = product });
+                }
                 
                 // Возвращаю ошибку сервера
                 return StatusCode(500);

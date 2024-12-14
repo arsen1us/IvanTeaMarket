@@ -1,6 +1,6 @@
-﻿namespace CustomerChurmPrediction.Entities.SessionEntity
+﻿namespace CustomerChurmPrediction.Entities
 {
-    public class SessionAdd
+    public class Notification : AbstractEntity
     {
         /// <summary>
         /// Id пользователя
@@ -8,9 +8,8 @@
         public string UserId { get; set; } = null!;
 
         /// <summary>
-        /// Время начала сессии
+        /// Текст уведомления
         /// </summary>
-        public DateTime SessionTimeStart { get; set; }
-
+        public string Text { get; set; } = null!;
     }
 }

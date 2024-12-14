@@ -15,11 +15,15 @@ namespace CustomerChurmPrediction.Controllers
         ITokenService _tokenService;
         ILogger<UserController> _logger;
 
-        public UserController(IUserService userService, ITokenService tokenService, ILogger<UserController> logger)
-        {
+        public UserController(
+            IUserService userService,
+            ITokenService tokenService,
+            ILogger<UserController> logger)
+            {
             _userService = userService;
             _tokenService = tokenService;
             _logger = logger;
+            
         }
         /// <summary>
         /// Регистрация
