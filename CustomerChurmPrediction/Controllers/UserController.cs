@@ -3,6 +3,8 @@ using CustomerChurmPrediction.Services;
 using CustomerChurmPrediction.Entities.UserEntity;
 using Microsoft.AspNetCore.Authorization;
 using CustomerChurmPrediction.Utils;
+using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
+using System.Composition;
 
 
 namespace CustomerChurmPrediction.Controllers
@@ -19,11 +21,11 @@ namespace CustomerChurmPrediction.Controllers
             IUserService userService,
             ITokenService tokenService,
             ILogger<UserController> logger)
-            {
+        {
             _userService = userService;
             _tokenService = tokenService;
             _logger = logger;
-            
+
         }
         /// <summary>
         /// Регистрация
@@ -36,7 +38,7 @@ namespace CustomerChurmPrediction.Controllers
         {
             try
             {
-                if(userReg is null 
+                if (userReg is null
                     || string.IsNullOrEmpty(userReg.FirstName)
                     || string.IsNullOrEmpty(userReg.LastName)
                     || string.IsNullOrEmpty(userReg.Email)
@@ -51,7 +53,7 @@ namespace CustomerChurmPrediction.Controllers
 
                 bool isSuccess = await _userService.SaveOrUpdateAsync(user, default);
 
-                if(isSuccess)
+                if (isSuccess)
                 {
                     string token = _tokenService.GenerateJwtToken(user);
 
@@ -135,7 +137,7 @@ namespace CustomerChurmPrediction.Controllers
         {
             try
             {
-                if(string.IsNullOrEmpty(userId))
+                if (string.IsNullOrEmpty(userId))
                     return BadRequest();
 
                 User user = await _userService.FindByIdAsync(userId, default);
@@ -198,3 +200,6 @@ namespace CustomerChurmPrediction.Controllers
         }
     }
 }
+
+
+

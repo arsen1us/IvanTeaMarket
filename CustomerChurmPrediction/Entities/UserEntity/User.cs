@@ -41,18 +41,14 @@ namespace CustomerChurmPrediction.Entities.UserEntity
         public string? CompanyId { get; set; } = null;
 
         /// <summary>
-        /// Ссылка на фото пользователя
+        /// Фото пользователя
         /// </summary>
-        // Мб, нужен List<string>, так как пользователь может работать с несколькими компаниями
-        //public List<string>? CompanyIds { get; set; } = null;
         public List<string> ImageSrcs { get; set; } = new List<string>();
 
         /// <summary>
         /// Поле показывает, нужно ли применять меры по удержанию пользователя или нет
         /// </summary>
         public bool IsLikelyToChurn { get; set; }
-
-        // Информация о заказах ============================================================
 
         /// <summary>
         /// Общее количество заказов
@@ -74,10 +70,6 @@ namespace CustomerChurmPrediction.Entities.UserEntity
         /// </summary>
         public double OrderFrequency { get; set; }
 
-        // Информация о заказах ============================================================
-
-
-        // Информация о пакупках пользователей =============================================
         /// <summary>
         /// Общее количество купленных товаров
         /// </summary>
@@ -97,10 +89,7 @@ namespace CustomerChurmPrediction.Entities.UserEntity
         /// Частота покупок
         /// </summary>
         public double PurchaseFrequency { get; set; }
-        // Информация о пакупках пользователей =============================================
-
-
-        // Информация о регистрации и аутентификации и сессиях пользователей ===============
+        
         /// <summary>
         /// Частота входа на сайт
         /// </summary>
@@ -120,42 +109,28 @@ namespace CustomerChurmPrediction.Entities.UserEntity
         /// Количество попыток входа
         /// </summary>
         public int AuthenticationTries { get; set; }
-        // Информация о регистрации и аутентификации и сессиях пользователей ===============
-
-
-        // Взаимодействие со страницами ====================================================
+        
         /// <summary>
         /// Число просмотренных страниц
         /// </summary>
         public int TotalPageViews { get; set; }
-        // Взаимодействие со страницами ====================================================
-
-
-        // Взаимодействие с корзиной =======================================================
+        
         /// <summary>
         /// Информация о взаимодействии с корзиной 
         /// </summary>
-        // Возможно надо вынести в отдельную таблицу
         public CartInteraction CartInteraction { get; set; } = new();
-        // Взаимодействие с корзиной =======================================================
-
-
-        // Взаимодействия с рекламой =======================================================
-        public int AdClicks { get; set; }
+        
 
         /// <summary>
-        /// Колво рекламы, на которую перешёл пользователь
+        /// Количество кликов на рекламу
         /// </summary>
-        public int PromotionClicksCount { get; set; }
+        public int AdClicks { get; set; }
 
         /// <summary>
         /// Id рекламы, на которую перешёл пользователь
         /// </summary>
         public List<string> PromotionIdClicksList { get; set; }
-        // Взаимодействия с рекламой =======================================================
-
-
-        // Обратная связь клиентов =========================================================
+        
         /// <summary>
         /// Кол-во отзывов
         /// </summary>
@@ -170,14 +145,9 @@ namespace CustomerChurmPrediction.Entities.UserEntity
         /// Список отзывов пользователей
         /// </summary>
         public List<string> UserReviewIds { get; set; }
-        // Обратная связь клиентов =========================================================
-
-
-        // Информация о страницах, которые посещал пользователей ===========================
-        // Добавить отслеживание информации в период 1 сесии
 
         /// <summary>
-        /// Количество ссылко на которые переходил пользователь
+        /// Количество ссылок на которые переходил пользователь
         /// </summary>
         public int PageUrlsCount { get; set; }
 
@@ -191,18 +161,6 @@ namespace CustomerChurmPrediction.Entities.UserEntity
         /// </summary>
         public string Url { get; set; } = null!;
 
-        /// <summary>
-        /// Среднее время просмотра страницы
-        /// </summary>
-        public DateTime AverageViewDuration { get; set; }
-
-        // Информация о страницах, которые посещал пользователей ===========================
-
-        // Данные о поведении и сегментации
-        public List<string> Segments { get; set; } = new(); // e.g., "High Spender", "Frequent Buyer"
-        public decimal LifetimeValue { get; set; }
-
-        // Конструктор с использованием полей UserReg
         public User(UserReg userReg)
         {
             FirstName = userReg.FirstName;
@@ -210,5 +168,6 @@ namespace CustomerChurmPrediction.Entities.UserEntity
             Email = userReg.Email;
             Password = userReg.Password;
         }
+        public User() { }
     }
 }

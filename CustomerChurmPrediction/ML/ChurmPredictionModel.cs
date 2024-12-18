@@ -16,30 +16,26 @@ namespace CustomerChurmPrediction.ML
 
         public void TrainModel(IEnumerable<UserData> trainingData)
         {
-            // Загрузка данных
+           
             var data = _mlContext.Data.LoadFromEnumerable(trainingData);
 
-            // Определение шага подготовки данных
             var dataPipeline = _mlContext.Transforms
-                .CopyColumns(outputColumnName: "Label", inputColumnName: nameof(UserData.IsLikelyToChurn)) // Указываем метку
+                .CopyColumns(outputColumnName: "Label", inputColumnName: nameof(UserData.IsLikelyToChurn))
                 .Append(_mlContext.Transforms.Concatenate("Features", nameof(UserData.TotalOrder),
                                                                      nameof(UserData.TotalPurchases),
                                                                      nameof(UserData.TotalSpent),
                                                                      nameof(UserData.AdClicks),
                                                                      nameof(UserData.LoginFrequency),
                                                                      nameof(UserData.AverageSessionDuration)))
-                .Append(_mlContext.BinaryClassification.Trainers.SdcaLogisticRegression()); // Убираем MapValueToKey
+                .Append(_mlContext.BinaryClassification.Trainers.SdcaLogisticRegression());
 
-            // Обучение модели
             _trainedModel = dataPipeline.Fit(data);
         }
 
         public ChurnPrediction Predict(UserData userData)
         {
-            // Создание engine для предсказаний
             var predictionEngine = _mlContext.Model.CreatePredictionEngine<UserData, ChurnPrediction>(_trainedModel);
 
-            // Возвращение результата
             return predictionEngine.Predict(userData);
         }
 

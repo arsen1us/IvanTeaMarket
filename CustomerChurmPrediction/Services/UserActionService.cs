@@ -14,14 +14,6 @@ namespace CustomerChurmPrediction.Services
     {
 
         /// <summary>
-        /// Создание сессиии
-        /// </summary>
-        public async Task CreateSession()
-        {
-
-        }
-
-        /// <summary>
         /// Получить по id пользователя
         /// </summary>
         public async Task<List<UserAction>> GetByUserId(string userId, CancellationToken? cancellationToken = default)

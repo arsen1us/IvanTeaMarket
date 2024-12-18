@@ -11,10 +11,5 @@ namespace CustomerChurmPrediction.Entities.UserActionEntity
         /// Id пользователя
         /// </summary>
         public string UserId { get; set; } = null!;
-
-        /// <summary>
-        /// Тип действия пользователя
-        /// </summary>
-        public UserActionType UserActionType { get; set; }
     }
 }
