@@ -33,12 +33,13 @@ namespace CustomerChurmPrediction.Controllers
             {
                 var user = await _userService.FindByIdAsync(sessionAdd.UserId);
 
+                // var userSession = await _sessionService.find
+
                 var session = new Session
                 {
                     UserId = sessionAdd.UserId,
-                    SessionTimeStart = sessionAdd.SessionTimeStart,
-                    CreateTime = sessionAdd.SessionTimeStart,
-
+                    SessionTimeStart = DateTime.Now,
+                    CreateTime = DateTime.Now,
                     CreatorId = sessionAdd.UserId,
                     UserIdLastUpdate = sessionAdd.UserId,
 
@@ -76,7 +77,7 @@ namespace CustomerChurmPrediction.Controllers
 
                 if (lastSession is null) return NotFound();
 
-                lastSession.SessionTimeEnd = sessionUpdate.UpdateTime;
+                lastSession.SessionTimeEnd = DateTime.Now;
 
                 bool isSuccess = await _sessionService.SaveOrUpdateAsync(lastSession, default);
 

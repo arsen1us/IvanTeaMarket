@@ -6,6 +6,8 @@ using System.Text;
 using CustomerChurmPrediction;
 using CustomerChurmPrediction.ML.Entities;
 using CustomerChurmPrediction.ML;
+using CustomerChurmPrediction.Entities.NotificationEntity;
+using Microsoft.AspNetCore.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,10 +28,9 @@ builder.Services.AddSingleton<IMongoClient, MongoClient>(options =>
     return new MongoClient(configuration["DatabaseConnection:ConnectionString"]);
 });
 
-// Подключение авторизации
+
 builder.Services.AddControllers();
 
-// Подключение аутентификации
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -47,16 +48,13 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["TokenSettings:Key"]))
     };
 
-    // Настройка для SignalR: передача токена через Query String
     options.Events = new JwtBearerEvents
     {
         OnMessageReceived = context =>
         {
             var accessToken = context.Request.Query["access_token"];
-
-            // Если запрос предназначен для хаба SignalR, извлечь токен
-            var path = context.HttpContext.Request.Path;
-            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/notificationHub"))
+            if (!string.IsNullOrEmpty(accessToken) &&
+                context.HttpContext.Request.Path.StartsWithSegments("/notification-hub"))
             {
                 context.Token = accessToken;
             }
@@ -85,6 +83,10 @@ builder.Services.AddScoped<ISessionService, SessionService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUserActionService, UserActionService>();
 builder.Services.AddScoped<IUserService, UserService>();
+
+// Сервис для работы с подключениями пользователей
+builder.Services.AddScoped<IConnectionService, ConnectionService>();
+builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 
 // Подключение логирования
 builder.Services.AddLogging();

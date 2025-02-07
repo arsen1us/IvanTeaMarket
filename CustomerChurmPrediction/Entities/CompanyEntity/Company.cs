@@ -45,6 +45,6 @@
         /// <summary>
 		/// Отрасль
 		/// </summary>
-        public string Inducstry { get; set; } = null!;
+        public string Industry { get; set; } = null!;
     }
 }

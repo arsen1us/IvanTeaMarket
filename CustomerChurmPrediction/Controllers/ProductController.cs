@@ -203,6 +203,7 @@ namespace CustomerChurmPrediction.Controllers
             public decimal Price { get; set; }
             public string CompanyId { get; set; } = null!;
             public IFormFileCollection? Images { get; set; }
+            public string UserId { get; set; } = null!;
         }
 
         [HttpPost]
@@ -220,6 +221,10 @@ namespace CustomerChurmPrediction.Controllers
                     CompanyId = productDto.CompanyId,
                     Count = productDto.Count,
                     Price = productDto.Price,
+
+                    UserIdLastUpdate = productDto.UserId,
+                    CreatorId = productDto.UserId,
+                    CreateTime = DateTime.Now,
                 };
 
                 // Получение и запись изображений
@@ -236,7 +241,6 @@ namespace CustomerChurmPrediction.Controllers
                 bool isSuccess = await _productService.SaveOrUpdateAsync(product, default);
                 if (isSuccess)
                 {
-                    await _hubContext.Clients.All.SendAsync("ReceiveNotification", "Продукт успешно добавлен!");
                     return Ok(new { product = product });
                 }
                 

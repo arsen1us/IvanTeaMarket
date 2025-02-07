@@ -1,4 +1,6 @@
 ﻿using CustomerChurmPrediction.Entities;
+using CustomerChurmPrediction.Entities.ProductEntity;
+using Microsoft.AspNetCore.SignalR;
 using MongoDB.Driver;
 
 namespace CustomerChurmPrediction.Services
@@ -78,6 +80,8 @@ namespace CustomerChurmPrediction.Services
         public IMongoCollection<T> Table;
         ILogger _logger;
         IWebHostEnvironment environment;
+        IHubContext<NotificationHub> _notificationHubContext;
+        IConnectionService _connectionService;
 
         public IMongoDatabase Database;
 
@@ -87,6 +91,27 @@ namespace CustomerChurmPrediction.Services
             _config = config;
             _logger = logger;
             environment = _environment;
+
+            Database = _client.GetDatabase(_config["DatabaseConnection:DatabaseName"]);
+            Table = Database.GetCollection<T>(collectionName);
+        }
+
+        // На данный момент сделаю данным образом
+        public BaseService(
+            IMongoClient client,
+            IConfiguration config,
+            ILogger logger,
+            IWebHostEnvironment _environment,
+            string collectionName,
+            IHubContext<NotificationHub> notificationHubContext,
+            IConnectionService connectionService)
+        {
+            _client = client;
+            _config = config;
+            _logger = logger;
+            environment = _environment;
+            _notificationHubContext = notificationHubContext;
+            _connectionService = connectionService;
 
             Database = _client.GetDatabase(_config["DatabaseConnection:DatabaseName"]);
             Table = Database.GetCollection<T>(collectionName);
@@ -218,7 +243,9 @@ namespace CustomerChurmPrediction.Services
 
                     // Проверяем, все ли операции были успешными (либо обновлены, либо вставлены)
                     if (result.Upserts.Count() + result.MatchedCount == abstractEntities.Count)
+                    {
                         return true;
+                    }
                 }
                 return false;
             }
@@ -247,44 +274,68 @@ namespace CustomerChurmPrediction.Services
             }
         }
 
+        /// <summary>
+        /// Сохранить или обновить список сущностей
+        /// </summary>
         public virtual async Task<bool> SaveOrUpdateAsync(List<T> entities, CancellationToken? cancellationToken = default)
         {
             try
             {
-                // Преобразуем переданные объекты в список для удобства обработки
                 var abstractEntities = entities.ToList();
 
-                // Создаём список операций ReplaceOneModel для каждого объекта
+                // Получить id пользователя, для отправки уведомление
+                string userId = abstractEntities.FirstOrDefault().UserIdLastUpdate;
+
+                if(string.IsNullOrEmpty(userId))
+                    userId = abstractEntities.FirstOrDefault().CreatorId;
+
+                string connectionId = _connectionService.GetConnectionIdByUserId(userId);
+
+                // Создание списка операций ReplaceOneModel для каждого объекта
                 var bulkOps = abstractEntities
                     .Select(myObject =>
                     {
                         return new ReplaceOneModel<T>(
-                            Builders<T>.Filter.Eq(x => x.Id, myObject.Id), // Фильтр по полю Id
-                            myObject // Объект для замены
+                            Builders<T>.Filter.Eq(x => x.Id, myObject.Id), 
+                            myObject 
                         )
                         {
-                            IsUpsert = true // Если документ не найден, он будет вставлен
+                            IsUpsert = true
                         };
                     })
-                    .Cast<WriteModel<T>>() // Приведение к типу WriteModel<T>
+                    .Cast<WriteModel<T>>()
                     .ToList();
 
-                // Проверяем, есть ли операции для выполнения
                 if (bulkOps.Count > 0)
                 {
-                    // Выполняем пакетную запись (bulk write) с использованием сессии
-                    // var result = await _collection.BulkWriteAsync(session, bulkOps);
                     var result = await Table.BulkWriteAsync(bulkOps);
 
-                    // Проверяем, все ли операции были успешными (либо обновлены, либо вставлены)
+                    // Кол-во созданных записей
+                    int createdCount = result.Upserts.Count();
+                    // Кол-во обновлённых записей
+                    int updatedCount = result.Upserts.Count();
+
                     if (result.Upserts.Count() + result.MatchedCount == abstractEntities.Count)
+                    {
+                        if(createdCount > 0)
+                        {
+                            if(!string.IsNullOrEmpty(connectionId))
+                                await _notificationHubContext.Clients.Client(connectionId).SendAsync("ReceiveNotification", $"{createdCount} {typeof(T).Name}(ов) успешно создан(ы)!");
+                        }
+                        if(updatedCount > 0)
+                        {
+                            if (!string.IsNullOrEmpty(connectionId))
+                                await _notificationHubContext.Clients.Client(connectionId).SendAsync("ReceiveNotification", $"{updatedCount} {typeof(T).Name}(ов) успешно обновлён(ы)!");
+                        }
                         return true;
+                    }
                 }
+                await _notificationHubContext.Clients.Client(connectionId).SendAsync("ReceiveNotification", $"Не удалось успешно добавить или обновить {typeof(T).Name}!");
                 return false;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                throw new Exception(ex.Message);
             }
         }
 
@@ -311,17 +362,39 @@ namespace CustomerChurmPrediction.Services
             }
         }
 
+        /// <summary>
+        /// Удалить сущность по id
+        /// </summary>
         public virtual async Task<long> DeleteAsync(string entityId, CancellationToken? cancellationToken = default)
         {
             try
             {
-                if (entityId != null)
+                if (!string.IsNullOrEmpty(entityId))
                 {
-                    var filter = Builders<T>.Filter.Eq(e => e.Id, entityId);
-                    var result = await Table.DeleteOneAsync(filter);
-                    if (result.DeletedCount > 0)
-                        return result.DeletedCount;
-                    return 0;
+                    T entity = await FindByIdAsync(entityId, default);
+                    if(entity is not null)
+                    {
+                        string userId = entity.UserIdLastUpdate;
+                        if (string.IsNullOrEmpty(userId))
+                            userId = entity.CreatorId;
+
+                        var connectionId = _connectionService.GetConnectionIdByUserId(userId);
+
+                        var filter = Builders<T>.Filter.Eq(e => e.Id, entityId);
+                        var result = await Table.DeleteOneAsync(filter);
+                        if (result.DeletedCount > 0)
+                        {
+                            await _notificationHubContext.Clients.Client(connectionId).SendAsync("ReceiveNotification", $"{typeof(T).Name} успешно удалено!");
+                            return result.DeletedCount;
+                        }
+
+                        await _notificationHubContext.Clients.Client(connectionId).SendAsync("ReceiveNotification", $"Не удалось удалить {typeof(T).Name}!");
+                        return 0;
+                    }
+                    else
+                    {
+                        return 0;
+                    }
                 }
                 else
                 {
@@ -330,7 +403,7 @@ namespace CustomerChurmPrediction.Services
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                throw new Exception(ex.Message);
             }
         }
 

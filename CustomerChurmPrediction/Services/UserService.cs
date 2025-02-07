@@ -1,6 +1,7 @@
 ﻿using MongoDB.Driver;
 using static CustomerChurmPrediction.Utils.CollectionName;
 using CustomerChurmPrediction.Entities.UserEntity;
+using Microsoft.AspNetCore.SignalR;
 
 namespace CustomerChurmPrediction.Services
 {
@@ -12,8 +13,14 @@ namespace CustomerChurmPrediction.Services
         public Task<User> FindByEmailAndPassword(string email, string password, CancellationToken? cancellationToken = default);
     }
 
-    public class UserService(IMongoClient client, IConfiguration config, ILogger<UserService> logger, IWebHostEnvironment _environment) 
-        : BaseService<User>(client, config, logger, _environment, Users), IUserService
+    public class UserService(
+        IMongoClient client,
+        IConfiguration config,
+        ILogger<UserService> logger,
+        IWebHostEnvironment _environment,
+        IHubContext<NotificationHub> _notificationHubContext,
+        IConnectionService _connectionService) 
+        : BaseService<User>(client, config, logger, _environment, Users, _notificationHubContext, _connectionService), IUserService
     {
         public async Task<User> FindByEmailAndPassword(string email, string password, CancellationToken? cancellationToken = default)
         {

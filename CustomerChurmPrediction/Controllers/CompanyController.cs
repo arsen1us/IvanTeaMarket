@@ -106,10 +106,14 @@ namespace CustomerChurmPrediction.Controllers
             }
             try
             {
+                var userId = User.FindFirst("Id")?.Value;
+
                 Company company = new Company
                 {
                     Name = companyAdd.Name,
                     Description = companyAdd.Description,
+                    CreatorId = userId,
+                    UserIdLastUpdate = userId
                 };
 
                 var companyImageSrc = await _companyService.UploadImagesAsync(companyAdd.Images, default);

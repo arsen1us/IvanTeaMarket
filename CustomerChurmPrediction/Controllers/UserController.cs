@@ -47,6 +47,8 @@ namespace CustomerChurmPrediction.Controllers
                     return BadRequest();
                 }
                 User user = new User(userReg);
+                user.CreatorId = user.Id;
+                user.UserIdLastUpdate = user.Id;
 
                 // Выдаю роль - "Пользователь"
                 user.Role = UserRoles.User;

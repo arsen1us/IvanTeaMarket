@@ -1,4 +1,4 @@
-﻿namespace CustomerChurmPrediction.Entities
+﻿namespace CustomerChurmPrediction.Entities.NotificationEntity
 {
     public class Notification : AbstractEntity
     {
@@ -11,5 +11,10 @@
         /// Текст уведомления
         /// </summary>
         public string Text { get; set; } = null!;
+
+        /// <summary>
+        /// Прочитано ли сообщение
+        /// </summary>
+        public bool Status { get; set; } = false;
     }
 }

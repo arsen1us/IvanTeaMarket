@@ -15,6 +15,6 @@
         /// <summary>
         /// Время окончания сессии
         /// </summary>
-        public DateTime SessionTimeEnd { get; set; }
+        public DateTime? SessionTimeEnd { get; set; } = null;
     }
 }
