@@ -94,7 +94,6 @@
         /// Предсказания оттока
         /// </summary>
         public readonly static string ChurnPredictions = "ChurnPredictions";
-
     }
 }
 

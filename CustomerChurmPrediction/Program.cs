@@ -4,18 +4,18 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using CustomerChurmPrediction;
-using CustomerChurmPrediction.ML.Entities;
-using CustomerChurmPrediction.ML;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors(options =>
 options.AddPolicy("default", policy =>
 {
-    policy.WithOrigins("http://localhost:3000") // React
+    // Домен React
+    policy.WithOrigins("http://localhost:3000")
           .AllowAnyHeader()
           .AllowAnyMethod()
-          .AllowCredentials(); // для SignalR
+          // для работы SignalR
+          .AllowCredentials();
 }));
 
 var configuration = builder.Configuration;
@@ -107,21 +107,5 @@ app.MapHub<NotificationHub>("/notification-hub");
 
 app.UseSwagger();
 app.UseSwaggerUI();
-
-// var users = new List<UserData>
-// {
-//     new UserData { TotalOrder = 15, TotalPurchases = 30, TotalSpent = 500, AdClicks = 5, LoginFrequency = 1.2f, AverageSessionDuration = 3600, IsLikelyToChurn = false },
-//     new UserData { TotalOrder = 5, TotalPurchases = 10, TotalSpent = 200, AdClicks = 2, LoginFrequency = 0.3f, AverageSessionDuration = 600, IsLikelyToChurn = true },
-// };
-// 
-// // Обучение
-// var churnModel = new ChurnPredictionModel();
-// churnModel.TrainModel(users);
-// 
-// // Прогнозирование
-// var newUser = new UserData { TotalOrder = 8, TotalPurchases = 15, TotalSpent = 350, AdClicks = 3, LoginFrequency = 0.7f, AverageSessionDuration = 1800 };
-// var prediction = churnModel.Predict(newUser);
-// 
-// Console.WriteLine($"Вероятность оттока: {prediction.Probability:P2}, Отток: {prediction.PredictedChurn}");
 
 app.Run();
