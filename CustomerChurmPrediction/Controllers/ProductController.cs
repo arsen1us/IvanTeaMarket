@@ -2,10 +2,8 @@
 using CustomerChurmPrediction.Services;
 using MongoDB.Driver;
 using CustomerChurmPrediction.Entities.ProductEntity;
-using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
-using System.Threading;
 
 namespace CustomerChurmPrediction.Controllers
 {

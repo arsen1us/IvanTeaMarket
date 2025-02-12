@@ -3,8 +3,6 @@ using CustomerChurmPrediction.Services;
 using CustomerChurmPrediction.Entities.UserEntity;
 using Microsoft.AspNetCore.Authorization;
 using CustomerChurmPrediction.Utils;
-using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
-using System.Composition;
 
 
 namespace CustomerChurmPrediction.Controllers

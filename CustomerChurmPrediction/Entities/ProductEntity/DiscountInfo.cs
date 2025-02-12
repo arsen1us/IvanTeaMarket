@@ -1,4 +1,4 @@
-﻿namespace CustomerChurmPrediction.Entities
+﻿namespace CustomerChurmPrediction.Entities.ProductEntity
 {
     /// <summary>
     /// Информация о скидке

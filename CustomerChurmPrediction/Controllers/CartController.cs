@@ -1,12 +1,7 @@
 ﻿using CustomerChurmPrediction.Services;
 using Microsoft.AspNetCore.Mvc;
 using CustomerChurmPrediction.Entities.CartEntity;
-
-
 using Microsoft.AspNetCore.Authorization;
-using NLog.LayoutRenderers;
-using CustomerChurmPrediction.Entities.UserEntity;
-using MongoDB.Bson;
 
 namespace CustomerChurmPrediction.Controllers
 {

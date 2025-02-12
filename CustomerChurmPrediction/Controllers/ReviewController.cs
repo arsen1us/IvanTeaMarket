@@ -2,7 +2,6 @@
 using CustomerChurmPrediction.Services;
 using CustomerChurmPrediction.Entities.ReviewEntity;
 
-
 namespace CustomerChurmPrediction.Controllers
 {
     [ApiController]

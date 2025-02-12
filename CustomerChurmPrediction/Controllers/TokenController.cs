@@ -1,6 +1,4 @@
-﻿using CustomerChurmPrediction.Entities.UserEntity;
-using CustomerChurmPrediction.Services;
-using CustomerChurmPrediction.Utils;
+﻿using CustomerChurmPrediction.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

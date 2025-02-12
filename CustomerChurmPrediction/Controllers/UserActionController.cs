@@ -1,5 +1,4 @@
-﻿using CustomerChurmPrediction.Entities.ProductEntity;
-using CustomerChurmPrediction.Entities.UserActionEntity;
+﻿using CustomerChurmPrediction.Entities.UserActionEntity;
 using CustomerChurmPrediction.Services;
 using Microsoft.AspNetCore.Mvc;
 
