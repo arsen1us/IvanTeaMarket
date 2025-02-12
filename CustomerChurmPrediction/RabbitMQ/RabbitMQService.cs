@@ -1,4 +1,9 @@
-﻿namespace CustomerChurmPrediction.RabbitMQ
+﻿using RabbitMQ.Client;
+
+
+namespace CustomerChurmPrediction.RabbitMQ
+
+
 {
     public interface IRabbitMQService
     {
@@ -23,7 +28,8 @@
                 throw new ArgumentNullException($"{nameof(obj)}");
             }
             try
-            {
+        {
+            var factory = new ConnectionFactory { HostName = _config["RabbitMQ:Host"] };
 
             }
             catch (Exception ex)
@@ -35,14 +41,14 @@
         public void SendMessage(string message)
         {
             if(string.IsNullOrEmpty(message))
-            {
+        {
                 throw new ArgumentNullException($"{nameof(message)}");
             }
             try
             {
 
             }
-            catch (Exception ex)
+            catch (Exception ex) 
             {
                 throw new Exception(ex.Message);
             }
