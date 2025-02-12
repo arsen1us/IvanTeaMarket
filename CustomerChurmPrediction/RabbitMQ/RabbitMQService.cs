@@ -20,6 +20,9 @@ namespace CustomerChurmPrediction.RabbitMQ
         public RabbitMQService(IConfiguration _config)
         {
             var factory = new ConnectionFactory { HostName = _config["RabbitMQ:Host"] };
+
+            // _connection = await factory.CreateConnectionAsync();
+            // _channel = await connection.CreateChannelAsync();
         }
 
         public void PublishMessage(object obj)
