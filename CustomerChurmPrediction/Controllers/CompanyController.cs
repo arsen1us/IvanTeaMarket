@@ -9,20 +9,17 @@ namespace CustomerChurmPrediction.Controllers
 {
     [ApiController]
     [Route("/api/company")]
-    public class CompanyController : Controller
+    public class CompanyController(
+        ICompanyService _companyService,
+        IUserService _userService,
+        ITokenService _tokenService) : Controller
     {
-        ICompanyService _companyService;
-        IUserService _userService;
-        ITokenService _tokenService;
-
-        public CompanyController(ICompanyService companyService, IUserService userService, ITokenService tokenService)
-        {
-            _companyService = companyService;
-            _userService = userService;
-            _tokenService = tokenService;
-        }
-        // Получить список компаний
-        // GET: /api/company
+        /// <summary>
+        /// Получить список компаний
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        // GET: https://localhost:7299/api/company
 
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
@@ -40,8 +37,13 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
         }
-        // Получить по id
-        // GET: /api/company/{companyId}
+        /// <summary>
+        /// // Получить компанию по id
+        /// </summary>
+        /// <param name="companyId"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        // GET: https://localhost:7299/api/company/{companyId}
 
         [Authorize(Roles = "Admin, Owner")]
         [HttpGet]
@@ -61,10 +63,13 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
         }
-
-        // Надо-не надо, пока не знаю
-        // Получить компанию по id продукта
-        // GET: api/company/product/{productId}
+        /// <summary>
+        /// Получить компанию по id продукта
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        // GET: https://localhost:7299/api/company/product/{productId}
 
         [HttpGet]
         [Route("product/{productId}")]
@@ -91,7 +96,7 @@ namespace CustomerChurmPrediction.Controllers
         /// <summary>
         /// Создать компанию
         /// </summary>
-        // POST: /api/company
+        // POST: https://localhost:7299/api/company
 
         [Authorize(Roles = "User, Admin, Owner")]
         [HttpPost]
@@ -169,7 +174,7 @@ namespace CustomerChurmPrediction.Controllers
         /// <summary>
         /// Изменить компанию
         /// </summary>
-        // PUT: /api/company/{companyId}
+        // PUT: https://localhost:7299/api/company/{companyId}
 
         [Authorize(Roles = "Admin, Owner")]
         [HttpPut]
@@ -198,7 +203,7 @@ namespace CustomerChurmPrediction.Controllers
         /// <summary>
         /// Удалить компанию
         /// </summary>
-        // DELETE: /api/company/{companyId}
+        // DELETE: https://localhost:7299/api/company/{companyId}
 
         [Authorize(Roles = "Admin, Owner")]
         [HttpDelete]

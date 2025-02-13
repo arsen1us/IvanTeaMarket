@@ -94,6 +94,11 @@
         /// Предсказания оттока
         /// </summary>
         public readonly static string ChurnPredictions = "ChurnPredictions";
+
+        /// <summary>
+        /// Информация о пользователе
+        /// </summary>
+        public readonly static string UsersInformation = "UsersInformation";
     }
 }
 

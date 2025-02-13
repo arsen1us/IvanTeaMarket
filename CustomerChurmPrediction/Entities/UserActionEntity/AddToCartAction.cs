@@ -1,9 +1,9 @@
 ﻿namespace CustomerChurmPrediction.Entities.UserActionEntity
 {
     /// <summary>
-    /// Добавить товар в корзину 
+    /// Действие добавление товара в корзину 
     /// </summary>
-    public class AddToCart : UserAction
+    public class AddToCartAction : UserAction
     {
         public string ProductId { get; set; } = null!;
     }

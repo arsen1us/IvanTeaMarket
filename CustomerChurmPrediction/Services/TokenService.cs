@@ -13,32 +13,36 @@ namespace CustomerChurmPrediction.Services
         /// <summary>
         /// Генерация jwt-токена
         /// </summary>
+        /// <param name="user"></param>
+        /// <returns>jwt-токен</returns>
+        /// <exception cref="Exception"></exception>
         public string GenerateJwtToken(User user);
 
         /// <summary>
-        /// Генерация refresh-токена
+        /// Генерация refresh-токена (токен вида: RA2Isc+d/w51Y1vttEk2/rx1DUuOi7CLCvHu41rjbpI=)
         /// </summary>
+        /// <returns>refresh-токен</returns>
         public string GenerateRefreshToken();
 
         /// <summary>
-        /// Обновиль jwt-токен
+        /// Обновить токен
         /// </summary>
+        /// <param name="token">Истёкший jwt-токен</param>
+        /// <returns>обновлённый jwt-токен</returns>
+        /// <exception cref="Exception"></exception>
         public Task<string> UpdateJwtTokenAsync(string token);
     }
-    public class TokenService : ITokenService
+
+    /// <summary>
+    /// Сервис для генерации и обновления jwt-токена 
+    /// </summary>
+    /// <param name="_userService">Сервис для регистрации, аутентификации и управления данными пользователей</param>
+    /// <param name="_config">Конфигурация</param>
+    /// <param name="_logger">Логгер</param>
+    public class TokenService(IUserService _userService,
+        IConfiguration _config,
+        ILogger<TokenService> _logger) : ITokenService
     {
-        IUserService _userService;
-        IConfiguration _config;
-        ILogger<TokenService> _logger;
-
-        public TokenService(IUserService userService, IConfiguration config, ILogger<TokenService> logger)
-        {
-            _userService = userService;
-            _config = config;
-            _logger = logger;
-        }
-        // Генерация jwt-токена
-
         public string GenerateJwtToken(User user)
         {
             try
@@ -72,7 +76,6 @@ namespace CustomerChurmPrediction.Services
             }
         }
 
-        // Получается токен вида: RA2Isc+d/w51Y1vttEk2/rx1DUuOi7CLCvHu41rjbpI=
         public string GenerateRefreshToken()
         {
             var randomNumber = new byte[32];
@@ -124,7 +127,12 @@ namespace CustomerChurmPrediction.Services
             }
         }
 
-        // Проверить истёкший jwt-token
+        /// <summary>
+        /// Получить данные пользователя из истёкшего jwt-токена
+        /// </summary>
+        /// <param name="expiredToken"></param>
+        /// <returns>Данные пользователя (Объект ClaimsPrincipal)</returns>
+        /// <exception cref="Exception"></exception>
         private ClaimsPrincipal GetPrincipalExpiredToken(string expiredToken)
         {
             try

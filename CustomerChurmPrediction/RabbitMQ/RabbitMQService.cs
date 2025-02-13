@@ -19,7 +19,7 @@ namespace CustomerChurmPrediction.RabbitMQ
         /// <param name="message">Сообщение</param>
         void SendMessage(string message);
     }
-    public class RabbitMQService : IRabbitMQService
+    public class RabbitMQService(IConfiguration _config) : IRabbitMQService
     {
         public void SendMessage(object obj)
         {

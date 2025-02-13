@@ -71,22 +71,31 @@ namespace CustomerChurmPrediction.Services
         public Task<List<string>> UploadImagesAsync(IFormFileCollection images, CancellationToken? cancellationToken = default);
     }
 
+    /// <summary>
+    /// Базовый для всех остальных сервисов сервис
+    /// </summary>
+    /// <typeparam name="T">Тип сущности</typeparam>
     public class BaseService<T> : IBaseService<T> where T : AbstractEntity
     {
         IMongoClient _client;
         IConfiguration _config;
         public IMongoCollection<T> Table;
         ILogger _logger;
-        IWebHostEnvironment environment;
+        IWebHostEnvironment _environment;
 
         public IMongoDatabase Database;
 
-        public BaseService(IMongoClient client, IConfiguration config, ILogger logger, IWebHostEnvironment _environment, string collectionName)
+        public BaseService(
+            IMongoClient client,
+            IConfiguration config,
+            ILogger logger,
+            IWebHostEnvironment environment,
+            string collectionName)
         {
             _client = client;
             _config = config;
             _logger = logger;
-            environment = _environment;
+            _environment = environment;
 
             Database = _client.GetDatabase(_config["DatabaseConnection:DatabaseName"]);
             Table = Database.GetCollection<T>(collectionName);
@@ -345,7 +354,7 @@ namespace CustomerChurmPrediction.Services
             try
             {
                 // Путь к папке uploads
-                var updoadsFolder = Path.Combine(environment.WebRootPath, "uploads");
+                var updoadsFolder = Path.Combine(_environment.WebRootPath, "uploads");
 
                 var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
 

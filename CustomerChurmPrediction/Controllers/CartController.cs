@@ -7,17 +7,11 @@ namespace CustomerChurmPrediction.Controllers
 {
     [ApiController]
     [Route("/api/cart")]
-    public class CartController : ControllerBase
+    public class CartController(
+        ICartService _cartService,
+        IUserService _userService,
+        ILogger<CartController> _logger) : ControllerBase
     {
-        ICartService _cartService;
-        IUserService _userService;
-        ILogger<CartController> _logger;
-        public CartController(ICartService cartService, IUserService userService, ILogger<CartController> logger)
-        {
-            _cartService = cartService;
-            _userService = userService;
-            _logger = logger;
-        }
         /// <summary>
         /// Получить корзину по id пользователя
         /// </summary>

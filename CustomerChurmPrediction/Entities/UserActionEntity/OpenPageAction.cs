@@ -1,10 +1,10 @@
 ﻿namespace CustomerChurmPrediction.Entities.UserActionEntity
 {
     /// <summary>
-    /// Открыть страницу
+    /// Действие открытия страницы
     /// </summary>
     // Добавляется при октрытии или обновлении любой страницы 
-    public class OpenPage : UserAction
+    public class OpenPageAction : UserAction
     {
 
     }

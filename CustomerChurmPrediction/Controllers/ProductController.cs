@@ -9,27 +9,13 @@ namespace CustomerChurmPrediction.Controllers
 {
     [ApiController]
     [Route("/api/product")]
-    public class ProductController : ControllerBase
+    public class ProductController(
+        IUserService _userService,
+        IProductService _productService,
+        ICompanyService _companyService,
+        ILogger<ProductController> _logger,
+        IHubContext<NotificationHub> _hubContext) : ControllerBase
     {
-        IUserService _userService;
-        IProductService _productService;
-        ICompanyService _companyService;
-        ILogger<ProductController> _logger;
-        IHubContext<NotificationHub> _hubContext;
-
-        public ProductController(
-            IUserService userService,
-            IProductService productService,
-            ICompanyService companyService,
-            ILogger<ProductController> logger,
-            IHubContext<NotificationHub> hubContext)
-        {
-            _userService = userService;
-            _productService = productService;
-            _companyService = companyService;
-            _logger = logger;
-            _hubContext = hubContext;
-        }
         /// <summary>
         /// Получить список всех продуктов
         /// </summary>

@@ -7,17 +7,10 @@ namespace CustomerChurmPrediction.Controllers
 {
     [ApiController]
     [Route("api/session")]
-    public class SessionController : Controller
+    public class SessionController(
+        ISessionService _sessionService,
+        IUserService _userService) : Controller
     {
-        ISessionService _sessionService;
-        IUserService _userService;
-
-        public SessionController(ISessionService sessionService, IUserService userService)
-        {
-            _sessionService = sessionService;
-            _userService = userService;
-        }
-
         /// <summary>
         /// Создание сессии
         /// </summary>

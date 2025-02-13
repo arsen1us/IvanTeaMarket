@@ -9,22 +9,11 @@ namespace CustomerChurmPrediction.Controllers
 {
     [ApiController]
     [Route("/api/user")]
-    public class UserController : ControllerBase
+    public class UserController(
+        IUserService _userService,
+        ITokenService _tokenService,
+        ILogger<UserController> _logger) : ControllerBase
     {
-        IUserService _userService;
-        ITokenService _tokenService;
-        ILogger<UserController> _logger;
-
-        public UserController(
-            IUserService userService,
-            ITokenService tokenService,
-            ILogger<UserController> logger)
-        {
-            _userService = userService;
-            _tokenService = tokenService;
-            _logger = logger;
-
-        }
         /// <summary>
         /// Регистрация
         /// </summary>

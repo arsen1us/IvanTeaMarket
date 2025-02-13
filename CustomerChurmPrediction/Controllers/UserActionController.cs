@@ -6,15 +6,8 @@ namespace CustomerChurmPrediction.Controllers
 {
     [ApiController]
     [Route("api/user-action")]
-    public class UserActionController : Controller
+    public class UserActionController(IUserActionService _userActionService) : Controller
     {
-        IUserActionService _userActionService;
-
-        public UserActionController(IUserActionService userActionService)
-        {
-            _userActionService = userActionService;
-        }
-
         /// <summary>
         /// Добавить действие Добавить в корзину
         /// </summary>
@@ -22,31 +15,7 @@ namespace CustomerChurmPrediction.Controllers
 
         [HttpPost]
         [Route("add-to-cart")]
-        public async Task<IActionResult> AddToCart([FromBody] AddToCart userAction)
-        {
-            if (userAction is null)
-                return BadRequest();
-            try
-            {
-                bool isSuccess = await _userActionService.SaveOrUpdateAsync(userAction, default);
-                if (isSuccess)
-                    return Ok(true);
-
-                return StatusCode(500);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-        /// <summary>
-        /// Добавить действие Попытка входа
-        /// </summary>
-        // POST: api/user-action/auth-attempt
-
-        [HttpPost]
-        [Route("auth-attempt")]
-        public async Task<IActionResult> AuthenticationAttempt([FromBody] AuthenticationAttempt userAction)
+        public async Task<IActionResult> AddToCart([FromBody] AddToCartAction userAction)
         {
             if (userAction is null)
                 return BadRequest();
@@ -70,7 +39,7 @@ namespace CustomerChurmPrediction.Controllers
 
         [HttpPost]
         [Route("auth-seccess")]
-        public async Task<IActionResult> AuthenticationSuccess([FromBody] AuthenticationSuccess userAction)
+        public async Task<IActionResult> AuthenticationSuccess([FromBody] AuthenticateAction userAction)
         {
             if (userAction is null)
                 return BadRequest();
@@ -94,31 +63,7 @@ namespace CustomerChurmPrediction.Controllers
 
         [HttpPost]
         [Route("buy-product")]
-        public async Task<IActionResult> BuyProduct([FromBody] BuyProduct userAction)
-        {
-            if (userAction is null)
-                return BadRequest();
-            try
-            {
-                bool isSuccess = await _userActionService.SaveOrUpdateAsync(userAction, default);
-                if (isSuccess)
-                    return Ok(true);
-
-                return StatusCode(500);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-        /// <summary>
-        /// Добавить действие Купить продукт из корзины
-        /// </summary>
-        // POST: api/user-action/buy-product-from-cart
-
-        [HttpPost]
-        [Route("buy-product-from-cart")]
-        public async Task<IActionResult> BuyProductFromCart([FromBody] BuyProductFromCart userAction)
+        public async Task<IActionResult> BuyProduct([FromBody] OrderAction userAction)
         {
             if (userAction is null)
                 return BadRequest();
@@ -142,7 +87,7 @@ namespace CustomerChurmPrediction.Controllers
 
         [HttpPost]
         [Route("create-review")]
-        public async Task<IActionResult> CreateReview([FromBody] CreateReview userAction)
+        public async Task<IActionResult> CreateReview([FromBody] CreateReviewAction userAction)
         {
             if (userAction is null)
                 return BadRequest();
@@ -166,7 +111,7 @@ namespace CustomerChurmPrediction.Controllers
 
         [HttpPost]
         [Route("open-page")]
-        public async Task<IActionResult> OpenPage([FromBody] OpenPage userAction)
+        public async Task<IActionResult> OpenPage([FromBody] OpenPageAction userAction)
         {
             if (userAction is null)
                 return BadRequest();
@@ -190,7 +135,7 @@ namespace CustomerChurmPrediction.Controllers
 
         [HttpPost]
         [Route("open-promotion")]
-        public async Task<IActionResult> OpenPromotion([FromBody] OpenPromotion userAction)
+        public async Task<IActionResult> OpenPromotion([FromBody] OpenPromotionAction userAction)
         {
             if (userAction is null)
                 return BadRequest();
@@ -214,31 +159,7 @@ namespace CustomerChurmPrediction.Controllers
 
         [HttpPost]
         [Route("reg-attempt")]
-        public async Task<IActionResult> RegistrationAttempt([FromBody] RegistrationAttempt userAction)
-        {
-            if (userAction is null)
-                return BadRequest();
-            try
-            {
-                bool isSuccess = await _userActionService.SaveOrUpdateAsync(userAction, default);
-                if (isSuccess)
-                    return Ok(true);
-
-                return StatusCode(500);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-        /// <summary>
-        /// Добавить действие Успешная регистрация
-        /// </summary>
-        // POST: api/user-action/reg-success
-
-        [HttpPost]
-        [Route("reg-success")]
-        public async Task<IActionResult> RegistrationSuccess([FromBody] RegistrationSuccess userAction)
+        public async Task<IActionResult> RegistrationAttempt([FromBody] RegisterAction userAction)
         {
             if (userAction is null)
                 return BadRequest();
@@ -263,7 +184,7 @@ namespace CustomerChurmPrediction.Controllers
 
         [HttpPost]
         [Route("use-coupon")]
-        public async Task<IActionResult> UseCoupon([FromBody] UseCoupon userAction)
+        public async Task<IActionResult> UseCoupon([FromBody] UseCouponAction userAction)
         {
             if (userAction is null)
                 return BadRequest();

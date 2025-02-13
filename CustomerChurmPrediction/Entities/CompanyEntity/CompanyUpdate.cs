@@ -16,6 +16,10 @@
         /// Id пользователя, кто добавляет компанию
         /// </summary>
         public string UserId { get; set; } = null!;
+
+        /// <summary>
+        /// Id владельцев компании
+        /// </summary>
         public List<string> OwnerIds { get; set; } = new List<string>();
     }
 }

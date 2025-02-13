@@ -11,22 +11,15 @@ namespace CustomerChurmPrediction.Controllers
 {
     [ApiController]
     [Route("/api/coupon")]
-    public class CouponController : Controller
+    public class CouponController(
+        ICouponService _couponService,
+        IUserService _userService,
+        ILogger<CouponController> _logger) : Controller
     {
-        ICouponService _couponService;
-        IUserService _userService;
-        ILogger<CouponController> _logger;
-
-        public CouponController(ICouponService couponService, IUserService userService, ILogger<CouponController> logger)
-        {
-            _couponService = couponService;
-            _userService = userService;
-            _logger = logger;
-        }
         /// <summary>
         /// Получить список купонов
         /// </summary>
-        // GET: api/coupon
+        // GET: https://localhost:7299/api/coupon
 
         [HttpGet]
 		public async Task<IActionResult> GetAllAsync()
@@ -46,7 +39,7 @@ namespace CustomerChurmPrediction.Controllers
         /// <summary>
         /// Получить купон по id
         /// </summary>
-        // GET: api/coupon/{couponId}
+        // GET: https://localhost:7299/api/coupon/{couponId}
 
         [HttpGet]
 		[Route("{couponId}")]
@@ -72,7 +65,7 @@ namespace CustomerChurmPrediction.Controllers
         /// <summary>
         /// Получить список купонов по id компании
         /// </summary>
-        // GET: api/coupon/company/{companyId}
+        // GET: https://localhost:7299/api/coupon/company/{companyId}
 
         [HttpGet]
 		[Route("company/{companyId}")]
@@ -101,7 +94,7 @@ namespace CustomerChurmPrediction.Controllers
         /// <summary>
         /// Добавить купон
         /// </summary>
-        // POST: api/coupon
+        // POST: https://localhost:7299/api/coupon
 
         [Authorize(Roles = "Admin, Owner")]
         [HttpPost]
@@ -134,7 +127,7 @@ namespace CustomerChurmPrediction.Controllers
         /// <summary>
         /// Изменить купон
         /// </summary>
-        // PUT: api/coupon/{couponId}
+        // PUT: https://localhost:7299/api/coupon/{couponId}
 
         [Authorize(Roles = "Admin, Owner")]
         [HttpPut]
@@ -165,7 +158,7 @@ namespace CustomerChurmPrediction.Controllers
         /// <summary>
         /// Удалить купон
         /// </summary>
-        // DELETE: api/coupon/{couponId}
+        // DELETE: https://localhost:7299/api/coupon/{couponId}
 
         [Authorize(Roles = "Admin, Owner")]
         [HttpDelete]

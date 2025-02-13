@@ -6,18 +6,11 @@ namespace CustomerChurmPrediction.Controllers
 {
     [ApiController]
     [Route("/api/review")]
-    public class ReviewController : Controller
+    public class ReviewController(
+        IReviewService _reviewService,
+        IUserService _userService,
+        ILogger<ReviewController> _logger) : Controller
     {
-        IReviewService _reviewService;
-        IUserService _userService;
-        ILogger<ReviewController> _logger;
-        public ReviewController(IReviewService reviewService, IUserService userService, ILogger<ReviewController> logger)
-        {
-            _reviewService = reviewService;
-            _userService = userService;
-            _logger = logger;
-
-        }
         /// <summary>
         /// Получить писок ReviewModels по id продукта 
         /// </summary>

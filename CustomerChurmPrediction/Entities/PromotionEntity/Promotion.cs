@@ -46,7 +46,6 @@
         /// <summary>
         /// Целевая аудитория
         /// </summary>
-        
         public string TargetAudience {get; set;} = null!;
 
         /// <summary>

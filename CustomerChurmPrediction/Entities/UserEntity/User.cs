@@ -100,6 +100,8 @@ namespace CustomerChurmPrediction.Entities.UserEntity
         /// </summary>
         public TimeSpan AverageSessionDuration { get; set; }
 
+
+
         /// <summary>
         /// Количество попыток регистрации
         /// </summary>
@@ -110,6 +112,8 @@ namespace CustomerChurmPrediction.Entities.UserEntity
         /// </summary>
         public int AuthenticationTries { get; set; }
         
+
+
         /// <summary>
         /// Число просмотренных страниц
         /// </summary>
@@ -119,7 +123,6 @@ namespace CustomerChurmPrediction.Entities.UserEntity
         /// Информация о взаимодействии с корзиной 
         /// </summary>
         public CartInteraction CartInteraction { get; set; } = new();
-        
 
         /// <summary>
         /// Количество кликов на рекламу

@@ -6,18 +6,11 @@ namespace CustomerChurmPrediction.Controllers
 {
     [ApiController]
     [Route("/api/token")]
-    public class TokenController : Controller
+    public class TokenController(
+        ITokenService _tokenService,
+        IUserService _userService,
+        ILogger<UserController> _logger) : Controller
     {
-        ITokenService _tokenService;
-        IUserService _userService;
-        ILogger<UserController> _logger;
-
-        public TokenController(ITokenService tokenService, IUserService userService, ILogger<UserController> logger)
-        {
-            _tokenService = tokenService;
-            _userService = userService;
-            _logger = logger;
-        }
         /// <summary>
         /// Обновить jwt-токен и refresh-токен
         /// </summary>

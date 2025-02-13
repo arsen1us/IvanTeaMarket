@@ -8,25 +8,12 @@ namespace CustomerChurmPrediction.Controllers
 {
     [ApiController]
     [Route("/api/order")]
-    public class OrderController : Controller
+    public class OrderController(
+        IOrderService _orderService,
+        ICompanyService _companyService,
+        IUserService _userService,
+        IProductService _productService) : Controller
     {
-        IOrderService _orderService;
-        ICompanyService _companyService;
-        IUserService _userService;
-        IProductService _productService;
-
-        public OrderController(
-            IOrderService orderService,
-            ICompanyService companyService,
-            IUserService userService,
-            IProductService productService) 
-        {
-            _companyService = companyService;
-            _orderService = orderService;
-            _userService = userService;
-            _productService = productService;
-        }
-
         /// <summary>
         /// Получить спиок заказов по id компании
         /// </summary>

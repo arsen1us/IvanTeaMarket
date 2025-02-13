@@ -1,9 +1,9 @@
 ﻿namespace CustomerChurmPrediction.Entities.UserActionEntity
 {
     /// <summary>
-    /// Открыть рекламный пост
+    /// Действие открытия рекламного поста
     /// </summary>
-    public class OpenPromotion : UserAction
+    public class OpenPromotionAction : UserAction
     {
         /// <summary>
         /// Id рекламного поста

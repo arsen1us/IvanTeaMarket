@@ -7,14 +7,8 @@ namespace CustomerChurmPrediction.Controllers
 {
     [ApiController]
     [Route("api/category")]
-    public class CategoryController : Controller
+    public class CategoryController(ICategoryService _categoryService) : Controller
     {
-        ICategoryService _categoryService;
-
-        public CategoryController(ICategoryService categoryService)
-        {
-            _categoryService = categoryService;
-        }
         /// <summary>
         /// Получить список всех категорий
         /// </summary>

@@ -1,9 +1,9 @@
 ﻿namespace CustomerChurmPrediction.Entities.UserActionEntity
 {
     /// <summary>
-    /// Оставить отзыв
+    /// Действие создание отзыва на продукт
     /// </summary>
-    public class CreateReview : UserAction
+    public class CreateReviewAction : UserAction
     {
         /// <summary>
         /// Id отзыва

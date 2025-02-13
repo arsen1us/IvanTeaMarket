@@ -8,20 +8,11 @@ namespace CustomerChurmPrediction.Controllers
 {
     [ApiController]
     [Route("/api/promotion")]
-    public class PromotionController : Controller
+    public class PromotionController(
+        IPromotionService _promotionService,
+        ICompanyService _companyService,
+        ILogger<PromotionController> _logger) : Controller
     {
-        IPromotionService _promotionService;
-        ICompanyService _companyService;
-        ILogger<PromotionController> _logger;
-
-        public PromotionController(IPromotionService promotionService, ICompanyService companyService, ILogger<PromotionController> logger)
-        {
-            _promotionService = promotionService;
-            _companyService = companyService;
-            _logger = logger;
-
-        }
-
         /// <summary>
         /// Получить список всех рекламных постов
         /// </summary>

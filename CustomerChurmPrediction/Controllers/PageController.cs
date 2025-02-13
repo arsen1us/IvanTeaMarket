@@ -6,14 +6,8 @@ namespace CustomerChurmPrediction.Controllers
 {
     [ApiController]
     [Route("/api/page")]
-    public class PageController : Controller
+    public class PageController(IPageService _pageService) : Controller
     {
-        IPageService _pageService;
-        public PageController(IPageService pageService)
-        {
-            _pageService = pageService;
-        }
-
         // Получить число просмотров
         //[HttpGet]
         //public async Task<IActionResult> GetPageViewsByIdAsync(string pageId, CancellationToken? cancellationToken = default)
