@@ -184,7 +184,7 @@ namespace CustomerChurmPrediction.Controllers
             public string Description { get; set; } = null!;
             public string CategoryId { get; set; } = null!;
             public int Count { get; set; }
-            public decimal Price { get; set; }
+            public double Price { get; set; }
             public string CompanyId { get; set; } = null!;
             public IFormFileCollection? Images { get; set; }
         }

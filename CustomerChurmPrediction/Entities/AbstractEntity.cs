@@ -1,6 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Driver;
+using System.Text.Json.Serialization;
 
 namespace CustomerChurmPrediction.Entities
 {
@@ -15,21 +15,21 @@ namespace CustomerChurmPrediction.Entities
         /// <summary>
         /// Время обновления сущности
         /// </summary>
-        public DateTime LastTimeUserUpdate { get; set; } 
+        public DateTime? LastTimeUserUpdate { get; set; }
 
         /// <summary>
         /// Время создания сущности
         /// </summary>
-        public DateTime CreateTime { get; set; } = DateTime.Now;
+        public DateTime? CreateTime { get; set; } = DateTime.Now;
 
         /// <summary>
         /// Id создателя
         /// </summary>
-        public string CreatorId { get; set; } = null!;
+        public string? CreatorId { get; set; }
 
         /// <summary>
         /// Id пользователя, последнего изменившего запись
         /// </summary>
-        public string UserIdLastUpdate { get; set; } = null!;
+        public string? UserIdLastUpdate { get; set; }
     }
 }

@@ -1,4 +1,7 @@
 ﻿using CustomerChurmPrediction.Entities.OrderEntity;
+using CustomerChurmPrediction.Entities.OrderEntity.Create;
+using CustomerChurmPrediction.Entities.ProductEntity;
+using CustomerChurmPrediction.Entities.UserEntity;
 using CustomerChurmPrediction.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,14 +32,14 @@ namespace CustomerChurmPrediction.Controllers
             try
             {
                 var company = _companyService.FindByIdAsync(companyId, default);
-
+        
                 if(company is null)
                 {
                     return NotFound();
                 }
-
-                var orderList = await _orderService.GetOrderModelsByCompanyIdAsync(companyId, default);
-
+        
+                var orderList = await _orderService.GetByCompanyIdAsync(companyId, default);
+        
                 if(orderList is null)
                 {
                     return NotFound();
@@ -50,7 +53,7 @@ namespace CustomerChurmPrediction.Controllers
         }
 
         /// <summary>
-        /// Получить спиок заказов по id пользователя
+        /// Получить спиcок заказов по id пользователя
         /// </summary>
         // GET: /api/order/company/{companyId}
 
@@ -64,12 +67,12 @@ namespace CustomerChurmPrediction.Controllers
             try
             {
                 var user = _userService.FindByIdAsync(userId, default);
-
+        
                 if (user is null)
                     return NotFound();
-
-                var orderList = await _orderService.GetOrderModelsByUserIdAsync(userId, default);
-
+        
+                var orderList = await _orderService.GetByUserIdAsync(userId, default);
+        
                 if (orderList is null)
                 {
                     return NotFound();
@@ -87,59 +90,66 @@ namespace CustomerChurmPrediction.Controllers
         /// </summary>
         // POST: /api/order
         [HttpPost]
-        public async Task<IActionResult> AddOrderAsync([FromBody] OrderListDto orderAdd)
+        public async Task<IActionResult> AddOrderAsync([FromBody]CreateOrderDto createOrder)
         {
-            if (orderAdd is null
-                || !orderAdd.OrderList.Any()
-                || string.IsNullOrEmpty(orderAdd.UserId))
+            // Если объект createOrder равен null или он пуст
+            if (createOrder is null|| !createOrder.Items.Any())
                 return BadRequest("Переданные аргументы is null or empty");
-
-            List<Order> orderList = new List<Order>();
-            Order order;
 
             try
             {
-                var user = await _userService.FindByIdAsync(orderAdd.UserId);
+                // Проверка, существует ли пользователь
+                var user = await _userService.FindByIdAsync(createOrder.UserId);
                 if (user is null)
                     return BadRequest("Пользователь с данным id не найден");
-                
-                foreach(var item in orderAdd.OrderList)
+
+                Order order = new Order
                 {
-                    var product = await _productService.FindByIdAsync(item.ProductId, default);
-                    // Продукт не найден
+                    UserId = user.Id,
+                    CreatorId = user.Id,
+                    UserIdLastUpdate = user.Id,
+                    OrderStatus = "Created",
+                    CreateTime = DateTime.UtcNow,
+                    LastTimeUserUpdate = DateTime.UtcNow,
+                };
+
+                foreach (var createOrderItem in createOrder.Items)
+                {
+                    OrderItem orderItem;
+
+                    // Проверка, существует ли продукт
+                    Product product = await _productService.FindByIdAsync(createOrderItem.ProductId, default);
                     if (product is null)
                         return BadRequest();
 
-                    // Количество товара на складе меньше чем в заказе
-                    if (product.Count < item.Quantity)
+                    // Проверка количества продукта
+                    if (product.Count < createOrderItem.Quantity)
                         return BadRequest();
 
-                    order = new Order
+                    orderItem = new OrderItem
                     {
-                        UserId = user.Id,
-                        CompanyId = product.CompanyId,
+                        OrderId = order.Id,
                         ProductId = product.Id,
-                        ProductCount = item.Quantity,
-                        CreateTime = DateTime.Now,
-                        LastTimeUserUpdate = DateTime.Now,
-                        TotalPrice = product.Price * item.Quantity,
+                        Quantity = createOrderItem.Quantity,
+                        UnitPrice = product.Price,
+                        TotalPrice = createOrderItem.Quantity * product.Price,
+                        CreatorId = user.Id,
+                        UserIdLastUpdate = user.Id,
+                        CreateTime = DateTime.UtcNow,
+                        LastTimeUserUpdate = DateTime.UtcNow
                     };
 
-                    if (order is not null)
-                        orderList.Add(order);
+                    order.Items.Add(orderItem);
                 }
 
-                if(orderList is not null)
-                {
-                    bool isSuccess = await _orderService.SaveOrUpdateAsync(orderList, default);
+                order.TotalPrice = order.Items.Sum(x => x.TotalPrice);
 
-                    if (isSuccess)
-                        return Ok(new { orderStatus = isSuccess });
+                bool isSuccess = await _orderService.SaveOrUpdateAsync(order, default);
 
-                    return StatusCode(500, "Произошла ошибка во время сохранения заказа. Деньги будут возвращены на счёт!");
-                }
-                
-                return StatusCode(500, "Произошла ошибка во время создания заказа. Деньги будут возвращены на счёт!");
+                if (isSuccess)
+                    return Ok(new { orderStatus = isSuccess });
+
+                return StatusCode(500, "Произошла ошибка во время сохранения заказа. Деньги будут возвращены на счёт!");
             }
             catch (Exception ex)
             {
@@ -152,8 +162,8 @@ namespace CustomerChurmPrediction.Controllers
         // GET: /api/order/company/{companyId}
 
         [HttpDelete]
-        [Route("{companyId}")]
-        public async Task<IActionResult> AddOrderAsync(string companyId)
+        [Route("{orderId}")]
+        public async Task<IActionResult> CancelOrderAsync(string orderId)
         {
             try
             {

@@ -19,7 +19,9 @@ namespace CustomerChurmPrediction.Utils
             services.AddCors(options =>
                 options.AddPolicy("default", policy =>
                 {
-                    policy.WithOrigins("http://localhost:3000")
+                    policy.WithOrigins(
+                        "http://localhost:3000",
+                        "http://localhost:4000")
                           .AllowAnyHeader()
                           .AllowAnyMethod()
                           .AllowCredentials(); // Для SignalR

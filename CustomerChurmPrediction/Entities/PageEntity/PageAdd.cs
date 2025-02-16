@@ -1,10 +1,19 @@
-﻿namespace CustomerChurmPrediction.Entities.PageEntity
+﻿using Newtonsoft.Json;
+
+namespace CustomerChurmPrediction.Entities.PageEntity
 {
     public class PageAdd
     {
+        /// <summary>
+        /// Id пользователя
+        /// </summary>
+        [JsonProperty("userId")]
         public string UserId { get; set; } = null!;
 
-        // Ссылка на страницу (пока оставлю так, так как нужны проспотры для рекламы, профилей и т.п.)
+        /// <summary>
+        /// Ссылка на страницу
+        /// </summary>
+        [JsonProperty("pageUrl")]
         public string PageUrl { get; set; } = null!;
     }
 }

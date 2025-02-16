@@ -1,9 +1,20 @@
 ﻿using Newtonsoft.Json;
 
-namespace CustomerChurmPrediction.Entities.OrderEntity
+using CustomerChurmPrediction.Entities.ProductEntity;
+using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson;
+
+namespace CustomerChurmPrediction.Entities.OrderEntity.Model
 {
-    public class Order : AbstractEntity
+    public class OrderModel
     {
+        /// <summary>
+        /// Id сущности
+        /// </summary>
+        [JsonProperty("orderId")]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; } = null!;
+
         /// <summary>
         /// Id пользователя
         /// </summary>
@@ -23,9 +34,9 @@ namespace CustomerChurmPrediction.Entities.OrderEntity
         public string OrderStatus { get; set; } = "Created";
 
         /// <summary>
-        /// Список позиций в заказе
+        /// Элементы заказа
         /// </summary>
         [JsonProperty("items")]
-        public List<OrderItem> Items { get; set; } = new List<OrderItem>();
+        public List<OrderItemModel> Items { get; set; } = new List<OrderItemModel>();
     }
 }

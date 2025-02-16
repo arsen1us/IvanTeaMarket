@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using CustomerChurmPrediction.Entities.CartEntity;
 using Microsoft.AspNetCore.Authorization;
+using MongoDB.Driver;
+using CustomerChurmPrediction.Entities.ProductEntity;
 
 namespace CustomerChurmPrediction.Controllers
 {
@@ -10,6 +12,7 @@ namespace CustomerChurmPrediction.Controllers
     public class CartController(
         ICartService _cartService,
         IUserService _userService,
+        IProductService _productService,
         ILogger<CartController> _logger) : ControllerBase
     {
         /// <summary>
@@ -30,7 +33,10 @@ namespace CustomerChurmPrediction.Controllers
                 if(cartList is null)
                     return NotFound();
 
-                var productList = await _cartService.FindProductsFromCardByUserId(userId, default);
+                var produtIds = cartList.Select(cart => cart.ProductId);
+                var filter = Builders<Product>.Filter.In(product => product.Id, produtIds);
+
+                var productList = await _productService.FindAllAsync(filter, default);
 
                 return Ok( new { productList = productList });
             }

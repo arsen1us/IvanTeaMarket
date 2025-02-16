@@ -124,12 +124,12 @@ namespace CustomerChurmPrediction
             var user = await _userService.FindByIdAsync(userId, default);
             if (user is not null)
             {
-                var cartList = await _cartService.FindProductsFromCardByUserId(userId, default);
-
-
-                var connectionId = UserConnections.GetValueOrDefault(userId);
-                if (!string.IsNullOrEmpty(connectionId))
-                    await Clients.Client(connectionId).SendAsync("ReceiveNotification", message, cartList);
+                // var cartList = await _cartService.FindProductsFromCartByUserId(userId, default);
+                // 
+                // 
+                // var connectionId = UserConnections.GetValueOrDefault(userId);
+                // if (!string.IsNullOrEmpty(connectionId))
+                //     await Clients.Client(connectionId).SendAsync("ReceiveNotification", message, cartList);
             }
         }
     }
