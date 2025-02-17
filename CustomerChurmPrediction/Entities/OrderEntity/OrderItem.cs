@@ -17,6 +17,12 @@ namespace CustomerChurmPrediction.Entities.OrderEntity
         public string ProductId { get; set; } = null!;
 
         /// <summary>
+        /// Id компании
+        /// </summary>
+        [JsonProperty("companyId")]
+        public string CompanyId { get; set; } = null!;
+
+        /// <summary>
         /// Количество
         /// </summary>
         [JsonProperty("quantity")]

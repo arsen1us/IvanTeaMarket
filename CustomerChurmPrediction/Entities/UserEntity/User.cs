@@ -100,8 +100,6 @@ namespace CustomerChurmPrediction.Entities.UserEntity
         /// </summary>
         public TimeSpan AverageSessionDuration { get; set; }
 
-
-
         /// <summary>
         /// Количество попыток регистрации
         /// </summary>

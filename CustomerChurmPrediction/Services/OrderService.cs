@@ -26,26 +26,52 @@ namespace CustomerChurmPrediction.Services
     {
         public async Task<List<OrderModel>> GetByCompanyIdAsync(string companyId, CancellationToken? cancellationToken = default)
         {
-            throw new Exception();
+            if (string.IsNullOrEmpty(companyId))
+                throw new ArgumentNullException($"Parameter {nameof(companyId)} is null");
+            try
+            {
+                var orderFilter = Builders<Order>.Filter.ElemMatch(order => order.Items, item => item.CompanyId == companyId);
+                var companyOrders = await FindAllAsync(orderFilter, cancellationToken);
 
-            // if (string.IsNullOrEmpty(companyId))
-            //     throw new ArgumentNullException();
-            // try
-            // {
-            //     var _productCollection = Database.GetCollection<Product>(Products);
-            // 
-            //     var result = from order in Table.AsQueryable()
-            //                  join product in _productCollection.AsQueryable() on order.ProductId equals product.Id
-            //                  where order.CompanyId == companyId
-            //                  select new OrderModel { Order = order, Product = product };
-            // 
-            //     return await result.ToListAsync();
-            // 
-            // }
-            // catch (Exception ex)
-            // {
-            //     throw new Exception(ex.Message);
-            // }
+                // id продуктов
+                List<string> productIds = companyOrders
+                    .SelectMany(order => order.Items.Select(i => i.ProductId))
+                    .Distinct()
+                    .ToList();
+
+                var productFilter = Builders<Product>.Filter.In(product => product.Id, productIds);
+                var productCollection = Database.GetCollection<Product>(Products);
+
+                var productList = await (await productCollection.FindAsync(productFilter)).ToListAsync();
+                var productDict = productList.ToDictionary(p => p.Id);
+
+                var orderModels = companyOrders.Select(order => new OrderModel
+                {
+                    Id = order.Id,
+                    UserId = order.UserId,
+                    OrderStatus = order.OrderStatus,
+                    TotalPrice = order.TotalPrice,
+                    Items = order.Items.Where(item => item.CompanyId == companyId).Select(item =>
+                    {
+                        var product = productDict.GetValueOrDefault(item.ProductId);
+                        return new OrderItemModel
+                        {
+                            ProductId = item.ProductId,
+                            ProductName = product?.Name ?? "Неизвестный продукт",
+                            ProductImageUrl = product?.ImageSrcs?.FirstOrDefault() ?? "",
+                            Quantity = item.Quantity,
+                            UnitPrice = item.UnitPrice,
+                            TotalPrice = item.TotalPrice
+                        };
+                    }).ToList()
+                }).ToList();
+
+                return orderModels;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<List<OrderModel>> GetByUserIdAsync(string userId, CancellationToken? cancellationToken = default)
@@ -91,8 +117,6 @@ namespace CustomerChurmPrediction.Services
                 }).ToList();
 
                 return orderModels;
-
-
             }
             catch (Exception ex)
             {

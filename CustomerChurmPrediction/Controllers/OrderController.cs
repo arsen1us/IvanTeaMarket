@@ -130,6 +130,7 @@ namespace CustomerChurmPrediction.Controllers
                     {
                         OrderId = order.Id,
                         ProductId = product.Id,
+                        CompanyId = product.CompanyId,
                         Quantity = createOrderItem.Quantity,
                         UnitPrice = product.Price,
                         TotalPrice = createOrderItem.Quantity * product.Price,
