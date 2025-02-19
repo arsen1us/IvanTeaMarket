@@ -9,7 +9,18 @@ namespace CustomerChurmPrediction.Services
         /// <summary>
         /// Получить компанию по id продукта
         /// </summary>
+        /// <param name="productId"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public Task<Company> GetByProductIdAsync(string productId, CancellationToken? cancellationToken = default);
+
+        /// <summary>
+        /// Получить компанию по id пользователя 
+        /// </summary>
+        /// <param name="companyId"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public Task<Company> FindByUserIdAsync(string userId, CancellationToken? cancellationToken = default);
     }
     public class CompanyService(IMongoClient client, IConfiguration config, ILogger<CompanyService> logger, IProductService productService, IWebHostEnvironment _environment) 
         : BaseService<Company>(client, config, logger, _environment, Companies), ICompanyService 
@@ -34,6 +45,22 @@ namespace CustomerChurmPrediction.Services
                 }
 
                 return null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<Company> FindByUserIdAsync(string userId, CancellationToken? cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(userId))
+                throw new ArgumentNullException(nameof(userId));
+            try
+            {
+                var filter = Builders<Company>.Filter.ElemMatch(company => company.OwnerIds, ownerId => ownerId == userId);
+                var company = (await FindAllAsync(filter, cancellationToken)).FirstOrDefault();
+                return company;
             }
             catch (Exception ex)
             {

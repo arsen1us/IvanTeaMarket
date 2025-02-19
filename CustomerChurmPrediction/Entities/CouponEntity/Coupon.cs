@@ -1,49 +1,40 @@
-﻿using Amazon.Util;
+﻿using Newtonsoft.Json;
 
 namespace CustomerChurmPrediction.Entities.CouponEntity
 {
-    // Купоны пользователей
+    /// <summary>
+    /// Купон (данный купон применяетсяс ко всем продуктам компании)
+    /// </summary>
     public class Coupon : AbstractEntity
     {
         /// <summary>
-        /// Активирован ли купол или нет
-        /// </summary>
-        public bool IsActivated { get; set; } = false;
-
-        /// <summary>
         /// Ключ активации
         /// </summary>
-        public string Key { get; set; } = null!;
+        [JsonProperty("code")]
+        public string Code { get; set; } = null!;
 
         /// <summary>
-        /// Id продуктов, на которые будет распространяться купон
+        /// Активен ли купон
         /// </summary>
-        public List<string> ProductIds { get; set; } = new List<string>();
+        [JsonProperty("isActive")]
+        public bool IsActive { get; set; } = false;
+
+        /// <summary>
+        /// Процент скидки на продукт
+        /// </summary>
+        [JsonProperty("discountPercentage")]
+        public double DiscountPercentage {get; set;}
 
         /// <summary>
         /// Id компании
         /// </summary>
+        [JsonProperty("companyId")]
         public string CompanyId { get; set; } = null!;
 
         /// <summary>
-        /// Дата начала действия купона
+        /// Дата окончания купона 
         /// </summary>
-        public DateTime StardDate { get; set; }
-
-        /// <summary>
-        /// Дата окончания действия купона
-        /// </summary>
-        public DateTime EndDate { get; set; }
-
-        /// <summary>
-        /// Время начала
-        /// </summary>
-        public TimeOnly StartTime { get; set; }
-
-        /// <summary>
-        /// Время окончания
-        /// </summary>
-        public TimeOnly EndTime { get; set; }
-        public Coupon() { }
+        [JsonProperty("expirationDate")]
+        public DateTime ExpirationDate { get; set; }
     }
 }

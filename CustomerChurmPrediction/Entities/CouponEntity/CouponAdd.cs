@@ -1,31 +1,32 @@
-﻿namespace CustomerChurmPrediction.Entities.CouponEntity
+﻿using Newtonsoft.Json;
+
+namespace CustomerChurmPrediction.Entities.CouponEntity
 {
-	public class CouponAdd : AbstractEntity
+	public class CouponAdd
 	{
         /// <summary>
         /// Ключ активации
         /// </summary>
-        public string Key { get; set; } = null!;
+        [JsonProperty("code")]
+        public string Code { get; set; } = null!;
 
         /// <summary>
-        /// Id продуктов, на которые будет распространяться купон
+        /// Процент скидки на продукт
         /// </summary>
-        public List<string> ProductIds { get; set; } = new List<string>();
+        [JsonProperty("discountPercentage")]
+        public double DiscountPercentage { get; set; }
 
         /// <summary>
         /// Id компании
         /// </summary>
+        [JsonProperty("companyId")]
         public string CompanyId { get; set; } = null!;
 
         /// <summary>
-        /// Дата начала действия купона
+        /// Дата окончания купона 
         /// </summary>
-        public DateTime StartDate { get; set; }
-
-        /// <summary>
-        /// Дата окончания действия купона
-        /// </summary>
-        public DateTime EndDate { get; set; }
+        [JsonProperty("expirationDate")]
+        public string ExpirationDate { get; set; } = null!;
 
     }
 }
