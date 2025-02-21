@@ -76,7 +76,7 @@ namespace CustomerChurmPrediction.Utils
                     {
                         var accessToken = context.Request.Query["access_token"];
                         var path = context.HttpContext.Request.Path;
-                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/notificationHub"))
+                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/notification-hub"))
                         {
                             context.Token = accessToken;
                         }
@@ -132,6 +132,8 @@ namespace CustomerChurmPrediction.Utils
             services.AddSwaggerGen();
             // Подключение SignalR
             services.AddSignalR();
+            // Подключение сервиса для работы с подключениями пользователей
+            services.AddSingleton<IUserConnectionService, UserConnectionService>();
 
             return services;
         }

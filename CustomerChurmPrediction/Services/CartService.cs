@@ -5,6 +5,7 @@ using CustomerChurmPrediction.Entities.UserEntity;
 using CustomerChurmPrediction.Entities.ProductEntity;
 using MongoDB.Bson;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.SignalR;
 
 
 namespace CustomerChurmPrediction.Services
@@ -17,8 +18,14 @@ namespace CustomerChurmPrediction.Services
         public Task<List<Cart>> FindAllAsync(string userId, CancellationToken? cancellationToken = default);
     }
 
-    public class CartService(IMongoClient client, IConfiguration config, ILogger<CartService> logger, IWebHostEnvironment _environment) 
-        : BaseService<Cart>(client, config, logger, _environment, Carts), ICartService
+    public class CartService(
+        IMongoClient client,
+        IConfiguration config,
+        ILogger<CartService> logger, 
+        IWebHostEnvironment _environment, 
+        IHubContext<NotificationHub> _hubContext,
+        IUserConnectionService _userConnectionService) 
+        : BaseService<Cart>(client, config, logger, _environment, _hubContext, _userConnectionService, Carts), ICartService
     {
         public async Task<List<Cart>> FindAllAsync(string userId, CancellationToken? cancellationToken = default)
         {

@@ -100,6 +100,24 @@
         /// </summary>
         public readonly static string UsersInformation = "UsersInformation";
     }
+
+    /// <summary>
+    /// Название методов для сервиса уведомлений SignalR
+    /// </summary>
+    public static class SignalRMethods
+    {
+        /// <summary>
+        /// Уведомление при подключении
+        /// </summary>
+        public readonly static string OnConnected = "OnConnected";
+
+        /// <summary>
+        /// Уведомление после успешной операции в бд
+        /// </summary>
+        public readonly static string SendDatabaseNotification = "SendDatabaseNotification";
+
+        public readonly static string SendForAll = "SendForAll";
+    }
 }
 
     

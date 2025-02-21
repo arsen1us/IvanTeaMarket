@@ -1,5 +1,7 @@
 ﻿using CustomerChurmPrediction.Entities;
+using Microsoft.AspNetCore.SignalR;
 using MongoDB.Driver;
+using static CustomerChurmPrediction.Utils.SignalRMethods;
 
 namespace CustomerChurmPrediction.Services
 {
@@ -79,23 +81,29 @@ namespace CustomerChurmPrediction.Services
     {
         IMongoClient _client;
         IConfiguration _config;
-        public IMongoCollection<T> Table;
         ILogger _logger;
         IWebHostEnvironment _environment;
+        IHubContext<NotificationHub> _hubContext;
+        IUserConnectionService _userConnectionService;
 
         public IMongoDatabase Database;
+        public IMongoCollection<T> Table;
 
         public BaseService(
             IMongoClient client,
             IConfiguration config,
             ILogger logger,
             IWebHostEnvironment environment,
+            IHubContext<NotificationHub> hubContext,
+            IUserConnectionService userConnectionService,
             string collectionName)
         {
             _client = client;
             _config = config;
             _logger = logger;
             _environment = environment;
+            _hubContext = hubContext;
+            _userConnectionService = userConnectionService;
 
             Database = _client.GetDatabase(_config["DatabaseConnection:DatabaseName"]);
             Table = Database.GetCollection<T>(collectionName);
@@ -110,7 +118,7 @@ namespace CustomerChurmPrediction.Services
                 var result = Table.Find(resultFilter);
                 return result.ToList();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new NotImplementedException();
             }
@@ -188,7 +196,7 @@ namespace CustomerChurmPrediction.Services
 
         public virtual bool SaveOrUpdate(T entity)
         {
-            if(entity != null)
+            if (entity != null)
             {
                 var entities = new List<T> { entity };
                 return SaveOrUpdate(entities);
@@ -241,18 +249,27 @@ namespace CustomerChurmPrediction.Services
 
         public virtual async Task<bool> SaveOrUpdateAsync(T entity, CancellationToken? cancellationToken = default)
         {
+            if (entity is null)
+                throw new ArgumentNullException($"Параметр {nameof(entity)} равен null");
             try
             {
-                if(entity != null)
+                if (entity != null)
                 {
+                    var userId = entity.CreatorId;
+
                     var entities = new List<T> { entity };
-                    return await SaveOrUpdateAsync(entities, default);
+                    bool isSuccess = await SaveOrUpdateAsync(entities, default);
+                    if (isSuccess)
+                    {
+                        await _userConnectionService.SendNotificationByUserIdAsync(SendDatabaseNotification, userId, "Запись успешно сохранена или обновлена");
+                        return isSuccess;
+                    }
                 }
                 return false;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                throw new NotImplementedException(ex.Message);
             }
         }
 
@@ -287,7 +304,9 @@ namespace CustomerChurmPrediction.Services
 
                     // Проверяем, все ли операции были успешными (либо обновлены, либо вставлены)
                     if (result.Upserts.Count() + result.MatchedCount == abstractEntities.Count)
+                    {
                         return true;
+                    }
                 }
                 return false;
             }
@@ -299,20 +318,15 @@ namespace CustomerChurmPrediction.Services
 
         public virtual long Delete(string entityId)
         {
+            if (string.IsNullOrEmpty(entityId))
+                throw new ArgumentNullException(nameof(entityId));
             try
             {
-                if (entityId != null)
-                {
-                    var filter = Builders<T>.Filter.Eq(e => e.Id, entityId);
-                    var result = Table.DeleteOne(filter);
-                    if (result.DeletedCount > 0)
-                        return result.DeletedCount;
-                    return 0;
-                }
-                else
-                {
-                    throw new ArgumentNullException();
-                }
+                var filter = Builders<T>.Filter.Eq(e => e.Id, entityId);
+                var result = Table.DeleteOne(filter);
+                if (result.DeletedCount > 0)
+                    return result.DeletedCount;
+                return 0;
             }
             catch (Exception ex)
             {
@@ -322,19 +336,33 @@ namespace CustomerChurmPrediction.Services
 
         public virtual async Task<long> DeleteAsync(string entityId, CancellationToken? cancellationToken = default)
         {
+            if (string.IsNullOrEmpty(entityId))
+                throw new ArgumentNullException(nameof(entityId));
             try
             {
-                if (entityId != null)
+                T entity = await FindByIdAsync(entityId, cancellationToken);
+
+                if (entity is null)
+                    throw new Exception($"Не удалось найти запись по id - {entityId}");
+
+                var filter = Builders<T>.Filter.Eq(e => e.Id, entityId);
+                var result = await Table.DeleteOneAsync(filter);
+                if (result.DeletedCount > 0)
                 {
-                    var filter = Builders<T>.Filter.Eq(e => e.Id, entityId);
-                    var result = await Table.DeleteOneAsync(filter);
-                    if (result.DeletedCount > 0)
-                        return result.DeletedCount;
-                    return 0;
+                    // Если данные id разные, отправляю обоим сообщения
+                    if (entity.CreatorId != entity.UserIdLastUpdate)
+                    {
+                        await _userConnectionService.SendNotificationByUsersIdAsync(SendDatabaseNotification, new List<string> { entity.CreatorId, entity.UserIdLastUpdate }, "Запись успешно удалена");
+                    }
+                    else
+                    {
+                        await _userConnectionService.SendNotificationByUserIdAsync(SendDatabaseNotification, entity.CreatorId, "Запись успешно удалена");
+                    }
+                    return result.DeletedCount;
                 }
                 else
                 {
-                    throw new ArgumentNullException();
+                    return 0;
                 }
             }
             catch (Exception ex)

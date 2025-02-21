@@ -1,5 +1,6 @@
 ﻿using CustomerChurmPrediction.Entities.ProductEntity;
 using CustomerChurmPrediction.Entities.SessionEntity;
+using Microsoft.AspNetCore.SignalR;
 using MongoDB.Driver;
 using static CustomerChurmPrediction.Utils.CollectionName;
 
@@ -13,8 +14,14 @@ namespace CustomerChurmPrediction.Services
         public Task<Session> GetLastByUserIdAsync(string userId, CancellationToken? cancellationToken = default);
     }
 
-    public class SessionService(IMongoClient client, IConfiguration config, ILogger<SessionService> logger, IWebHostEnvironment _environment)
-        : BaseService<Session>(client, config, logger, _environment, Sessions), ISessionService
+    public class SessionService(
+        IMongoClient client,
+        IConfiguration config,
+        ILogger<SessionService> logger,
+        IWebHostEnvironment _environment,
+        IHubContext<NotificationHub> _hubContext,
+        IUserConnectionService _userConnectionService)
+        : BaseService<Session>(client, config, logger, _environment, _hubContext, _userConnectionService, Sessions), ISessionService
     {
         public async Task<Session> GetLastByUserIdAsync(string userId, CancellationToken? cancellationToken = default)
         {

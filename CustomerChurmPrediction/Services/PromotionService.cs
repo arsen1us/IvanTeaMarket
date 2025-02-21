@@ -1,4 +1,5 @@
 ﻿using CustomerChurmPrediction.Entities.PromotionEntity;
+using Microsoft.AspNetCore.SignalR;
 using MongoDB.Driver;
 using static CustomerChurmPrediction.Utils.CollectionName;
 
@@ -11,8 +12,14 @@ namespace CustomerChurmPrediction.Services
         /// </summary>
         public Task<List<Promotion>> GetByCompanyIdAsync(string companyId, CancellationToken? cancellationToken = default);
     }
-    public class PromotionService(IMongoClient client, IConfiguration config, ILogger<PromotionService> logger, IWebHostEnvironment _environment) 
-        : BaseService<Promotion>(client, config, logger, _environment, Promotions), IPromotionService
+    public class PromotionService(
+        IMongoClient client,
+        IConfiguration config,
+        ILogger<PromotionService> logger,
+        IWebHostEnvironment _environment,
+        IHubContext<NotificationHub> _hubContext,
+        IUserConnectionService _userConnectionService) 
+        : BaseService<Promotion>(client, config, logger, _environment, _hubContext, _userConnectionService, Promotions), IPromotionService
     {
         public async Task<List<Promotion>> GetByCompanyIdAsync(string companyId, CancellationToken? cancellationToken = default)
         {

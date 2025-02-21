@@ -5,6 +5,7 @@ using CustomerChurmPrediction.Entities.ProductEntity;
 using MongoDB.Driver.Linq;
 using static CustomerChurmPrediction.Services.OrderService;
 using CustomerChurmPrediction.Entities.OrderEntity.Model;
+using Microsoft.AspNetCore.SignalR;
 
 namespace CustomerChurmPrediction.Services
 {
@@ -21,8 +22,14 @@ namespace CustomerChurmPrediction.Services
         public Task<List<OrderModel>> GetByUserIdAsync(string userId, CancellationToken? cancellationToken = default);
     }
 
-    public class OrderService(IMongoClient client, IConfiguration config, ILogger<OrderService> logger, IWebHostEnvironment _environment) 
-        : BaseService<Order>(client, config, logger, _environment, Orders), IOrderService
+    public class OrderService(
+        IMongoClient client,
+        IConfiguration config,
+        ILogger<OrderService> logger,
+        IWebHostEnvironment _environment,
+        IHubContext<NotificationHub> _hubContext,
+        IUserConnectionService _userConnectionService) 
+        : BaseService<Order>(client, config, logger, _environment, _hubContext, _userConnectionService, Orders), IOrderService
     {
         public async Task<List<OrderModel>> GetByCompanyIdAsync(string companyId, CancellationToken? cancellationToken = default)
         {

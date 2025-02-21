@@ -1,5 +1,6 @@
 ﻿using CustomerChurmPrediction.Entities.ReviewEntity;
 using CustomerChurmPrediction.Entities.UserEntity;
+using Microsoft.AspNetCore.SignalR;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using static CustomerChurmPrediction.Utils.CollectionName;
@@ -13,8 +14,14 @@ namespace CustomerChurmPrediction.Services
         /// </summary>
         public Task<List<ReviewModel>> GetReviewModelsByProductIdAsync(string productId, CancellationToken? cancellationToken = default);
     }
-    public class ReviewService(IMongoClient client, IConfiguration config, ILogger<ReviewService> logger, IWebHostEnvironment _environment) 
-        : BaseService<Review>(client, config, logger, _environment, Reviews), IReviewService
+    public class ReviewService(
+        IMongoClient client,
+        IConfiguration config,
+        ILogger<ReviewService> logger,
+        IWebHostEnvironment _environment,
+        IHubContext<NotificationHub> _hubContext,
+        IUserConnectionService _userConnectionService) 
+        : BaseService<Review>(client, config, logger, _environment, _hubContext, _userConnectionService, Reviews), IReviewService
     {
         public async Task<List<ReviewModel>> GetReviewModelsByProductIdAsync(string productId, CancellationToken? cancellationToken = default)
         {

@@ -1,4 +1,5 @@
 ﻿using CustomerChurmPrediction.Entities.UserActionEntity;
+using Microsoft.AspNetCore.SignalR;
 using MongoDB.Driver;
 using static CustomerChurmPrediction.Utils.CollectionName;
 
@@ -9,8 +10,14 @@ namespace CustomerChurmPrediction.Services
 
     }
 
-    public class UserActionService(IMongoClient client, IConfiguration config, ILogger<UserActionService> logger, IWebHostEnvironment _environment)
-        : BaseService<UserAction>(client, config, logger, _environment, UserActions), IUserActionService
+    public class UserActionService(
+        IMongoClient client,
+        IConfiguration config,
+        ILogger<UserActionService> logger,
+        IWebHostEnvironment _environment,
+        IHubContext<NotificationHub> _hubContext,
+        IUserConnectionService _userConnectionService)
+        : BaseService<UserAction>(client, config, logger, _environment, _hubContext, _userConnectionService, UserActions), IUserActionService
     {
 
         /// <summary>

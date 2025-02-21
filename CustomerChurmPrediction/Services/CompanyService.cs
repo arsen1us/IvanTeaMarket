@@ -1,4 +1,5 @@
 ﻿using CustomerChurmPrediction.Entities.CompanyEntity;
+using Microsoft.AspNetCore.SignalR;
 using MongoDB.Driver;
 using static CustomerChurmPrediction.Utils.CollectionName;
 
@@ -22,8 +23,15 @@ namespace CustomerChurmPrediction.Services
         /// <returns></returns>
         public Task<Company> FindByUserIdAsync(string userId, CancellationToken? cancellationToken = default);
     }
-    public class CompanyService(IMongoClient client, IConfiguration config, ILogger<CompanyService> logger, IProductService productService, IWebHostEnvironment _environment) 
-        : BaseService<Company>(client, config, logger, _environment, Companies), ICompanyService 
+    public class CompanyService(
+        IMongoClient client,
+        IConfiguration config,
+        ILogger<CompanyService> logger, 
+        IProductService productService, 
+        IWebHostEnvironment _environment, 
+        IHubContext<NotificationHub> _hubContext,
+        IUserConnectionService _userConnectionService) 
+        : BaseService<Company>(client, config, logger, _environment, _hubContext, _userConnectionService, Companies), ICompanyService 
     {
         public async Task<Company> GetByProductIdAsync(string productId, CancellationToken? cancellationToken = default)
         {

@@ -1,39 +1,38 @@
 ﻿using CustomerChurmPrediction.Entities.ProductEntity;
 using CustomerChurmPrediction.Services;
 using Microsoft.AspNetCore.SignalR;
+using System.Security.Claims;
+using static CustomerChurmPrediction.Utils.SignalRMethods;
 
 namespace CustomerChurmPrediction
 {
-    public class NotificationHub : Hub
+    public class NotificationHub(
+        ICartService _cartService,
+        IProductService _productService,
+        IUserService _userService,
+        IUserConnectionService _userConnectionService) : Hub
     {
-        private static readonly Dictionary<string, string> UserConnections = new();
-
-        ICartService _cartService;
-        IProductService _productService;
-        IUserService _userService;
-
-        public NotificationHub(ICartService cartService, IProductService productService, IUserService userService)
-        {
-            _cartService = cartService;
-            _productService = productService;
-            _userService = userService;
-        }
-
         /// <summary>
         /// Обработка подключения к хабу
         /// </summary>
         /// <returns></returns>
-        public override Task OnConnectedAsync()
+        public override async Task OnConnectedAsync()
         {
-            // Получить Id из Jwt-токена
-            var userId = Context.UserIdentifier; 
-            if (!string.IsNullOrEmpty(userId))
+            try
             {
-                UserConnections[userId] = Context.ConnectionId;
-                Console.WriteLine($"User {userId} connected with ConnectionId {Context.ConnectionId}");
+                // Получить Id из Jwt-токена
+                var userId = Context.User?.FindFirst("Id").Value;
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    _userConnectionService.AddConnection(userId, Context.ConnectionId);
+                    await Clients.Caller.SendAsync(OnConnected, "Вы успешно подключились к сервису уведомлений!");
+                }
+                await base.OnConnectedAsync();
             }
-
-            return base.OnConnectedAsync();
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         /// <summary>
@@ -44,10 +43,27 @@ namespace CustomerChurmPrediction
             var userId = Context.UserIdentifier;
             if (!string.IsNullOrEmpty(userId))
             {
-                UserConnections.Remove(userId);
+                _userConnectionService.RemoveConnection(userId);
             }
 
             return base.OnDisconnectedAsync(exception);
+        }
+
+        /// <summary>
+        /// Отправить уведомление при успешном действии в бд
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        public async Task SendDatabaseNotificationAsync(string message)
+        {
+            try
+            {
+                await Clients.Caller.SendAsync(SendDatabaseNotification, message);
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         /// <summary>
@@ -55,7 +71,7 @@ namespace CustomerChurmPrediction
         /// </summary>
         public async Task SendNotificationForAll(string message)
         {
-            await Clients.All.SendAsync("ReceiveNotification", message);
+            await Clients.All.SendAsync(SendForAll, message);
         }
 
         /// <summary>
@@ -64,12 +80,19 @@ namespace CustomerChurmPrediction
         // userId - пользователь, кому надо отправить персональное уведомление
         public async Task SendPersonalDiscount(string message, string userId)
         {
-            var user = await _userService.FindByIdAsync(userId, default);
-            if (user is not null)
+            try
             {
-                var connectionId = UserConnections.GetValueOrDefault(userId);
-                if (!string.IsNullOrEmpty(connectionId))
-                    await Clients.Client(connectionId).SendAsync("ReceiveNotification", message);
+                // var user = await _userService.FindByIdAsync(userId, default);
+                // if (user is not null)
+                // {
+                //     var connectionId = UserConnections.GetValueOrDefault(userId);
+                //     if (!string.IsNullOrEmpty(connectionId))
+                //         await Clients.Client(connectionId).SendAsync("ReceiveNotification", message);
+                // }
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
 
@@ -78,12 +101,19 @@ namespace CustomerChurmPrediction
         /// </summary>
         public async Task SendYouMightLikeNotification(string message, string userId, List<string> productIds)
         {
-            var user = await _userService.FindByIdAsync(userId, default);
-            if (user is not null)
+            try
             {
-                var connectionId = UserConnections.GetValueOrDefault(userId);
-                if (!string.IsNullOrEmpty(connectionId))
-                    await Clients.Client(connectionId).SendAsync("ReceiveNotification", message, productIds);
+                // var user = await _userService.FindByIdAsync(userId, default);
+                // if (user is not null)
+                // {
+                //     var connectionId = UserConnections.GetValueOrDefault(userId);
+                //     if (!string.IsNullOrEmpty(connectionId))
+                //         await Clients.Client(connectionId).SendAsync("ReceiveNotification", message, productIds);
+                // }
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
 
@@ -92,13 +122,20 @@ namespace CustomerChurmPrediction
         /// </summary>
         public async Task SendYouPreviouslyAddedTheseItemsToYourCartNotification(string message, string userId, List<string> cartIds)
         {
-            var user = await _userService.FindByIdAsync(userId, default);
-            if (user is not null)
+            try
             {
-
-                var connectionId = UserConnections.GetValueOrDefault(userId);
-                if (!string.IsNullOrEmpty(connectionId))
-                    await Clients.Client(connectionId).SendAsync("ReceiveNotification", message, cartIds);
+                // var user = await _userService.FindByIdAsync(userId, default);
+                // if (user is not null)
+                // {
+                // 
+                //     var connectionId = UserConnections.GetValueOrDefault(userId);
+                //     if (!string.IsNullOrEmpty(connectionId))
+                //         await Clients.Client(connectionId).SendAsync("ReceiveNotification", message, cartIds);
+                // }
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
 
@@ -107,12 +144,19 @@ namespace CustomerChurmPrediction
         /// </summary>
         public async Task SendYouPreviouslyViewedTheseItemsNotification(string message, string userId, List<string> productIds)
         {
-            var user = await _userService.FindByIdAsync(userId, default);
-            if (user is not null)
+            try
             {
-                var connectionId = UserConnections.GetValueOrDefault(userId);
-                if (!string.IsNullOrEmpty(connectionId))
-                    await Clients.Client(connectionId).SendAsync("ReceiveNotification", message, productIds);
+                // var user = await _userService.FindByIdAsync(userId, default);
+                // if (user is not null)
+                // {
+                //     var connectionId = UserConnections.GetValueOrDefault(userId);
+                //     if (!string.IsNullOrEmpty(connectionId))
+                //         await Clients.Client(connectionId).SendAsync("ReceiveNotification", message, productIds);
+                // }
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
 
@@ -121,15 +165,22 @@ namespace CustomerChurmPrediction
         /// </summary>
         public async Task SendWeHaveGiftForYouNotification(string message, string userId)
         {
-            var user = await _userService.FindByIdAsync(userId, default);
-            if (user is not null)
+            try
             {
-                // var cartList = await _cartService.FindProductsFromCartByUserId(userId, default);
-                // 
-                // 
-                // var connectionId = UserConnections.GetValueOrDefault(userId);
-                // if (!string.IsNullOrEmpty(connectionId))
-                //     await Clients.Client(connectionId).SendAsync("ReceiveNotification", message, cartList);
+                var user = await _userService.FindByIdAsync(userId, default);
+                if (user is not null)
+                {
+                    // var cartList = await _cartService.FindProductsFromCartByUserId(userId, default);
+                    // 
+                    // 
+                    // var connectionId = UserConnections.GetValueOrDefault(userId);
+                    // if (!string.IsNullOrEmpty(connectionId))
+                    //     await Clients.Client(connectionId).SendAsync("ReceiveNotification", message, cartList);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
     }

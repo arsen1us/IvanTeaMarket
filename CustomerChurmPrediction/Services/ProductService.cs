@@ -1,4 +1,5 @@
 ﻿using CustomerChurmPrediction.Entities.ProductEntity;
+using Microsoft.AspNetCore.SignalR;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System.Linq;
@@ -23,8 +24,14 @@ namespace CustomerChurmPrediction.Services
         /// </summary>
         public Task<List<Product>> FindBySearchStringAsync(string input, CancellationToken? cancellationToken = default);
     }
-    public class ProductService(IMongoClient client, IConfiguration config, ILogger<ProductService> logger, IWebHostEnvironment _environment) 
-        : BaseService<Product>(client, config, logger, _environment, Products), IProductService
+    public class ProductService(
+        IMongoClient client,
+        IConfiguration config,
+        ILogger<ProductService> logger,
+        IWebHostEnvironment _environment,
+        IHubContext<NotificationHub> _hubContext,
+        IUserConnectionService _userConnectionService) 
+        : BaseService<Product>(client, config, logger, _environment, _hubContext, _userConnectionService, Products), IProductService
     {
 
         public async Task<List<Product>> FindByCategoryIdAsync(string categoryId, CancellationToken? cancellationToken = default)
