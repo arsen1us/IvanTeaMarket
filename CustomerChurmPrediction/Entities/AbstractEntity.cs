@@ -15,12 +15,17 @@ namespace CustomerChurmPrediction.Entities
         /// <summary>
         /// Время обновления сущности
         /// </summary>
-        public DateTime? LastTimeUserUpdate { get; set; }
+        public DateTime? LastTimeUserUpdate { get; set; } = null;
 
         /// <summary>
         /// Время создания сущности
         /// </summary>
         public DateTime? CreateTime { get; set; } = DateTime.Now;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string UserId { get; set; }
 
         /// <summary>
         /// Id создателя

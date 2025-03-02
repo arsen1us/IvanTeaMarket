@@ -1,7 +1,9 @@
 ﻿using CustomerChurmPrediction.Entities;
+using CustomerChurmPrediction.Entities.UserEntity;
 using Microsoft.AspNetCore.SignalR;
 using MongoDB.Driver;
 using static CustomerChurmPrediction.Utils.SignalRMethods;
+using static CustomerChurmPrediction.Utils.CollectionName;
 
 namespace CustomerChurmPrediction.Services
 {
@@ -26,6 +28,14 @@ namespace CustomerChurmPrediction.Services
         /// Получить сущность по id (async)
         /// </summary>
         public Task<T> FindByIdAsync(string entityId, CancellationToken? cancellationToken = default);
+
+        /// <summary>
+        /// Получить сущность по id пользователя
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public Task<List<T>> FindByUserIdAsync(string userId, CancellationToken? cancellationToken = default);
 
         /// <summary>
         /// Получить количество сущностей
@@ -87,7 +97,8 @@ namespace CustomerChurmPrediction.Services
         IUserConnectionService _userConnectionService;
 
         public IMongoDatabase Database;
-        public IMongoCollection<T> Table;
+        public IMongoCollection<T> Collection;
+        public IMongoCollection<User> UserCollection;
 
         public BaseService(
             IMongoClient client,
@@ -106,7 +117,8 @@ namespace CustomerChurmPrediction.Services
             _userConnectionService = userConnectionService;
 
             Database = _client.GetDatabase(_config["DatabaseConnection:DatabaseName"]);
-            Table = Database.GetCollection<T>(collectionName);
+            Collection = Database.GetCollection<T>(collectionName);
+            UserCollection = Database.GetCollection<User>(Users);
         }
 
         public virtual List<T> FindAll(FilterDefinition<T>? filter)
@@ -115,7 +127,7 @@ namespace CustomerChurmPrediction.Services
             {
                 var resultFilter = filter ?? Builders<T>.Filter.Empty;
 
-                var result = Table.Find(resultFilter);
+                var result = Collection.Find(resultFilter);
                 return result.ToList();
             }
             catch (Exception ex)
@@ -129,7 +141,7 @@ namespace CustomerChurmPrediction.Services
             try
             {
                 var resultFilter = filter ?? Builders<T>.Filter.Empty;
-                var result = await Table.FindAsync(resultFilter);
+                var result = await Collection.FindAsync(resultFilter);
                 return await result.ToListAsync();
             }
             catch (Exception ex)
@@ -143,7 +155,7 @@ namespace CustomerChurmPrediction.Services
             try
             {
                 var filter = Builders<T>.Filter.Eq(e => e.Id, entityId);
-                var result = Table.Find(filter).First();
+                var result = Collection.Find(filter).First();
                 return result;
             }
             catch (Exception ex)
@@ -157,7 +169,7 @@ namespace CustomerChurmPrediction.Services
             try
             {
                 var filter = Builders<T>.Filter.Eq(e => e.Id, entityId);
-                var result = (await Table.FindAsync(filter)).First();
+                var result = (await Collection.FindAsync(filter)).First();
                 return result;
             }
             catch (Exception ex)
@@ -171,7 +183,7 @@ namespace CustomerChurmPrediction.Services
             try
             {
                 var resultFilter = filter ?? Builders<T>.Filter.Empty;
-                var result = Table.CountDocuments(filter);
+                var result = Collection.CountDocuments(filter);
                 return result;
             }
             catch (Exception ex)
@@ -185,7 +197,7 @@ namespace CustomerChurmPrediction.Services
             try
             {
                 var resultFilter = filter ?? Builders<T>.Filter.Empty;
-                var result = await Table.CountDocumentsAsync(filter);
+                var result = await Collection.CountDocumentsAsync(filter);
                 return result;
             }
             catch (Exception ex)
@@ -231,7 +243,7 @@ namespace CustomerChurmPrediction.Services
                 {
                     // Выполняем пакетную запись (bulk write) с использованием сессии
                     // var result = await _collection.BulkWriteAsync(session, bulkOps);
-                    var result = Table.BulkWrite(bulkOps);
+                    var result = Collection.BulkWrite(bulkOps);
 
                     // Проверяем, все ли операции были успешными (либо обновлены, либо вставлены)
                     if (result.Upserts.Count() + result.MatchedCount == abstractEntities.Count)
@@ -300,7 +312,7 @@ namespace CustomerChurmPrediction.Services
                 {
                     // Выполняем пакетную запись (bulk write) с использованием сессии
                     // var result = await _collection.BulkWriteAsync(session, bulkOps);
-                    var result = await Table.BulkWriteAsync(bulkOps);
+                    var result = await Collection.BulkWriteAsync(bulkOps);
 
                     // Проверяем, все ли операции были успешными (либо обновлены, либо вставлены)
                     if (result.Upserts.Count() + result.MatchedCount == abstractEntities.Count)
@@ -323,7 +335,7 @@ namespace CustomerChurmPrediction.Services
             try
             {
                 var filter = Builders<T>.Filter.Eq(e => e.Id, entityId);
-                var result = Table.DeleteOne(filter);
+                var result = Collection.DeleteOne(filter);
                 if (result.DeletedCount > 0)
                     return result.DeletedCount;
                 return 0;
@@ -346,7 +358,7 @@ namespace CustomerChurmPrediction.Services
                     throw new Exception($"Не удалось найти запись по id - {entityId}");
 
                 var filter = Builders<T>.Filter.Eq(e => e.Id, entityId);
-                var result = await Table.DeleteOneAsync(filter);
+                var result = await Collection.DeleteOneAsync(filter);
                 if (result.DeletedCount > 0)
                 {
                     // Если данные id разные, отправляю обоим сообщения
@@ -416,6 +428,33 @@ namespace CustomerChurmPrediction.Services
                     return uploadFilePaths;
                 // возвращаю пустой список
                 return new List<string>();
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<List<T>> FindByUserIdAsync(string userId, CancellationToken? cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new ArgumentNullException();
+            }
+            try
+            {
+                var userFilter = Builders<User>.Filter.Eq(user => user.Id, userId);
+                User existingUser = await (await UserCollection.FindAsync(userFilter)).FirstOrDefaultAsync();
+
+                if (existingUser is null)
+                {
+                    throw new Exception("Не удалось найти пользователя по id. Во время получения сущности по id");
+                }
+
+                var filter = Builders<T>.Filter.Eq(entity => entity.UserId, userId);
+                List<T> entities = await (await Collection.FindAsync(filter)).ToListAsync();
+                return entities;
 
             }
             catch (Exception ex)

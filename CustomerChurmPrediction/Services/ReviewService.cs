@@ -31,7 +31,7 @@ namespace CustomerChurmPrediction.Services
                 throw new ArgumentNullException(nameof(productId));
             try
             {
-                var reviewModels = from review in Table.AsQueryable()
+                var reviewModels = from review in Collection.AsQueryable()
                                    join user in userCollection.AsQueryable() on review.UserId equals user.Id
                                    where review.ProductId == productId
                                    select new ReviewModel
