@@ -5,12 +5,6 @@ namespace CustomerChurmPrediction.Entities.UserActionEntity
     public class UserAction : AbstractEntity
     {
         /// <summary>
-        /// Id пользователя
-        /// </summary>
-        [JsonProperty("userId")]
-        public string UserId { get; set; } = null!;
-
-        /// <summary>
         /// Тип действия пользователя 
         /// </summary>
         [JsonProperty("actionType")]

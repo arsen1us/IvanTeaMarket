@@ -1,4 +1,4 @@
-﻿namespace CustomerChurmPrediction.Entities
+﻿namespace CustomerChurmPrediction.Entities.ChurnPredictionEntity
 {
     public class ChurnPrediction : AbstractEntity
     {
@@ -29,5 +29,5 @@
 
         }
     }
-    
+
 }

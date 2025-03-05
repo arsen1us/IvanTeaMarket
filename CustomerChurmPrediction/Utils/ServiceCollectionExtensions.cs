@@ -157,6 +157,8 @@ namespace CustomerChurmPrediction.Utils
             services.AddScoped<ICompanyService, CompanyService>();
             services.AddScoped<ICouponService, CouponService>();
             services.AddScoped<IEmailService, EmailService>();
+            // Сервис для работы с предсказаниями оттока пользователей
+            services.AddScoped<IChurnPredictionService, ChurnPredictionService>();
 
             return services;
         }

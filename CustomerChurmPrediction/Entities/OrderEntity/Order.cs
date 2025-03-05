@@ -5,12 +5,6 @@ namespace CustomerChurmPrediction.Entities.OrderEntity
     public class Order : AbstractEntity
     {
         /// <summary>
-        /// Id пользователя
-        /// </summary>
-        [JsonProperty("userId")]
-        public string UserId { get; set; } = null!;
-
-        /// <summary>
         /// Цена заказа
         /// </summary>
         [JsonProperty("totalPrice")]

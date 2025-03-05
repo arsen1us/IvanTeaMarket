@@ -1,4 +1,4 @@
-﻿using CustomerChurmPrediction.Entities;
+﻿using CustomerChurmPrediction.Entities.ChurnPredictionEntity;
 using CustomerChurmPrediction.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,12 +15,14 @@ namespace CustomerChurmPrediction.Controllers
         /// </summary>
         /// <returns></returns>
         // GET: https://localhost:7299/api/churn-prediction
+
+        [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             try
             {
-                List<ChurnPrediction> predictionList = await _predictionService.FindAllAsync(default);
-                return Ok(new { predictionList = predictionList });
+                List<ChurnPredictionModel> churnPredictionList = await _predictionService.GetChurnPredictionModelsAsync();
+                return Ok(new { churnPredictionList = churnPredictionList });
             }
             catch (Exception ex)
             {

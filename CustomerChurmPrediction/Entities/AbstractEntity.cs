@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
 using System.Text.Json.Serialization;
 
 namespace CustomerChurmPrediction.Entities
@@ -25,7 +26,8 @@ namespace CustomerChurmPrediction.Entities
         /// <summary>
         /// 
         /// </summary>
-        public string UserId { get; set; }
+        [JsonProperty("userId")]
+        public string? UserId { get; set; }
 
         /// <summary>
         /// Id создателя
