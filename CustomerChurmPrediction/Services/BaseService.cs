@@ -267,7 +267,16 @@ namespace CustomerChurmPrediction.Services
             {
                 if (entity != null)
                 {
-                    var userId = entity.CreatorId;
+                    string userId;
+
+                    if(typeof(T) == typeof(User))
+                    {
+                        userId = entity.Id;
+                    }
+                    else
+                    {
+                        userId = entity.CreatorId;
+                    }
 
                     var entities = new List<T> { entity };
                     bool isSuccess = await SaveOrUpdateAsync(entities, default);
