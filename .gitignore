@@ -362,7 +362,7 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-wwwroot/uploads/*.jpg
-wwwroot/uploads/*.png
-wwwroot/uploads/*.gif
-wwwroot/uploads/*.webp
+CustomerChurmPrediction/wwwroot/uploads/*.jpg
+CustomerChurmPrediction/wwwroot/uploads/*.png
+CustomerChurmPrediction/wwwroot/uploads/*.gif
+CustomerChurmPrediction/wwwroot/uploads/*.webp
