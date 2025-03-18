@@ -1,4 +1,5 @@
-﻿using CustomerChurmPrediction.RabbitMQ;
+﻿using CustomerChurmPrediction.ML.Services;
+using CustomerChurmPrediction.RabbitMQ;
 using CustomerChurmPrediction.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -157,8 +158,15 @@ namespace CustomerChurmPrediction.Utils
             services.AddScoped<ICompanyService, CompanyService>();
             services.AddScoped<ICouponService, CouponService>();
             services.AddScoped<IEmailService, EmailService>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddMLModelServices(this IServiceCollection services)
+        {
             // Сервис для работы с предсказаниями оттока пользователей
             services.AddScoped<IChurnPredictionService, ChurnPredictionService>();
+            services.AddScoped<IMLModelInputService, MLModelInputService>();
 
             return services;
         }

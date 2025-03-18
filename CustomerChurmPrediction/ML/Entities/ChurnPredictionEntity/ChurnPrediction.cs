@@ -1,4 +1,6 @@
-﻿namespace CustomerChurmPrediction.Entities.ChurnPredictionEntity
+﻿using CustomerChurmPrediction.Entities;
+
+namespace CustomerChurmPrediction.ML.Entities.ChurnPredictionEntity
 {
     public class ChurnPrediction : AbstractEntity
     {

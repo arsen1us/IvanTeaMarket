@@ -43,7 +43,9 @@ namespace CustomerChurmPrediction.Services
             List<string> userIds,
             string message);
     }
-    public class UserConnectionService(IHubContext<NotificationHub> _hubContext) : IUserConnectionService
+    public class UserConnectionService(
+        IHubContext<NotificationHub> _hubContext,
+        ILogger<UserConnectionService> _logger) : IUserConnectionService
     {
         private static readonly ConcurrentDictionary<string, string> _usersConnection = new ConcurrentDictionary<string, string>();
 
@@ -62,10 +64,24 @@ namespace CustomerChurmPrediction.Services
             string userId,
             string message)
         {
-            string connectionId = _usersConnection[userId];
-            if(!string.IsNullOrEmpty(connectionId))
+            try
             {
-                await _hubContext.Clients.Client(connectionId).SendAsync(method, message);
+                if (_usersConnection.ContainsKey(userId))
+                {
+                    string connectionId = _usersConnection[userId];
+                    if (!string.IsNullOrEmpty(connectionId))
+                    {
+                        await _hubContext.Clients.Client(connectionId).SendAsync(method, message);
+                    }
+                }
+                else
+                {
+                    // Добавить обработку данного случая 
+                }
+            }
+            catch(Exception ex)
+            {
+                throw new Exception($"Произошла ошибка в процессе отправки сообщения по id [{userId}]. Детали ошибки: {ex.Message}");
             }
         }
 

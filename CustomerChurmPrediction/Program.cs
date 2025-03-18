@@ -13,6 +13,7 @@ builder.Services
     .AddAuthenticationServices(configuration)
     .AddWebApiServices()
     .AddCrudServices()
+    .AddMLModelServices()
     .AddUserServices()
     .AddPageServices()
     .AddNotificationServices();

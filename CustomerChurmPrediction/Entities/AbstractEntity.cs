@@ -10,7 +10,7 @@ namespace CustomerChurmPrediction.Entities
         /// <summary>
         /// Id сущности
         /// </summary>
-        [BsonRepresentation(BsonType.ObjectId)]
+        [BsonId]
         public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
 
         /// <summary>

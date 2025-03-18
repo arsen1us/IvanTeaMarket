@@ -2,13 +2,13 @@
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
 
-namespace CustomerChurmPrediction.Entities.ChurnPredictionEntity
+namespace CustomerChurmPrediction.ML.Entities.ChurnPredictionEntity
 {
     public class ChurnPredictionModel
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
+        public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
 
         /// <summary>
         /// Пользователь

@@ -99,6 +99,11 @@
         /// Информация о пользователе
         /// </summary>
         public readonly static string UsersInformation = "UsersInformation";
+
+        /// <summary>
+        /// Коллекция MLModelInputs
+        /// </summary>
+        public readonly static string MLModelInputs = "MLModelInputs";
     }
 
     /// <summary>

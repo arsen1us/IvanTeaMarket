@@ -30,12 +30,20 @@ namespace CustomerChurmPrediction.Services
         public Task<T> FindByIdAsync(string entityId, CancellationToken? cancellationToken = default);
 
         /// <summary>
-        /// Получить сущность по id пользователя
+        /// Получить список сущностей по id пользователя
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public Task<List<T>> FindByUserIdAsync(string userId, CancellationToken? cancellationToken = default);
+
+        /// <summary>
+        /// Получить сущность по id пользователя 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public Task<T> FindOneByUserIdAsync(string userId, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Получить количество сущностей
@@ -464,6 +472,33 @@ namespace CustomerChurmPrediction.Services
                 var filter = Builders<T>.Filter.Eq(entity => entity.UserId, userId);
                 List<T> entities = await (await Collection.FindAsync(filter)).ToListAsync();
                 return entities;
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<T> FindOneByUserIdAsync(string userId, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new ArgumentNullException();
+            }
+            try
+            {
+                var userFilter = Builders<User>.Filter.Eq(user => user.Id, userId);
+                User existingUser = await (await UserCollection.FindAsync(userFilter)).FirstOrDefaultAsync();
+
+                if (existingUser is null)
+                {
+                    throw new Exception("Не удалось найти пользователя по id. Во время получения сущности по id");
+                }
+
+                var filter = Builders<T>.Filter.Eq(entity => entity.UserId, userId);
+                T entitу = await (await Collection.FindAsync(filter)).FirstOrDefaultAsync();
+                return entitу;
 
             }
             catch (Exception ex)
