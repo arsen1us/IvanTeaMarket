@@ -208,5 +208,16 @@ namespace CustomerChurmPrediction.Utils
 
             return services;
         }
+
+        /// <summary>
+        /// Пождключение сервисов для работы с Telegram ботом
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddTelegramBotServices(this IServiceCollection services)
+        {
+            services.AddSingleton<ITelegramBotService, TelegramBotService>();
+            return services;
+        }
     }
 }
