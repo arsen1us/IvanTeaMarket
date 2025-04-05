@@ -11,7 +11,7 @@ namespace CustomerChurmPrediction.Utils
     public static class ServiceCollectionExtensions
     {
         /// <summary>
-        /// Добавление политики Cors
+        /// Подключение и настройка политики Cors
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
@@ -217,6 +217,23 @@ namespace CustomerChurmPrediction.Utils
         public static IServiceCollection AddTelegramBotServices(this IServiceCollection services)
         {
             services.AddSingleton<ITelegramBotService, TelegramBotService>();
+            return services;
+        }
+
+        /// <summary>
+        /// Подключение и настройка HSTS
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddStrictTransportSecurity(this IServiceCollection services)
+        {
+            services.AddHsts(options =>
+            {
+                options.Preload = true;
+                options.IncludeSubDomains = true;
+                options.MaxAge = TimeSpan.FromDays(365);
+            });
+
             return services;
         }
     }
