@@ -104,6 +104,11 @@
         /// Коллекция MLModelInputs
         /// </summary>
         public readonly static string MLModelInputs = "MLModelInputs";
+
+        /// <summary>
+        /// Коллекция чая
+        /// </summary>
+        public readonly static string Teas = "Teas";
     }
 
     /// <summary>

@@ -158,6 +158,7 @@ namespace CustomerChurmPrediction.Utils
             services.AddScoped<ICompanyService, CompanyService>();
             services.AddScoped<ICouponService, CouponService>();
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<ITeaService, TeaService>();
 
             return services;
         }
