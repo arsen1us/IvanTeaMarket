@@ -18,8 +18,8 @@
         public string UserId { get; set; } = null!;
 
         /// <summary>
-        /// Id владельцев компании
+        /// Id владельца компании
         /// </summary>
-        public List<string> OwnerIds { get; set; } = new List<string>();
+        public string OwnerId { get; set; } = null!;
     }
 }

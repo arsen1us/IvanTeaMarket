@@ -15,7 +15,7 @@
         /// <summary>
         /// Id владельцев компании
         /// </summary>
-        public List<string> OwnerIds { get; set; } = new List<string>();
+        public string OwnerId { get; set; } = null!;
 
         /// <summary>
 		/// Id фотографий

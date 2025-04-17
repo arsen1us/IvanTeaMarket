@@ -7,6 +7,8 @@ using MongoDB.Driver;
 
 namespace CustomerChurmPrediction.Controllers
 {
+    [ApiController]
+    [Route("api/tea")]
     public class TeaController(
         ITeaService _teaService,
         ILogger<TeaController> _logger,
@@ -15,7 +17,7 @@ namespace CustomerChurmPrediction.Controllers
         /// <summary>
         /// Получить список всех чаёв
         /// </summary>
-        // GET: https://localhost:7299/api/product
+        // GET: https://localhost:7299/api/tea
 
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
@@ -39,7 +41,7 @@ namespace CustomerChurmPrediction.Controllers
         /// <summary>
         /// Получить чай по id
         /// </summary>
-        // GET: https://localhost:7299/api/product/{teaId}
+        // GET: https://localhost:7299/api/tea/{teaId}
 
         [HttpGet]
         [Route("{teaId}")]
@@ -77,7 +79,7 @@ namespace CustomerChurmPrediction.Controllers
         /// <summary>
         /// Добавить новую запись с чаем
         /// </summary>
-        // POST: https://localhost:7299/api/product/{productId}
+        // POST: https://localhost:7299/api/tea
 
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromForm] TeaAddDto teaAddDto)
@@ -135,7 +137,7 @@ namespace CustomerChurmPrediction.Controllers
         /// <summary>
         /// Изменить запись с чаем по id 
         /// </summary>
-        // PUT: https://localhost:7299/api/product/{teaId}
+        // PUT: https://localhost:7299/api/tea/{teaId}
 
         [HttpPut]
         [Route("{teaId}")]
@@ -196,7 +198,7 @@ namespace CustomerChurmPrediction.Controllers
         /// <summary>
         /// Удалить запись с чаем по id 
         /// </summary>
-        // Delete: https://localhost:7299/api/product/{teaId}
+        // Delete: https://localhost:7299/api/tea/{teaId}
 
         [HttpDelete]
         [Route("{teaId}")]

@@ -63,6 +63,12 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
         }
+        /// <summary>
+        /// Получить компанию по id пользователя (проверить, является ли пользователь владельцем компании)
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
 
         [Authorize(Roles = "User, Admin, Owner")]
         [HttpGet]
@@ -137,9 +143,9 @@ namespace CustomerChurmPrediction.Controllers
                     Name = companyAdd.Name,
                     Description = companyAdd.Description,
                     CreatorId = companyAdd.UserId,
-                    UserIdLastUpdate = companyAdd.UserId
+                    UserIdLastUpdate = companyAdd.UserId,
+                    OwnerId = companyAdd.UserId
                 };
-                company.OwnerIds.Add(companyAdd.UserId);
 
                 var companyImageSrc = await _companyService.UploadImagesAsync(companyAdd.Images, default);
 
@@ -196,7 +202,7 @@ namespace CustomerChurmPrediction.Controllers
             }
         }
         /// <summary>
-        /// Изменить компанию
+        /// Обновить информацию о компании
         /// </summary>
         // PUT: https://localhost:7299/api/company/{companyId}
 
@@ -211,7 +217,7 @@ namespace CustomerChurmPrediction.Controllers
 
                 company.Name = companyUpdate.Name;
                 company.Description = companyUpdate.Description;
-                company.OwnerIds = companyUpdate.OwnerIds;
+                company.OwnerId = companyUpdate.OwnerId;
 
                 bool isSuccess = await _companyService.SaveOrUpdateAsync(company);
                 if (isSuccess)

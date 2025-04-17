@@ -66,7 +66,8 @@ namespace CustomerChurmPrediction.Services
                 throw new ArgumentNullException(nameof(userId));
             try
             {
-                var filter = Builders<Company>.Filter.ElemMatch(company => company.OwnerIds, ownerId => ownerId == userId);
+                var filter = Builders<Company>.Filter.Eq(company => company.OwnerId, userId);
+
                 var company = (await FindAllAsync(filter, cancellationToken)).FirstOrDefault();
                 return company;
             }
