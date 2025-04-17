@@ -21,95 +21,101 @@
     public static class CollectionName
     {
         /// <summary>
-        /// Корзина
+        /// Коллекция с информацией о корзинах пользователей
         /// </summary>
         public readonly static string Carts = "Carts";
 
         /// <summary>
-        /// Категории
+        /// Коллекция с категориями чая
         /// </summary>
         public readonly static string Categories = "Categories";
 
         /// <summary>
-        /// Избранное
+        /// Коллекция с изрбранным чаем
         /// </summary>
         public readonly static string Favorites = "Favorites";
 
         /// <summary>
-        /// Пользователи
+        /// Коллекция с пользователями
         /// </summary>
         public readonly static string Users = "Users";
 
         /// <summary>
-        /// Товары
+        /// Коллекция с товарами
         /// </summary>
         public readonly static string Products = "Products";
 
         /// <summary>
-        /// Купоны
+        /// Коллекция с купонами
         /// </summary>
         public readonly static string Coupons = "Coupons";
 
         /// <summary>
-        /// Реклама
+        /// Коллекция с рекламой
         /// </summary>
         public readonly static string Promotions = "Promotions";
 
         /// <summary>
-        /// Отзывы
+        /// Коллекция с отзывами
         /// </summary>
         public readonly static string Reviews = "Reviews";
 
         /// <summary>
-        /// Вкладки сайта (страницы с товарами)
+        /// Коллекция с информацией, какие страницы посещают пользователи
         /// </summary>
         public readonly static string Pages = "Pages";
 
         /// <summary>
-        /// Компании
+        /// Коллекция с информацией о компаниях
         /// </summary>
         public readonly static string Companies = "Companies";
 
         /// <summary>
-        /// Заказы
+        /// Коллекция с заказами пользователей 
         /// </summary>
         public readonly static string Orders = "Orders";
 
         /// <summary>
-        /// Сессии пользователей
+        /// Коллекция с сессиями пользователей
         /// </summary>
         public readonly static string Sessions = "Sessions";
 
         /// <summary>
-        /// Действия пользователей
+        /// Коллекция с действиями пользователей 
         /// </summary>
         public readonly static string UserActions = "UserActions";
 
         /// <summary>
-        /// Уведомления
+        /// Коллекция с уведомлениями
         /// </summary>
         public readonly static string Notifications = "Notifications";
 
         /// <summary>
-        /// Предсказания оттока
+        /// Коллекция с предсказаниями оттока
         /// </summary>
         public readonly static string ChurnPredictions = "ChurnPredictions";
 
         /// <summary>
-        /// Информация о пользователе
+        /// Коллекция с информацией о пользователе
         /// </summary>
         public readonly static string UsersInformation = "UsersInformation";
 
         /// <summary>
-        /// Коллекция MLModelInputs
+        /// Коллекция с объектами типа MLModelInputs
         /// </summary>
         public readonly static string MLModelInputs = "MLModelInputs";
 
         /// <summary>
-        /// Коллекция чая
+        /// Коллекция с чаем
         /// </summary>
         public readonly static string Teas = "Teas";
+
+        /// <summary>
+        /// Коллекция с персоналными завяками пользователей
+        /// </summary>
+        public readonly static string PersonalUserBids = "PersonalUserBids";
     }
+
 
     /// <summary>
     /// Название методов для сервиса уведомлений SignalR
