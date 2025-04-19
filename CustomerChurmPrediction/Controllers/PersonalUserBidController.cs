@@ -7,6 +7,8 @@ using MongoDB.Driver;
 
 namespace CustomerChurmPrediction.Controllers
 {
+    [ApiController]
+    [Route("api/personal-order")]
     public class PersonalUserBidController(
         IPersonalUserBidService _personalUserBidService,
         ILogger<PersonalUserBidController> _logger,
@@ -25,8 +27,8 @@ namespace CustomerChurmPrediction.Controllers
 
             try
             {
-                var personalUserBids = await _personalUserBidService.FindAllAsync(filter, cancellationToken);
-                return Ok(new {personalUserBind =  personalUserBids});
+                var personalUsersBids = await _personalUserBidService.FindAllAsync(filter, cancellationToken);
+                return Ok(new {personalUsersBids =  personalUsersBids});
             }
             catch (Exception ex)
             {
@@ -49,6 +51,11 @@ namespace CustomerChurmPrediction.Controllers
             try
             {
                 var personalUserBid = await _personalUserBidService.FindByIdAsync(id, cancellationToken);
+
+                if (personalUserBid is null)
+                    return NotFound();
+
+                return Ok(new { personalUserBid = personalUserBid });
             }
             catch (Exception ex)
             {
@@ -56,24 +63,29 @@ namespace CustomerChurmPrediction.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("user/{userId")]
-        public async Task<IActionResult> GetByUserIdAsync(string userId)
-        {
-            if (string.IsNullOrEmpty(userId))
-            {
-                return BadRequest();
-            }
+        //fixme (надо подумать над этим)
+        //[HttpGet]
+        //[Route("user/{userId")]
+        //public async Task<IActionResult> GetByUserIdAsync(string userId)
+        //{
+        //    if (string.IsNullOrEmpty(userId))
+        //    {
+        //        return BadRequest();
+        //    }
 
-            try
-            {
+        //    using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(5));
+        //    CancellationToken cancellationToken = cts.Token;
+        //    var filter = Builders<PersonalUserBid>.Filter.Eq(personalUserBid => personalUserBid.UserId)
 
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
+        //    try
+        //    {
+                
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception(ex.Message);
+        //    }
+        //}
 
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] PersonalUserBidAddDto personalUserBidAdd)
@@ -83,9 +95,23 @@ namespace CustomerChurmPrediction.Controllers
                 return BadRequest();
             }
 
+            using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(5));
+            CancellationToken cancellationToken = cts.Token;
+
             try
             {
+                PersonalUserBid personalUserBid = new PersonalUserBid(personalUserBidAdd);
 
+                bool isSuccess = await _personalUserBidService.SaveOrUpdateAsync(personalUserBid, cancellationToken);
+
+                if (isSuccess)
+                {
+                    return Ok(new { personalUserBid = personalUserBid });
+                }
+                else
+                {
+                    return StatusCode(500);
+                }
             }
             catch (Exception ex)
             {
@@ -93,18 +119,55 @@ namespace CustomerChurmPrediction.Controllers
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="personalUserBidUpdate"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         [HttpPut]
-        [Route("{userId}")]
-        public async Task<IActionResult> UpdateAsync(string userId, [FromBody] PersonalUserBidUpdateDto personalUserBidUpdate)
+        [Route("{id}")]
+        public async Task<IActionResult> UpdateAsync(string id, [FromBody] PersonalUserBidUpdateDto personalUserBidUpdate)
         {
-            if (string.IsNullOrEmpty(userId) || personalUserBidUpdate is null)
+            if (string.IsNullOrEmpty(id) || personalUserBidUpdate is null)
             {
                 return BadRequest();
             }
 
+            using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(5));
+            CancellationToken cancellationToken = cts.Token;
+
             try
             {
+                var existingPersonalUserBid = await _personalUserBidService.FindByIdAsync(id, cancellationToken);
+                if(existingPersonalUserBid is null)
+                {
+                    return NotFound();
+                }
 
+                if (existingPersonalUserBid.Name != personalUserBidUpdate.Name)
+                    existingPersonalUserBid.Name = personalUserBidUpdate.Name;
+
+                if (existingPersonalUserBid.Phone != personalUserBidUpdate.Phone)
+                    existingPersonalUserBid.Phone = personalUserBidUpdate.Phone;
+
+                if (existingPersonalUserBid.Email != personalUserBidUpdate.Email)
+                    existingPersonalUserBid.Email = personalUserBidUpdate.Email;
+
+                if (existingPersonalUserBid.Details != personalUserBidUpdate.Details)
+                    existingPersonalUserBid.Details = personalUserBidUpdate.Details;
+
+                bool isSuccess = await _personalUserBidService.SaveOrUpdateAsync(existingPersonalUserBid, cancellationToken);
+
+                if (isSuccess)
+                {
+                    return Ok(new { personalUserBid = existingPersonalUserBid });
+                }
+                else
+                {
+                    return StatusCode(500);
+                }
             }
             catch (Exception ex)
             {
@@ -113,17 +176,29 @@ namespace CustomerChurmPrediction.Controllers
         }
 
         [HttpDelete]
-        [Route("{userId}")]
-        public async Task<IActionResult> DeleteAsync(string userId)
+        [Route("{id}")]
+        public async Task<IActionResult> DeleteAsync(string id)
         {
-            if (personalUserBidAdd is null)
+            if (string.IsNullOrEmpty(id) )
             {
                 return BadRequest();
             }
 
+            using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(5));
+            CancellationToken cancellationToken = cts.Token;
+
             try
             {
+                var deletedCount = await _personalUserBidService.DeleteAsync(id, cancellationToken);
 
+                if(deletedCount == 0)
+                {
+                    return StatusCode(500);
+                }
+                else
+                {
+                    return Ok(new { deletedCount = deletedCount });
+                }
             }
             catch (Exception ex)
             {
