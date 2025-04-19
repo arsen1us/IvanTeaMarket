@@ -4,7 +4,7 @@ namespace CustomerChurmPrediction.Services
 {
     public interface ITelegramBotService
     {
-        public Task SendMessageAsync(string message);
+        public Task SendMessageAsync(string message, CancellationToken? cancellationToken = null);
     }
 
     public class TelegramBotService : ITelegramBotService
@@ -22,7 +22,7 @@ namespace CustomerChurmPrediction.Services
             _logger = logger;
         }
 
-        public async Task SendMessageAsync(string message)
+        public async Task SendMessageAsync(string message, CancellationToken? cancellationToken = null)
         {
             if (string.IsNullOrWhiteSpace(message))
                 throw new ArgumentException("Сообщение не может быть пустым", nameof(message));

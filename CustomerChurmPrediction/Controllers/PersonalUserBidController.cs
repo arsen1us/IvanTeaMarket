@@ -12,7 +12,8 @@ namespace CustomerChurmPrediction.Controllers
     public class PersonalUserBidController(
         IPersonalUserBidService _personalUserBidService,
         ILogger<PersonalUserBidController> _logger,
-        IHubContext<NotificationHub> _hubContext) : Controller
+        IHubContext<NotificationHub> _hubContext,
+        ITelegramBotService _telegramBotService) : Controller
     {
         /// <summary>
         /// Получить все записи персональных заявок пользователей
@@ -106,6 +107,7 @@ namespace CustomerChurmPrediction.Controllers
 
                 if (isSuccess)
                 {
+                    await _telegramBotService.SendMessageAsync($"Новая заявка. Имя - {personalUserBid.Name}, телефон - {personalUserBid.Phone}, почта - {personalUserBid.Email}, детали - {personalUserBid.Details}", cancellationToken);
                     return Ok(new { personalUserBid = personalUserBid });
                 }
                 else
