@@ -1,10 +1,6 @@
 ﻿using MongoDB.Driver;
 using static CustomerChurmPrediction.Utils.CollectionName;
 using CustomerChurmPrediction.Entities.CartEntity;
-using CustomerChurmPrediction.Entities.UserEntity;
-using CustomerChurmPrediction.Entities.ProductEntity;
-using MongoDB.Bson;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.SignalR;
 
 

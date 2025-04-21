@@ -7,14 +7,14 @@ namespace CustomerChurmPrediction.Entities.OrderEntity.Model
         /// <summary>
         /// Id продукта
         /// </summary>
-        [JsonProperty("productId")]
-        public string ProductId { get; set; } = null!;
+        [JsonProperty("teaId")]
+        public string TeaId { get; set; } = null!;
 
         /// <summary>
         /// Название продукта
         /// </summary>
-        [JsonProperty("productName")]
-        public string ProductName { get; set; } = null!;
+        [JsonProperty("teaName")]
+        public string teaName { get; set; } = null!;
 
         /// <summary>
         /// Ссылка на изображение продукта

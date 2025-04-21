@@ -7,8 +7,8 @@ namespace CustomerChurmPrediction.Entities.OrderEntity.Create
         /// <summary>
         /// Id продукта
         /// </summary>
-        [JsonProperty("productId")]
-        public string ProductId { get; set; } = null!;
+        [JsonProperty("teaId")]
+        public string teaId { get; set; } = null!;
 
         /// <summary>
         /// Количество

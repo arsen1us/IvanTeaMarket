@@ -1,5 +1,4 @@
-﻿using CustomerChurmPrediction.Entities.ProductEntity;
-using CustomerChurmPrediction.Entities.SessionEntity;
+﻿using CustomerChurmPrediction.Entities.SessionEntity;
 using Microsoft.AspNetCore.SignalR;
 using MongoDB.Driver;
 using static CustomerChurmPrediction.Utils.CollectionName;

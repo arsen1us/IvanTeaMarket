@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using CustomerChurmPrediction.Entities.CartEntity;
 using Microsoft.AspNetCore.Authorization;
 using MongoDB.Driver;
-using CustomerChurmPrediction.Entities.ProductEntity;
+using CustomerChurmPrediction.Entities.TeaEntity;
 
 namespace CustomerChurmPrediction.Controllers
 {
@@ -12,11 +12,11 @@ namespace CustomerChurmPrediction.Controllers
     public class CartController(
         ICartService _cartService,
         IUserService _userService,
-        IProductService _productService,
+        ITeaService _teaService,
         ILogger<CartController> _logger) : ControllerBase
     {
         /// <summary>
-        /// Получить корзину по id пользователя
+        /// Загружает корзину по id пользователя
         /// </summary>
         // GET: /api/cart/{userId}
 
@@ -33,12 +33,12 @@ namespace CustomerChurmPrediction.Controllers
                 if(cartList is null)
                     return NotFound();
 
-                var produtIds = cartList.Select(cart => cart.ProductId);
-                var filter = Builders<Product>.Filter.In(product => product.Id, produtIds);
+                var produtIds = cartList.Select(cart => cart.TeaId);
+                var filter = Builders<Tea>.Filter.In(tea => tea.Id, produtIds);
 
-                var productList = await _productService.FindAllAsync(filter, default);
+                var teas = await _teaService.FindAllAsync(filter, default);
 
-                return Ok( new { productList = productList });
+                return Ok( new { teas = teas });
             }
             catch (Exception ex)
             {
@@ -47,13 +47,12 @@ namespace CustomerChurmPrediction.Controllers
         }
 
         /// <summary>
-        /// Получить корзину по id пользователя
+        ///  Добавляет чай в корзину пользователя
         /// </summary>
         // POST: /api/cart/{userId}
 
-        [Authorize(Roles = "User, Admin, Owner")]
         [HttpPost]
-        public async Task<IActionResult> AddProductToCartAsync(CartAdd cartAdd)
+        public async Task<IActionResult> AddTeaToCartAsync(CartAdd cartAdd)
         {
             if (cartAdd is null)
                 return BadRequest();
@@ -61,7 +60,7 @@ namespace CustomerChurmPrediction.Controllers
             {
                 Cart cart = new Cart
                 {
-                    ProductId = cartAdd.ProductId,
+                    TeaId = cartAdd.TeaId,
                     UserId = cartAdd.UserId
                 };
 
@@ -77,7 +76,7 @@ namespace CustomerChurmPrediction.Controllers
             }
         }
         /// <summary>
-        /// Получить корзину по id пользователя
+        /// Удалёет чай из корзины пользователя
         /// </summary>
         // DELETE: /api/cart/{userId}
 

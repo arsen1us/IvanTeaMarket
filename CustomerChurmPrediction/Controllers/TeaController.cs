@@ -1,5 +1,4 @@
-﻿using CustomerChurmPrediction.Entities.ProductEntity;
-using CustomerChurmPrediction.Entities.TeaEntity;
+﻿using CustomerChurmPrediction.Entities.TeaEntity;
 using CustomerChurmPrediction.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -27,14 +26,14 @@ namespace CustomerChurmPrediction.Controllers
             var filter = Builders<Tea>.Filter.Empty;
             try
             {
-                List<Tea> productList = await _teaService.FindAllAsync(filter, cancellationToken);
-                _logger.LogInformation($"[{DateTime.UtcNow} Method: {nameof(GetAllAsync)}] - Успешно получен список продуктов. Число записей: {productList.Count}");
-                return Ok(new { productList = productList });
+                List<Tea> teas = await _teaService.FindAllAsync(filter, cancellationToken);
+                _logger.LogInformation($"[{DateTime.UtcNow} Method: {nameof(GetAllAsync)}] - Успешно получен список чаёв. Число записей: {teas.Count}");
+                return Ok(new { teas = teas });
             }
             catch (Exception ex)
             {
-                _logger.LogError($"[{DateTime.UtcNow} Method: {nameof(GetAllAsync)}] - Не удалось получить список продуктов. Детали ошибки: {ex.Message}");
-                throw new Exception($"[{DateTime.UtcNow} Method: {nameof(GetAllAsync)}] - Не удалось получить список продуктов. Детали ошибки: {ex.Message}");
+                _logger.LogError($"[{DateTime.UtcNow} Method: {nameof(GetAllAsync)}] - Не удалось получить список чаёв. Детали ошибки: {ex.Message}");
+                throw new Exception($"[{DateTime.UtcNow} Method: {nameof(GetAllAsync)}] - Не удалось получить список чаёв. Детали ошибки: {ex.Message}");
             }
         }
 
@@ -66,7 +65,7 @@ namespace CustomerChurmPrediction.Controllers
                 }
 
                 _logger.LogInformation($"[{DateTime.UtcNow} Method: {nameof(GetByIdAsync)}] - Запись с id {teaId} успешно получена");
-                return Ok(new { product = tea });
+                return Ok(new { tea = tea });
 
             }
             catch (Exception ex)
@@ -91,11 +90,11 @@ namespace CustomerChurmPrediction.Controllers
             }
 
             // Получение и запись изображений
-            // if (productDto.Images is null || productDto.Images.Count == 0)
-            // {
-            //     _logger.LogError($"[{DateTime.UtcNow} Method: {nameof(AddAsync)}] - Обязательно необходимо передать список изображений");
-            //     return BadRequest();
-            // }
+            if (teaAddDto.Images is null || teaAddDto.Images.Count == 0)
+            {
+                _logger.LogError($"[{DateTime.UtcNow} Method: {nameof(AddAsync)}] - Обязательно необходимо передать список изображений");
+                return BadRequest();
+            }
 
             using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(5));
             CancellationToken cancellationToken = cts.Token;
@@ -109,13 +108,13 @@ namespace CustomerChurmPrediction.Controllers
                 };
 
                 // Загрузка изображений на сервер
-                // List<string> imageSrcs = await _teaService.UploadImagesAsync(productDto.Images, cancellationToken);
-                // if (imageSrcs is null)
-                // {
-                //     _logger.LogError($"[{DateTime.UtcNow} Method: {nameof(AddAsync)}] - Не удалось сохранить изображения для продукта");
-                //     return StatusCode(500);
-                // }
-                // product.ImageSrcs = imageSrcs;
+                List<string> imageSrcs = await _teaService.UploadImagesAsync(teaAddDto.Images, cancellationToken);
+                if (imageSrcs is null)
+                {
+                    _logger.LogError($"[{DateTime.UtcNow} Method: {nameof(AddAsync)}] - Не удалось сохранить изображения для продукта");
+                    return StatusCode(500);
+                }
+                tea.ImageSrcs = imageSrcs;
 
                 bool isSuccess = await _teaService.SaveOrUpdateAsync(tea, cancellationToken);
                 if (isSuccess)

@@ -1,10 +1,13 @@
-﻿namespace CustomerChurmPrediction.Entities.CartEntity
+﻿using Newtonsoft.Json;
+
+namespace CustomerChurmPrediction.Entities.CartEntity
 {
     public class Cart : AbstractEntity
     {
         /// <summary>
         /// Id продукта
         /// </summary>
-        public string ProductId { get; set; } = null!;
+        [JsonProperty("teaId")]
+        public string TeaId { get; set; } = null!;
     }
 }

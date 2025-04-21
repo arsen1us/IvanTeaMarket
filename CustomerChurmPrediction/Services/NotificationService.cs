@@ -30,7 +30,6 @@ namespace CustomerChurmPrediction.Services
         IMongoClient _client,
         IConfiguration _config, 
         ILogger<CartService> _logger,
-        IProductService _productService,
         IWebHostEnvironment _environment,
         IHubContext<NotificationHub> _hubContext,
         IUserConnectionService _userConnectionService,

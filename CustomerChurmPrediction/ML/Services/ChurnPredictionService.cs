@@ -24,13 +24,11 @@ namespace CustomerChurmPrediction.ML.Services
     /// <param name="client"></param>
     /// <param name="config"></param>
     /// <param name="logger"></param>
-    /// <param name="_productService"></param>
     /// <param name="_environment"></param>
     public class ChurnPredictionService(
         IMongoClient _client,
         IConfiguration _config,
         ILogger<CartService> _logger,
-        IProductService _productService,
         IHubContext<NotificationHub> _hubContext,
         IUserConnectionService _userConnectionService,
         IWebHostEnvironment _environment)

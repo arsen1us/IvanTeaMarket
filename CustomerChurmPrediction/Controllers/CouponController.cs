@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CustomerChurmPrediction.Services;
-using CustomerChurmPrediction.Entities.ProductEntity;
 using MongoDB.Driver;
 using CustomerChurmPrediction.Entities.CouponEntity;
 using ZstdSharp.Unsafe;

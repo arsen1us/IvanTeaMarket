@@ -27,7 +27,7 @@ namespace CustomerChurmPrediction.Services
         IMongoClient client,
         IConfiguration config,
         ILogger<CompanyService> logger, 
-        IProductService productService, 
+        ITeaService teaService, 
         IWebHostEnvironment _environment, 
         IHubContext<NotificationHub> _hubContext,
         IUserConnectionService _userConnectionService) 
@@ -35,29 +35,7 @@ namespace CustomerChurmPrediction.Services
     {
         public async Task<Company> GetByProductIdAsync(string productId, CancellationToken? cancellationToken = default)
         {
-            if(string.IsNullOrEmpty(productId))
-                throw new ArgumentNullException(nameof(productId));
-            try
-            {
-                // получить продукт по id
-                var product = await productService.FindByIdAsync(productId, cancellationToken);
-
-                if(product is not null)
-                {
-                    // получить id компании
-                    string companyId = product.CompanyId;
-                    
-                    var company = await FindByIdAsync(companyId, cancellationToken);
-
-                    return company;
-                }
-
-                return null;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            throw new Exception();
         }
 
         public async Task<Company> FindByUserIdAsync(string userId, CancellationToken? cancellationToken = default)

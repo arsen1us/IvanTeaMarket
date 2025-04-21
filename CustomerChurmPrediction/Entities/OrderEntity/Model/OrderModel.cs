@@ -1,6 +1,4 @@
 ﻿using Newtonsoft.Json;
-
-using CustomerChurmPrediction.Entities.ProductEntity;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
 

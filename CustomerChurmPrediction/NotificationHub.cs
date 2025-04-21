@@ -1,5 +1,4 @@
-﻿using CustomerChurmPrediction.Entities.ProductEntity;
-using CustomerChurmPrediction.Services;
+﻿using CustomerChurmPrediction.Services;
 using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
 using static CustomerChurmPrediction.Utils.SignalRMethods;
@@ -8,7 +7,6 @@ namespace CustomerChurmPrediction
 {
     public class NotificationHub(
         ICartService _cartService,
-        IProductService _productService,
         IUserService _userService,
         IUserConnectionService _userConnectionService) : Hub
     {

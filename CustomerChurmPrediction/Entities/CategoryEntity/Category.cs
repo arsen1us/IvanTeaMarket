@@ -1,10 +1,16 @@
-﻿namespace CustomerChurmPrediction.Entities.CategoryEntity
+﻿using Newtonsoft.Json;
+
+namespace CustomerChurmPrediction.Entities.CategoryEntity
 {
+    /// <summary>
+    /// Категория чая
+    /// </summary>
     public class Category : AbstractEntity
     {
         /// <summary>
-        /// Название
+        /// Название категории чая
         /// </summary>
+        [JsonProperty("name")]
         public string Name { get; set; } = null!;
     }
 }

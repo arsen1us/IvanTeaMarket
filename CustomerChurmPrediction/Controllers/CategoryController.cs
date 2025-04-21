@@ -20,12 +20,12 @@ namespace CustomerChurmPrediction.Controllers
             try
             {
                 var filter = Builders<Category>.Filter.Empty;
-                var categoryList = await _categoryService.FindAllAsync(filter, default);
+                var categories = await _categoryService.FindAllAsync(filter, default);
 
-                if (categoryList is null)
+                if (categories is null)
                     return NotFound();
 
-                return Ok(new { categoryList = categoryList });
+                return Ok(new { categories = categories });
             }
             catch (Exception ex)
             {
@@ -65,7 +65,7 @@ namespace CustomerChurmPrediction.Controllers
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] CategoryAdd categoryAdd)
         {
-            if (categoryAdd is null)
+             if (categoryAdd is null)
                 return BadRequest();
 
             try

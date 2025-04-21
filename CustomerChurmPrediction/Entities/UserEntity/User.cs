@@ -1,7 +1,4 @@
-﻿using CustomerChurmPrediction.Entities.ProductEntity;
-using CustomerChurmPrediction.Entities.OrderEntity;
-
-namespace CustomerChurmPrediction.Entities.UserEntity
+﻿namespace CustomerChurmPrediction.Entities.UserEntity
 {
     public class User : AbstractEntity
     {

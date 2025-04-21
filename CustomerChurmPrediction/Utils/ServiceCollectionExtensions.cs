@@ -150,7 +150,6 @@ namespace CustomerChurmPrediction.Utils
             services.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
 
             services.AddScoped<IOrderService, OrderService>();
-            services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IPromotionService, PromotionService>();
             services.AddScoped<IReviewService, ReviewService>();
             services.AddScoped<ICartService, CartService>();
