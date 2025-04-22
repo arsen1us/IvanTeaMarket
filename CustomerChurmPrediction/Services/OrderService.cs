@@ -13,7 +13,7 @@ namespace CustomerChurmPrediction.Services
         /// <summary>
         /// Загружает список заказов по id пользователя
         /// </summary>
-        public Task<List<OrderModel>> GetByUserIdAsync(string userId, CancellationToken? cancellationToken = default);
+        public Task<List<OrderDto>> GetByUserIdAsync(string userId, CancellationToken? cancellationToken = null);
     }
 
     /// <summary>
@@ -21,20 +21,21 @@ namespace CustomerChurmPrediction.Services
     /// </summary>
     /// <param name="client"></param>
     /// <param name="config"></param>
-    /// <param name="logger"></param>
+    /// <param name="_logger"></param>
     /// <param name="_environment"></param>
     /// <param name="_hubContext"></param>
     /// <param name="_userConnectionService"></param>
     public class OrderService(
         IMongoClient client,
         IConfiguration config,
-        ILogger<OrderService> logger,
+        ILogger<OrderService> _logger,
         IWebHostEnvironment _environment,
         IHubContext<NotificationHub> _hubContext,
-        IUserConnectionService _userConnectionService) 
-        : BaseService<Order>(client, config, logger, _environment, _hubContext, _userConnectionService, Orders), IOrderService
+        IUserConnectionService _userConnectionService, 
+        ITeaService _teaService) 
+        : BaseService<Order>(client, config, _logger, _environment, _hubContext, _userConnectionService, Orders), IOrderService
     {
-        public async Task<List<OrderModel>> GetByUserIdAsync(string userId, CancellationToken? cancellationToken = default)
+        public async Task<List<OrderDto>> GetByUserIdAsync(string userId, CancellationToken? cancellationToken = null)
         {
             if (string.IsNullOrEmpty(userId))
             {
@@ -46,42 +47,27 @@ namespace CustomerChurmPrediction.Services
 
             try
             {
-
                 List<Order> userOrders = await FindAllAsync(filter, cancellationToken);
 
-                List<string> teaIds = userOrders
-                    .SelectMany(order => order.Items.Select(i => i.TeaId))
-                    .Distinct()
-                    .ToList();
+                List<OrderDto> orderDtos = new List<OrderDto>(userOrders.Count); 
 
-                var productCollection = Database.GetCollection<Tea>(Teas);
-                var teaFilter = Builders<Tea>.Filter.In(product => product.Id, teaIds);
-                var productList = await (await productCollection.FindAsync(teaFilter)).ToListAsync();
-
-                var productDict = productList.ToDictionary(p => p.Id);
-
-                List<OrderModel> orderModels = userOrders.Select(order => new OrderModel
+                foreach(var userOrder in userOrders)
                 {
-                    Id = order.Id,
-                    UserId = order.UserId,
-                    OrderStatus = order.OrderStatus,
-                    TotalPrice = order.TotalPrice,
-                    Items = order.Items.Select(item =>
-                    {
-                        var product = productDict.GetValueOrDefault(item.TeaId);
-                        return new OrderItemModel
-                        {
-                            TeaId = item.TeaId,
-                            teaName = product?.Name ?? "Неизвестный продукт",
-                            ProductImageUrl = product?.ImageSrcs?.FirstOrDefault() ?? "",
-                            Quantity = item.Quantity,
-                            UnitPrice = item.UnitPrice,
-                            TotalPrice = item.TotalPrice
-                        };
-                    }).ToList()
-                }).ToList();
+                    var userOrderTeaIds = userOrder.Items.Select(orderItem => orderItem.TeaId);
+                    var teaFilter = Builders<Tea>.Filter.In(tea => tea.Id, userOrderTeaIds);
+                    // Список чая из корзины пользователей
+                    List<Tea> teas = await _teaService.FindAllAsync(teaFilter, cancellationToken);
 
-                return orderModels;
+                    OrderDto orderDto = new OrderDto
+                    {
+                        Order = userOrder,
+                        Teas = teas
+                    };
+
+                    orderDtos.Add(orderDto);
+                }
+
+                return orderDtos;
             }
             catch (Exception ex)
             {

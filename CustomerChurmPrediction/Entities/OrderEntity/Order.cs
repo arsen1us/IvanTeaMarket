@@ -2,6 +2,9 @@
 
 namespace CustomerChurmPrediction.Entities.OrderEntity
 {
+    /// <summary>
+    /// Заказ пользователя
+    /// </summary>
     public class Order : AbstractEntity
     {
         /// <summary>

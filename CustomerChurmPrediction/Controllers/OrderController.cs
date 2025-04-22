@@ -22,7 +22,6 @@ namespace CustomerChurmPrediction.Controllers
         /// </summary>
         // GET: /api/order/user/{userId}
 
-        [Authorize(Roles = "User, Admin, Owner")]
         [HttpGet]
         [Route("user/{userId}")]
         public async Task<IActionResult> GetByUserIdAsync(string userId)
@@ -45,20 +44,20 @@ namespace CustomerChurmPrediction.Controllers
                     return NotFound();
                 }
         
-                var orderList = await _orderService.GetByUserIdAsync(userId, cancellationToken);
+                var orders = await _orderService.GetByUserIdAsync(userId, cancellationToken);
 
-                if (orderList is null)
+                if (orders is null)
                 {
                     _logger.LogError($"[{DateTime.UtcNow} Method: {nameof(GetByUserIdAsync)}] - Не удалось получить список заказов пользователя с id [{userId}]");
                     return NotFound();
                 }
 
-                _logger.LogInformation($"[{DateTime.UtcNow} Method: {nameof(GetByUserIdAsync)}] - Успешно получен список заказов для пользователя с id [{userId}]. Кол {teas.Count}");
-                return Ok(new { orderList = orderList });
+                _logger.LogInformation($"[{DateTime.UtcNow} Method: {nameof(GetByUserIdAsync)}] - Успешно получен список заказов для пользователя с id [{userId}]. Количество записей: [{orders.Count}]");
+                return Ok(new { orders = orders });
             }
             catch (Exception ex)
             {
-                _logger.LogError($"[{DateTime.UtcNow} Method: {nameof(GetByUserIdAsync)}] - Успешно получен список чаёв. Число записей: {teas.Count}");
+                _logger.LogError($"[{DateTime.UtcNow} Method: {nameof(GetByUserIdAsync)}] - Произошла ошибка в процессе получения заказов пользователя с id [{userId}]. Детали ошибки: {ex.Message}");
                 throw new Exception(ex.Message);
             }
         }
@@ -100,10 +99,10 @@ namespace CustomerChurmPrediction.Controllers
                     LastTimeUserUpdate = DateTime.UtcNow,
                 };
 
+                List<Tea> teasForUpdate = new List<Tea>(createOrder.Items.Count);
+
                 foreach (var createOrderItem in createOrder.Items)
                 {
-                    OrderItem orderItem;
-
                     // Проверка, существует ли чай
                     Tea tea = await _teaService.FindByIdAsync(createOrderItem.teaId, cancellationToken);
                     if (tea is null)
@@ -115,12 +114,13 @@ namespace CustomerChurmPrediction.Controllers
                     // Проверка количества продукта
                     if (tea.Count < createOrderItem.Quantity)
                     {
-                        _logger.LogError($"[{DateTime.UtcNow} Method: {nameof(AddOrderAsync)}] - Успешно получен список чаёв. Число записей: {teas.Count}");
+                        _logger.LogError($"[{DateTime.UtcNow} Method: {nameof(AddOrderAsync)}] - Кол-во доступного чая меньше чем в заказе. Количество доступного чая - [{tea.Count}]. Количество в заказе -  [{createOrderItem.Quantity}]");
                         return BadRequest();
                     }
 
+                    tea.Count -= createOrderItem.Quantity;
 
-                    orderItem = new OrderItem
+                    var orderItem = new OrderItem
                     {
                         OrderId = order.Id,
                         TeaId = tea.Id,
@@ -134,10 +134,18 @@ namespace CustomerChurmPrediction.Controllers
                     };
 
                     order.Items.Add(orderItem);
+                    teasForUpdate.Add(tea);
+                }
+
+                bool isSuccessTeasSave = await _teaService.SaveOrUpdateAsync(teasForUpdate, cancellationToken);
+
+                if(!isSuccessTeasSave)
+                {
+                    _logger.LogError($"[{DateTime.UtcNow} Method: {nameof(AddOrderAsync)}] - Не удалось сохранить список обновлённого чая. Число записей - [{teasForUpdate.Count}]");
+                    return StatusCode(500, "Произошла ошибка во время сохранения списка обновлённого чая");
                 }
 
                 order.TotalPrice = order.Items.Sum(x => x.TotalPrice);
-
                 bool isSuccess = await _orderService.SaveOrUpdateAsync(order, cancellationToken);
 
                 if (isSuccess)
@@ -158,7 +166,7 @@ namespace CustomerChurmPrediction.Controllers
             }
         }
         /// <summary>
-        /// Уда
+        /// Отменяет заказ
         /// </summary>
         // GET: /api/order/{orderId}
 
@@ -168,15 +176,50 @@ namespace CustomerChurmPrediction.Controllers
         {
             using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(5));
             CancellationToken cancellationToken = cts.Token;
-
+             
             try
             {
-                _logger.LogInformation($"[{DateTime.UtcNow} Method: {nameof(CancelOrderAsync)}] - Успешно получен список чаёв. Число записей: {teas.Count}");
-                return Ok();
+                var existingOrder = await _orderService.FindByIdAsync(orderId, cancellationToken);
+                if (existingOrder is null)
+                {
+                    _logger.LogError($"[{DateTime.UtcNow} Method: {nameof(CancelOrderAsync)}] - Не удалось найти заказ с id - [{orderId}]");
+                    return NotFound();
+                }
+
+                List<Tea> teas = new List<Tea>(existingOrder.Items.Count);
+                foreach (var item in existingOrder.Items)
+                {
+                    var tea = await _teaService.FindByIdAsync(item.TeaId);
+                    if (tea is null)
+                    {
+                        _logger.LogError($"[{DateTime.UtcNow} Method: {nameof(CancelOrderAsync)}] - Не удалось найти чай с id - [{item.TeaId}]");
+                        return NotFound();
+                    }
+                    tea.Count += item.Quantity;
+                    teas.Add(tea);
+                }
+
+                bool isSuccessTeasSave = await _teaService.SaveOrUpdateAsync(teas, cancellationToken);
+                if(!isSuccessTeasSave)
+                {
+                    _logger.LogError($"[{DateTime.UtcNow} Method: {nameof(CancelOrderAsync)}] - Не удалось сохранить заказ с обновлённой информацией о чая (отменённый заказ + возвращённое количество чая). Количество записей - [{teas.Count}]");
+                    return StatusCode(500);
+                }
+
+                existingOrder.OrderStatus = "Canceled";
+                bool isSuccessExistingOrderSave = await _orderService.SaveOrUpdateAsync(existingOrder, cancellationToken);
+                if(!isSuccessExistingOrderSave)
+                {
+                    _logger.LogError($"[{DateTime.UtcNow} Method: {nameof(CancelOrderAsync)}] - Не удалось сохранить заказ с обновлённой информацией (отменённый заказ). Id заказа - [{orderId}]");
+                    return StatusCode(500);
+                }
+
+                return Ok(new { order = existingOrder });
+
             }
             catch (Exception ex)
             {
-                _logger.LogError($"[{DateTime.UtcNow} Method: {nameof(CancelOrderAsync)}] - Успешно получен список чаёв. Число записей: {teas.Count}");
+                _logger.LogError($"[{DateTime.UtcNow} Method: {nameof(CancelOrderAsync)}] - Во время отмены заказа произошла ошибка. Детали ошибки: {ex.Message}");
                 throw new Exception(ex.Message);
             }
         }
