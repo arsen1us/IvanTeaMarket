@@ -10,11 +10,10 @@ namespace CustomerChurmPrediction.Controllers
     [Route("/api/promotion")]
     public class PromotionController(
         IPromotionService _promotionService,
-        ICompanyService _companyService,
         ILogger<PromotionController> _logger) : Controller
     {
         /// <summary>
-        /// Получить список всех рекламных постов
+        /// Получает список всех рекламных постов
         /// </summary>
         // GET: api/promotion
 
@@ -34,46 +33,9 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
         }
-        /// <summary>
-        /// Добавить список рекламы по id компании
-        /// </summary>
-        // GET: api/promotion/{companyId}
 
-        [HttpGet]
-        [Route("company/{companyId}")]
-        public async Task<IActionResult> GetPromotionListByCompanyIdAsync(string companyId)
-        {
-            if(string.IsNullOrEmpty(companyId))
-                throw new ArgumentNullException(nameof(companyId));
-            try
-            {
-                // Проверка, существует ли компани с данным id
-                var company = await _companyService.FindByIdAsync(companyId, default);
-                if(company is not null)
-                {
-                    var promotionList = await _promotionService.GetByCompanyIdAsync(companyId, default);
-
-                    if(promotionList is not null)
-                    {
-                        return Ok(new { promotionList = promotionList });
-                    }
-                    else
-                    {
-                        return StatusCode(500, "Не удалось получить список рекламных постов по id компании");
-                    }
-                }
-                else
-                {
-                    return NotFound();
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
         /// <summary>
-        /// Добавить рекламу
+        /// Добавляет рекламу
         /// </summary>
         // POST: /api/promotion
 
@@ -113,7 +75,7 @@ namespace CustomerChurmPrediction.Controllers
             }
         }
         /// <summary>
-        /// Изменить рекламу
+        /// Изменяет рекламу
         /// </summary>
         // PUT: /api/promotion/{promotionId}
 
@@ -156,7 +118,7 @@ namespace CustomerChurmPrediction.Controllers
             }
         }
         /// <summary>
-        /// Изменить рекламу
+        /// Удаляет рекламу
         /// </summary>
         // DELETE: /api/promotion/{promotionId}
 
@@ -182,28 +144,6 @@ namespace CustomerChurmPrediction.Controllers
             {
                 throw new Exception(ex.Message);
             }
-        }
-        /// <summary>
-        /// Используется для тестов
-        /// </summary>
-        // GET: /api/promotion/random
-
-        [Authorize]
-        [HttpGet]
-        [Route("first")]
-        public async Task<IActionResult> GetFirstPromotionAsync()
-        {
-            var filter = Builders<Promotion>.Filter.Empty;
-
-            var promotions = await _promotionService.FindAllAsync(filter, default);
-
-            var promotion = promotions.FirstOrDefault();
-
-            if(promotion != null)
-            {
-                return Ok( new {promotion = promotion});
-            }
-            return NotFound();
         }
     }
 }

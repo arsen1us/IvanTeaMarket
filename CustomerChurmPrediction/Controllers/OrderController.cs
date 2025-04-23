@@ -12,7 +12,6 @@ namespace CustomerChurmPrediction.Controllers
     [Route("/api/order")]
     public class OrderController(
         IOrderService _orderService,
-        ICompanyService _companyService,
         IUserService _userService,
         ITeaService _teaService,
         ILogger<OrderController> _logger) : Controller
