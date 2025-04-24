@@ -3,7 +3,7 @@
 namespace CustomerChurmPrediction.Entities.TeaEntity
 {
     /// <summary>
-    /// Класс для добавления чая
+    /// Класс для создания чая
     /// </summary>
     public class TeaAddDto
     {
