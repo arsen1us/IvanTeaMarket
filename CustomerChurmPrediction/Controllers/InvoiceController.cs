@@ -28,7 +28,7 @@ namespace CustomerChurmPrediction.Controllers
         /// <returns></returns>
         // POST: /api/invoice
 
-        [Authorize(Roles = "User, Admin")]
+        [Authorize(Roles = "User,Admin")]
         [HttpPost]
         public async Task<IActionResult> CreateAsync(InvoiceAddDto invoiceAdd)
         {
@@ -106,7 +106,7 @@ namespace CustomerChurmPrediction.Controllers
         /// <returns></returns>
         // PUT: api/invoice/{id}
 
-        [Authorize(Roles = "User, Admin")]
+        [Authorize(Roles = "User,Admin")]
         [HttpPut]
         [Route("{id}")]
         public async Task<IActionResult> UpdateAsync(string id, InvoiceUpdateDto invoiceUpdate)
@@ -124,7 +124,7 @@ namespace CustomerChurmPrediction.Controllers
         }
 
 
-        [Authorize(Roles = "User, Admin")]
+        [Authorize(Roles = "User,Admin")]
         [HttpDelete]
         public async Task<IActionResult> CancelAsync(string invoiceId)
         {

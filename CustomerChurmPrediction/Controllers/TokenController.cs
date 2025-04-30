@@ -35,10 +35,10 @@ namespace CustomerChurmPrediction.Controllers
 
                 var token = authToken.Replace("Bearer ", "");
 
-                var refreshToken = HttpContext.Request.Cookies["RefreshToken"];
-
-                if (string.IsNullOrEmpty(refreshToken))
-                    return Unauthorized();
+                if (!HttpContext.Request.Cookies.TryGetValue("RefreshToken", out var refreshToken) || string.IsNullOrEmpty(refreshToken))
+                {
+                    // return Unauthorized("Refresh token is missing");
+                }
 
                 string newJwtToken = "Bearer" + await _tokenService.UpdateJwtTokenAsync(token, cancellationToken);
 
@@ -68,7 +68,7 @@ namespace CustomerChurmPrediction.Controllers
         /// Метод для проверки авторизации пользователя
         /// </summary>
 
-        [Authorize(Roles = "User, Owner, Admin")]
+        [Authorize(Roles = "User,Admin")]
         [HttpGet]
         [Route("check")]
         public async Task<IActionResult> CheckAuthorization()

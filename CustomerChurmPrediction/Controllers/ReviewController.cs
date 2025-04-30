@@ -17,7 +17,7 @@ namespace CustomerChurmPrediction.Controllers
         /// </summary>
         // GET: /api/review/{teaId}
 
-        [Authorize(Roles = "User, Admin")]
+        [Authorize(Roles = "User,Admin")]
         [HttpGet]
         [Route("{teaId}")]
         public async Task<IActionResult> GetReviewModelsByProductIdAsync(string teaId)
@@ -58,7 +58,7 @@ namespace CustomerChurmPrediction.Controllers
         /// <exception cref="Exception"></exception>
         // POST: /api/review
 
-        [Authorize(Roles = "User, Admin")]
+        [Authorize(Roles = "User,Admin")]
         [HttpPost]
         public async Task<IActionResult> AddReviewAsync(ReviewAdd reviewAdd)
         {
@@ -108,7 +108,7 @@ namespace CustomerChurmPrediction.Controllers
         /// <exception cref="Exception"></exception>
         // DELETE: /api/review/{id}
 
-        [Authorize(Roles = "User, Admin")]
+        [Authorize(Roles = "User,Admin")]
         [HttpDelete]
         [Route("{id}")]
         public async Task<IActionResult> DeleteReviewAsync(string id)

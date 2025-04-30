@@ -39,7 +39,7 @@ namespace CustomerChurmPrediction.Controllers
         /// <exception cref="Exception"></exception>
         // POST: /api/page
 
-        [Authorize(Roles = "User, Admin")]
+        [Authorize(Roles = "User,Admin")]
         [HttpPost]
         public async Task<IActionResult> AddViewAsync(PageAdd pageAdd)
         {

@@ -1,5 +1,6 @@
 ﻿using CustomerChurmPrediction.Entities.TeaEntity;
 using CustomerChurmPrediction.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using MongoDB.Driver;
@@ -18,6 +19,7 @@ namespace CustomerChurmPrediction.Controllers
         /// </summary>
         // GET: https://localhost:7299/api/tea
 
+        [Authorize(Roles = "User,Admin")]
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
@@ -42,6 +44,7 @@ namespace CustomerChurmPrediction.Controllers
         /// </summary>
         // GET: https://localhost:7299/api/tea/{teaId}
 
+        [Authorize(Roles = "User,Admin")]
         [HttpGet]
         [Route("{teaId}")]
         public async Task<IActionResult> GetByIdAsync(string teaId)
@@ -91,29 +94,29 @@ namespace CustomerChurmPrediction.Controllers
                 return BadRequest();
             }
 
-            throw new Exception();
-            // using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(5));
-            // CancellationToken cancellationToken = cts.Token;
-            // try
-            // {
-            // 
-            //     Tea tea = await _teaService.FindByIdAsync(teaId, cancellationToken);
-            //     if (tea is null)
-            //     {
-            //         _logger.LogError($"[{DateTime.UtcNow} Method: {nameof(GetByIdAsync)}] - Не удалось найти запись с id {teaId}");
-            //         return NotFound();
-            // 
-            //     }
-            // 
-            //     _logger.LogInformation($"[{DateTime.UtcNow} Method: {nameof(GetByIdAsync)}] - Запись с id {teaId} успешно получена");
-            //     return Ok(new { tea = tea });
-            // 
-            // }
-            // catch (Exception ex)
-            // {
-            //     _logger.LogError($"[{DateTime.UtcNow} Method: {nameof(GetByIdAsync)}] - Не удалосб получить запись с id {teaId}. Детали ошибки: {ex.Message}");
-            //     throw new Exception(ex.Message);
-            // }
+            using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(5));
+            CancellationToken cancellationToken = cts.Token;
+            var filter = Builders<Tea>.Filter.In(tea => tea.Id, teaIds);
+            try
+            {
+
+                List<Tea> teas = await _teaService.FindAllAsync(filter, cancellationToken);
+                if (teas is null)
+                {
+                    _logger.LogError($"[{DateTime.UtcNow} Method: {nameof(GetByIdAsync)}] - Не удалось найти список чаёв");
+                    return NotFound();
+
+                }
+
+                _logger.LogInformation($"[{DateTime.UtcNow} Method: {nameof(GetByIdAsync)}] - Список чаёв успешно получен");
+                return Ok(new { teas = teas });
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"[{DateTime.UtcNow} Method: {nameof(GetByIdAsync)}] - Во время получения списка чаёв произошла ошибка. Детали ошибки: {ex.Message}");
+                throw new Exception(ex.Message);
+            }
         }
 
         /// <summary>
@@ -121,6 +124,7 @@ namespace CustomerChurmPrediction.Controllers
         /// </summary>
         // POST: https://localhost:7299/api/tea
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromForm] TeaAddDto teaAddDto)
         {
@@ -179,6 +183,7 @@ namespace CustomerChurmPrediction.Controllers
         /// </summary>
         // PUT: https://localhost:7299/api/tea/{teaId}
 
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         [Route("{teaId}")]
         public async Task<IActionResult> UpdateAsync(string teaId, [FromBody] TeaUpdateDto teaUpdateDto)
@@ -240,6 +245,7 @@ namespace CustomerChurmPrediction.Controllers
         /// </summary>
         // Delete: https://localhost:7299/api/tea/{teaId}
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete]
         [Route("{teaId}")]
         public async Task<IActionResult> DeleteAsync(string teaId)

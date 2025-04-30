@@ -11,7 +11,7 @@ namespace CustomerChurmPrediction
         IUserConnectionService _userConnectionService) : Hub
     {
         /// <summary>
-        /// Обработка подключения к хабу
+        /// Обрабатывает подключение к хабу
         /// </summary>
         /// <returns></returns>
         public override async Task OnConnectedAsync()
@@ -34,7 +34,7 @@ namespace CustomerChurmPrediction
         }
 
         /// <summary>
-        /// Обработка отключения от хаба
+        /// Обрабатывает отключение от хаба
         /// </summary>
         public override Task OnDisconnectedAsync(Exception? exception)
         {
@@ -48,7 +48,7 @@ namespace CustomerChurmPrediction
         }
 
         /// <summary>
-        /// Отправить уведомление при успешном действии в бд
+        /// Отправляет уведомление при успешном действии в бд
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
@@ -65,121 +65,11 @@ namespace CustomerChurmPrediction
         }
 
         /// <summary>
-        /// Отправить всем уведомление
+        /// Отправляет уведомление всем
         /// </summary>
         public async Task SendNotificationForAll(string message)
         {
             await Clients.All.SendAsync(SendForAll, message);
-        }
-
-        /// <summary>
-        /// Отправить уведомление о персональной скидке
-        /// </summary>
-        // userId - пользователь, кому надо отправить персональное уведомление
-        public async Task SendPersonalDiscount(string message, string userId)
-        {
-            try
-            {
-                // var user = await _userService.FindByIdAsync(userId, default);
-                // if (user is not null)
-                // {
-                //     var connectionId = UserConnections.GetValueOrDefault(userId);
-                //     if (!string.IsNullOrEmpty(connectionId))
-                //         await Clients.Client(connectionId).SendAsync("ReceiveNotification", message);
-                // }
-            }
-            catch(Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// Отправить уведомление "Вам может понравится"
-        /// </summary>
-        public async Task SendYouMightLikeNotification(string message, string userId, List<string> productIds)
-        {
-            try
-            {
-                // var user = await _userService.FindByIdAsync(userId, default);
-                // if (user is not null)
-                // {
-                //     var connectionId = UserConnections.GetValueOrDefault(userId);
-                //     if (!string.IsNullOrEmpty(connectionId))
-                //         await Clients.Client(connectionId).SendAsync("ReceiveNotification", message, productIds);
-                // }
-            }
-            catch(Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// Отправить уведомление "Ранее вы добавили эти товары в корзину "
-        /// </summary>
-        public async Task SendYouPreviouslyAddedTheseItemsToYourCartNotification(string message, string userId, List<string> cartIds)
-        {
-            try
-            {
-                // var user = await _userService.FindByIdAsync(userId, default);
-                // if (user is not null)
-                // {
-                // 
-                //     var connectionId = UserConnections.GetValueOrDefault(userId);
-                //     if (!string.IsNullOrEmpty(connectionId))
-                //         await Clients.Client(connectionId).SendAsync("ReceiveNotification", message, cartIds);
-                // }
-            }
-            catch(Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// Отправить уведомление "Ранее вы смотрели эти товары"
-        /// </summary>
-        public async Task SendYouPreviouslyViewedTheseItemsNotification(string message, string userId, List<string> productIds)
-        {
-            try
-            {
-                // var user = await _userService.FindByIdAsync(userId, default);
-                // if (user is not null)
-                // {
-                //     var connectionId = UserConnections.GetValueOrDefault(userId);
-                //     if (!string.IsNullOrEmpty(connectionId))
-                //         await Clients.Client(connectionId).SendAsync("ReceiveNotification", message, productIds);
-                // }
-            }
-            catch(Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// Отправить уведомление "Ранее вы смотрели эти товары"
-        /// </summary>
-        public async Task SendWeHaveGiftForYouNotification(string message, string userId)
-        {
-            try
-            {
-                var user = await _userService.FindByIdAsync(userId, default);
-                if (user is not null)
-                {
-                    // var cartList = await _cartService.FindProductsFromCartByUserId(userId, default);
-                    // 
-                    // 
-                    // var connectionId = UserConnections.GetValueOrDefault(userId);
-                    // if (!string.IsNullOrEmpty(connectionId))
-                    //     await Clients.Client(connectionId).SendAsync("ReceiveNotification", message, cartList);
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
         }
     }
 

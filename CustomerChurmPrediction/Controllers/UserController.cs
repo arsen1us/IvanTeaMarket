@@ -49,6 +49,7 @@ namespace CustomerChurmPrediction.Controllers
             {
 
                 User user = new User(userReg);
+
                 // Выдаю роль - "Пользователь"
                 user.Role = UserRoles.User;
 
@@ -142,7 +143,7 @@ namespace CustomerChurmPrediction.Controllers
         /// <returns></returns>
         // GET: /api/user/{userId}
 
-        [Authorize(Roles = "User, Admin")]
+        // [Authorize(Roles = "User, Admin")]
         [HttpGet]
         [Route("{userId}")]
         public async Task<IActionResult> FindUserByIdAsync(string userId)
@@ -185,7 +186,7 @@ namespace CustomerChurmPrediction.Controllers
         /// <returns></returns>
         // PUT: /api/user/{userId}
 
-        [Authorize(Roles = "User, Admin")]
+        [Authorize(Roles = "User,Admin")]
         [HttpPut]
         [Route("{userId}")]
         public async Task<IActionResult> UpdateUserAsync(string userId, [FromForm] UserUpdate userUpdate)

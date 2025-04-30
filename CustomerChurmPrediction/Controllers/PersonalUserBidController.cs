@@ -131,7 +131,7 @@ namespace CustomerChurmPrediction.Controllers
         /// <exception cref="Exception"></exception>
         // POST: /api/personal-order
 
-        [Authorize(Roles = "User, Admin")]
+        [Authorize(Roles = "User,Admin")]
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] PersonalUserBidAddDto personalUserBidAdd)
         {
@@ -174,7 +174,7 @@ namespace CustomerChurmPrediction.Controllers
         /// <exception cref="Exception"></exception>
         // PUT: /api/personal-order/{id}
 
-        [Authorize(Roles = "User, Admin")]
+        [Authorize(Roles = "User,Admin")]
         [HttpPut]
         [Route("{id}")]
         public async Task<IActionResult> UpdateAsync(string id, [FromBody] PersonalUserBidUpdateDto personalUserBidUpdate)
@@ -232,7 +232,7 @@ namespace CustomerChurmPrediction.Controllers
         /// <exception cref="Exception"></exception>
         // DELETE: /api/personal-order/{id}
 
-        [Authorize(Roles = "User, Admin")]
+        [Authorize(Roles = "User,Admin")]
         [HttpDelete]
         [Route("{id}")]
         public async Task<IActionResult> DeleteAsync(string id)
