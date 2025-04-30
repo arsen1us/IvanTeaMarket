@@ -7,6 +7,12 @@ using CustomerChurmPrediction.Utils;
 
 namespace CustomerChurmPrediction.Controllers
 {
+    /// <summary>
+    /// Контроллер для работы с пользователями
+    /// </summary>
+    /// <param name="_userService"></param>
+    /// <param name="_tokenService"></param>
+    /// <param name="_logger"></param>
     [ApiController]
     [Route("/api/user")]
     public class UserController(
@@ -14,9 +20,12 @@ namespace CustomerChurmPrediction.Controllers
         ITokenService _tokenService,
         ILogger<UserController> _logger) : ControllerBase
     {
+
         /// <summary>
-        /// Регистрация
+        /// Регистрирует пользователя
         /// </summary>
+        /// <param name="userReg"></param>
+        /// <returns></returns>
         // POST: /api/user/reg
 
         [HttpPost]
@@ -72,9 +81,12 @@ namespace CustomerChurmPrediction.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
         /// <summary>
-        /// Аутентификация
+        /// Аутентифицирует пользователя
         /// </summary>
+        /// <param name="userAuth"></param>
+        /// <returns></returns>
         // POST: /api/user/auth
 
         [HttpPost]
@@ -122,13 +134,17 @@ namespace CustomerChurmPrediction.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
         /// <summary>
-        /// Получить пользователя по id
+        /// Получает пользователя по id
         /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         // GET: /api/user/{userId}
 
-        [Authorize(Roles = "Admin, Owner, User")]
-        [HttpGet("{userId}")]
+        [Authorize(Roles = "User, Admin")]
+        [HttpGet]
+        [Route("{userId}")]
         public async Task<IActionResult> FindUserByIdAsync(string userId)
         {
             if (string.IsNullOrEmpty(userId))
@@ -162,12 +178,16 @@ namespace CustomerChurmPrediction.Controllers
         }
 
         /// <summary>
-        /// Изменить пользователя
+        /// Изменяет пользователя 
         /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="userUpdate"></param>
+        /// <returns></returns>
         // PUT: /api/user/{userId}
 
-        [Authorize(Roles = "Admin, Owner, User")]
-        [HttpPut("{userId}")]
+        [Authorize(Roles = "User, Admin")]
+        [HttpPut]
+        [Route("{userId}")]
         public async Task<IActionResult> UpdateUserAsync(string userId, [FromForm] UserUpdate userUpdate)
         {
             if (string.IsNullOrEmpty(userId) || userUpdate is null)

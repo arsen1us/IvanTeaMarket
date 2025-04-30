@@ -1,29 +1,21 @@
-# Используем официальный образ .NET SDK для сборки
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-
-# Устанавливаем рабочую директорию внутри контейнера
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
-
-# Копируем файлы проекта и восстанавливаем зависимости
-COPY *.csproj ./
-RUN dotnet restore
-
-# Копируем весь исходный код и собираем проект
-COPY . ./
-RUN dotnet publish -c Release -o out
-
-# Используем официальный образ .NET Runtime для запуска
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
-
-# Устанавливаем рабочую директорию
-WORKDIR /app
-
-# Копируем собранное приложение из предыдущего контейнера
-COPY --from=build /app/out .
-
-# Открываем порт (если приложение работает на 5000/5001)
 EXPOSE 5000
 EXPOSE 5001
 
-# Запускаем приложение
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+COPY *.csproj ./
+RUN dotnet restore
+
+COPY . ./
+WORKDIR /src
+
+RUN dotnet publish -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=build /app/publish .
+
 ENTRYPOINT ["dotnet", "CustomerChurmPrediction.dll"]

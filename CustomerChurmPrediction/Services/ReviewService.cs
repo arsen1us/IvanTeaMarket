@@ -33,7 +33,7 @@ namespace CustomerChurmPrediction.Services
             {
                 var reviewModels = from review in Collection.AsQueryable()
                                    join user in userCollection.AsQueryable() on review.UserId equals user.Id
-                                   where review.ProductId == productId
+                                   where review.TeaId == productId
                                    select new ReviewModel
                                    {
                                        User = user,

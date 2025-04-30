@@ -10,15 +10,19 @@ builder.Services
     .AddStrictTransportSecurity()
     .AddInfrastructureServices()
     .AddMongoDbService(configuration)
-    .AddRabbitMQServices()
     .AddAuthenticationServices(configuration)
     .AddWebApiServices()
     .AddCrudServices()
     .AddTelegramBotServices()
-    .AddMLModelServices()
     .AddUserServices()
     .AddPageServices()
-    .AddNotificationServices();
+    .AddNotificationServices()
+    .AddBackgroundServices();
+
+//builder.WebHost.ConfigureKestrel(options =>
+//{
+//    options.ListenAnyIP(5000);
+//});
 
 var app = builder.Build();
 

@@ -2,6 +2,9 @@
 
 namespace CustomerChurmPrediction.Entities.ReviewEntity
 {
+    /// <summary>
+    /// Модель отзыва
+    /// </summary>
     public class ReviewModel
     {
         /// <summary>

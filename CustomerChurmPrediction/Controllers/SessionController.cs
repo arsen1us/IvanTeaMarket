@@ -17,7 +17,7 @@ namespace CustomerChurmPrediction.Controllers
         /// </summary>
         // POST: /api/session
 
-        [Authorize(Roles = "User, Admin, Owner")]
+        [Authorize(Roles = "User, Admin")]
         [HttpPost]
         public async Task<IActionResult> CreateSessionAsync([FromBody] SessionAdd sessionAdd)
         {
@@ -65,7 +65,7 @@ namespace CustomerChurmPrediction.Controllers
         /// </summary>
         // PUT: api/session/{userId}
 
-        [Authorize(Roles = "User, Admin, Owner")]
+        [Authorize(Roles = "User, Admin")]
         [HttpPut]
         [Route("{userId}")]
         public async Task<IActionResult> UpdateSessionAsync(string userId, [FromBody] SessionUpdate sessionUpdate)

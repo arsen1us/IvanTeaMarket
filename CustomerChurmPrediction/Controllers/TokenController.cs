@@ -4,6 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CustomerChurmPrediction.Controllers
 {
+    /// <summary>
+    /// Контроллер для работы с jwt-токеном
+    /// </summary>
+    /// <param name="_tokenService"></param>
+    /// <param name="_userService"></param>
+    /// <param name="_logger"></param>
     [ApiController]
     [Route("/api/token")]
     public class TokenController(
@@ -12,7 +18,7 @@ namespace CustomerChurmPrediction.Controllers
         ILogger<UserController> _logger) : Controller
     {
         /// <summary>
-        /// Обновить jwt-токен и refresh-токен
+        /// Обновляет jwt-токен и refresh-токен
         /// </summary>
         // GET: api/token/refresh-token
 
@@ -20,6 +26,9 @@ namespace CustomerChurmPrediction.Controllers
         [Route("update")]
         public async Task<IActionResult> UpdateToken()
         {
+            using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(5));
+            CancellationToken cancellationToken = cts.Token;
+
             try
             {
                 var authToken = HttpContext.Request.Headers["Authorization"].ToString();
@@ -31,7 +40,7 @@ namespace CustomerChurmPrediction.Controllers
                 if (string.IsNullOrEmpty(refreshToken))
                     return Unauthorized();
 
-                string newJwtToken = "Bearer" + await _tokenService.UpdateJwtTokenAsync(token);
+                string newJwtToken = "Bearer" + await _tokenService.UpdateJwtTokenAsync(token, cancellationToken);
 
                 // Если не удалосб создать токен возвращаю 401
                 if (string.IsNullOrEmpty(newJwtToken))
@@ -54,6 +63,7 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
         }
+
         /// <summary>
         /// Метод для проверки авторизации пользователя
         /// </summary>

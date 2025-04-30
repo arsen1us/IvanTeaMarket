@@ -1,5 +1,6 @@
 ﻿using CustomerChurmPrediction.Entities.CategoryEntity;
 using CustomerChurmPrediction.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 
@@ -10,7 +11,7 @@ namespace CustomerChurmPrediction.Controllers
     public class CategoryController(ICategoryService _categoryService) : Controller
     {
         /// <summary>
-        /// Получить список всех категорий
+        /// Получает список всех категорий
         /// </summary>
         // GET: /api/category
 
@@ -33,7 +34,7 @@ namespace CustomerChurmPrediction.Controllers
             }
         }
         /// <summary>
-        /// Получить категорию по id
+        /// Получает категорию по id
         /// </summary>
         // GET: /api/category/{categoryId}
 
@@ -58,10 +59,11 @@ namespace CustomerChurmPrediction.Controllers
             }
         }
         /// <summary>
-        /// Добавить категорию
+        /// Создаёт категорию
         /// </summary>
         // POST: /api/category
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] CategoryAdd categoryAdd)
         {
@@ -88,10 +90,11 @@ namespace CustomerChurmPrediction.Controllers
             }
         }
         /// <summary>
-        /// Изменить категорию
+        /// Изменяет категорию
         /// </summary>
         // PUT: /api/category/{categoryId}
 
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         [Route("{categoryId}")]
         public async Task<IActionResult> UpdateAsync(string categoryId, [FromBody] Category categoryUpdate)
@@ -121,10 +124,11 @@ namespace CustomerChurmPrediction.Controllers
             }
         }
         /// <summary>
-        /// Удвлить категорию
+        /// Удаляет категорию
         /// </summary>
         // DELETE: /api/category/{categoryId}
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete]
         [Route("{categoryId}")]
         public async Task<IActionResult> DeleteByIdAsync(string categoryId)

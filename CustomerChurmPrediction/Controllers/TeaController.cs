@@ -76,6 +76,47 @@ namespace CustomerChurmPrediction.Controllers
         }
 
         /// <summary>
+        /// Получает список чаёв по ids
+        /// </summary>
+        // POST: https://localhost:7299/api/tea/list-by-ids/
+
+        [HttpPost]
+        [Route("list-by-ids")]
+        public async Task<IActionResult> GetByIdAsync([FromBody] List<string> teaIds)
+        {
+            // Если список id чаёв равен null или он пуст
+            if (teaIds is null || !teaIds.Any())
+            {
+                _logger.LogError($"[{DateTime.UtcNow} Method: {nameof(GetByIdAsync)}] - Параметр {nameof(teaIds)} не был передан или он пуст");
+                return BadRequest();
+            }
+
+            throw new Exception();
+            // using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(5));
+            // CancellationToken cancellationToken = cts.Token;
+            // try
+            // {
+            // 
+            //     Tea tea = await _teaService.FindByIdAsync(teaId, cancellationToken);
+            //     if (tea is null)
+            //     {
+            //         _logger.LogError($"[{DateTime.UtcNow} Method: {nameof(GetByIdAsync)}] - Не удалось найти запись с id {teaId}");
+            //         return NotFound();
+            // 
+            //     }
+            // 
+            //     _logger.LogInformation($"[{DateTime.UtcNow} Method: {nameof(GetByIdAsync)}] - Запись с id {teaId} успешно получена");
+            //     return Ok(new { tea = tea });
+            // 
+            // }
+            // catch (Exception ex)
+            // {
+            //     _logger.LogError($"[{DateTime.UtcNow} Method: {nameof(GetByIdAsync)}] - Не удалосб получить запись с id {teaId}. Детали ошибки: {ex.Message}");
+            //     throw new Exception(ex.Message);
+            // }
+        }
+
+        /// <summary>
         /// Добавить новую запись с чаем
         /// </summary>
         // POST: https://localhost:7299/api/tea

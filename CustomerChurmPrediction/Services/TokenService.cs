@@ -30,7 +30,7 @@ namespace CustomerChurmPrediction.Services
         /// <param name="token">Истёкший jwt-токен</param>
         /// <returns>обновлённый jwt-токен</returns>
         /// <exception cref="Exception"></exception>
-        public Task<string> UpdateJwtTokenAsync(string token);
+        public Task<string> UpdateJwtTokenAsync(string token, CancellationToken? cancellationToken = null);
     }
 
     /// <summary>
@@ -87,7 +87,7 @@ namespace CustomerChurmPrediction.Services
             }
         }
 
-        public async Task<string> UpdateJwtTokenAsync(string token)
+        public async Task<string> UpdateJwtTokenAsync(string token, CancellationToken? cancellationToken = null)
         {
             try
             {
@@ -116,7 +116,7 @@ namespace CustomerChurmPrediction.Services
                     return null;
                 }
 
-                var user = await _userService.FindByIdAsync(_id, default);
+                var user = await _userService.FindByIdAsync(_id, cancellationToken);
 
                 return GenerateJwtToken(user);
 

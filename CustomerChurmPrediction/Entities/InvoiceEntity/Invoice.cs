@@ -6,11 +6,6 @@
     public class Invoice : AbstractEntity
     {
         /// <summary>
-        /// Id пользователя
-        /// </summary>
-        public string UserId { get; set; } = null!;
-
-        /// <summary>
         /// Итоговая цена
         /// </summary>
         public double TotalPrice { get; set; }
@@ -50,5 +45,18 @@
         /// Итоговая цена чая
         /// </summary>
         public double TotalPrice { get; set; }
+
+        public InvoiceTea()
+        {
+            
+        }
+
+        public InvoiceTea(InvoiceTeaAddDto invoiceTeaAdd)
+        {
+            TeaId = invoiceTeaAdd.TeaId;
+            UnitPrice = invoiceTeaAdd.UnitPrice;
+            Count = invoiceTeaAdd.Count;
+            TotalPrice = UnitPrice * Count;
+        }
     }
 }

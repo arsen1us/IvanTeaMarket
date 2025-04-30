@@ -1,5 +1,8 @@
 ﻿namespace CustomerChurmPrediction.Entities.ReviewEntity
 {
+    /// <summary>
+    /// Класс для создания отзыва
+    /// </summary>
     public class ReviewAdd
     {
         /// <summary>
@@ -8,9 +11,9 @@
         public string UserId { get; set; } = null!;
 
         /// <summary>
-        /// Id продукта
+        /// Id чая
         /// </summary>
-        public string ProductId { get; set; } = null!;
+        public string TeaId { get; set; } = null!;
 
         /// <summary>
         /// Текст отзыва

@@ -20,7 +20,7 @@ namespace CustomerChurmPrediction.Controllers
         /// </summary>
         // GET: /api/cart/{userId}
 
-        [Authorize(Roles = "User, Admin, Owner")]
+        [Authorize(Roles = "User, Admin")]
         [HttpGet]
         [Route("{userId}")]
         public async Task<IActionResult> GetCartByUserId(string userId)
@@ -51,6 +51,7 @@ namespace CustomerChurmPrediction.Controllers
         /// </summary>
         // POST: /api/cart/{userId}
 
+        [Authorize(Roles = "User, Admin")]
         [HttpPost]
         public async Task<IActionResult> AddTeaToCartAsync(CartAdd cartAdd)
         {
@@ -76,11 +77,11 @@ namespace CustomerChurmPrediction.Controllers
             }
         }
         /// <summary>
-        /// Удалёет чай из корзины пользователя
+        /// Удаляет чай из корзины пользователя
         /// </summary>
         // DELETE: /api/cart/{userId}
 
-        [Authorize(Roles = "User, Admin, Owner")]
+        [Authorize(Roles = "User, Admin")]
         [HttpDelete]
         [Route("{cartId}")]
         public async Task<IActionResult> DeleteProductFromCartAsync(string cartId)

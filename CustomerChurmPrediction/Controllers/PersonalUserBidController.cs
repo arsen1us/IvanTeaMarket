@@ -1,6 +1,7 @@
 ﻿using CustomerChurmPrediction.Entities.PersonalUserBidEntity;
 using CustomerChurmPrediction.Entities.TeaEntity;
 using CustomerChurmPrediction.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using MongoDB.Driver;
@@ -11,6 +12,7 @@ namespace CustomerChurmPrediction.Controllers
     [Route("api/personal-order")]
     public class PersonalUserBidController(
         IPersonalUserBidService _personalUserBidService,
+        IUserService _userService,
         ILogger<PersonalUserBidController> _logger,
         IHubContext<NotificationHub> _hubContext,
         ITelegramBotService _telegramBotService) : Controller
@@ -19,6 +21,8 @@ namespace CustomerChurmPrediction.Controllers
         /// Получить все записи персональных заявок пользователей
         /// </summary>
         /// <returns></returns>
+
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
@@ -36,7 +40,15 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
         }
+        /// <summary>
+        /// Получает информацию о персональной заявке по id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        // GET: /api/personal-order/{id}
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> GetByIdAsync(string id)
@@ -63,31 +75,63 @@ namespace CustomerChurmPrediction.Controllers
                 throw new Exception(ex.Message);
             }
         }
+        /// <summary>
+        /// Получает по id пользователя
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        // GET: api/personal-order/user/{userId}
 
-        //fixme (надо подумать над этим)
-        //[HttpGet]
-        //[Route("user/{userId")]
-        //public async Task<IActionResult> GetByUserIdAsync(string userId)
-        //{
-        //    if (string.IsNullOrEmpty(userId))
-        //    {
-        //        return BadRequest();
-        //    }
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        [Route("user/{userId}")]
+        public async Task<IActionResult> GetByUserIdAsync(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
 
-        //    using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(5));
-        //    CancellationToken cancellationToken = cts.Token;
-        //    var filter = Builders<PersonalUserBid>.Filter.Eq(personalUserBid => personalUserBid.UserId)
+                return BadRequest();
+            }
 
-        //    try
-        //    {
-                
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception(ex.Message);
-        //    }
-        //}
+            using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(5));
+            CancellationToken cancellationToken = cts.Token;
+            var filter = Builders<PersonalUserBid>.Filter.Eq(personalUserBid => personalUserBid.UserId, userId);
 
+            try
+            {
+                var user = await _userService.FindByIdAsync(userId, cancellationToken);
+                if(user is null)
+                {
+
+                    return NotFound();
+                }
+
+                var personalUserBids = await _personalUserBidService.FindAllAsync(filter, cancellationToken);
+                if(personalUserBids is null)
+                {
+
+                    return NotFound();
+                }
+
+                return Ok(new { personalUsersBids = personalUserBids });
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Создаёт персональную заявку
+        /// </summary>
+        /// <param name="personalUserBidAdd"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        // POST: /api/personal-order
+
+        [Authorize(Roles = "User, Admin")]
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] PersonalUserBidAddDto personalUserBidAdd)
         {
@@ -122,12 +166,15 @@ namespace CustomerChurmPrediction.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Обновляет персональный заказ по id
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="personalUserBidUpdate"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
+        // PUT: /api/personal-order/{id}
+
+        [Authorize(Roles = "User, Admin")]
         [HttpPut]
         [Route("{id}")]
         public async Task<IActionResult> UpdateAsync(string id, [FromBody] PersonalUserBidUpdateDto personalUserBidUpdate)
@@ -177,6 +224,15 @@ namespace CustomerChurmPrediction.Controllers
             }
         }
 
+        /// <summary>
+        /// Удаляет персональный заказ по id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        // DELETE: /api/personal-order/{id}
+
+        [Authorize(Roles = "User, Admin")]
         [HttpDelete]
         [Route("{id}")]
         public async Task<IActionResult> DeleteAsync(string id)

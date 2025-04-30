@@ -21,6 +21,7 @@ namespace CustomerChurmPrediction.Controllers
         /// </summary>
         // GET: /api/order/user/{userId}
 
+        [Authorize(Roles = "User, Admin")]
         [HttpGet]
         [Route("user/{userId}")]
         public async Task<IActionResult> GetByUserIdAsync(string userId)
@@ -65,6 +66,8 @@ namespace CustomerChurmPrediction.Controllers
         /// Создаёт заказ
         /// </summary>
         // POST: /api/order
+
+        [Authorize(Roles = "User, Admin")]
         [HttpPost]
         public async Task<IActionResult> AddOrderAsync([FromBody]CreateOrderDto createOrder)
         {
@@ -169,6 +172,7 @@ namespace CustomerChurmPrediction.Controllers
         /// </summary>
         // GET: /api/order/{orderId}
 
+        [Authorize(Roles = "User, Admin")]
         [HttpDelete]
         [Route("{orderId}")]
         public async Task<IActionResult> CancelOrderAsync(string orderId)

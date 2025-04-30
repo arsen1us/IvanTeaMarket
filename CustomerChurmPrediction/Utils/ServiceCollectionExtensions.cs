@@ -1,6 +1,5 @@
-﻿using CustomerChurmPrediction.ML.Services;
-using CustomerChurmPrediction.RabbitMQ;
-using CustomerChurmPrediction.Services;
+﻿using CustomerChurmPrediction.Services;
+using CustomerChurmPrediction.Services.BackgroundServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
@@ -11,7 +10,7 @@ namespace CustomerChurmPrediction.Utils
     public static class ServiceCollectionExtensions
     {
         /// <summary>
-        /// Подключение и настройка политики Cors
+        /// Подключает и настраивает политику CORS
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
@@ -32,7 +31,7 @@ namespace CustomerChurmPrediction.Utils
         }
 
         /// <summary>
-        /// Добавление сервисов WebApi
+        /// Подключает сервисы WebApi
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
@@ -43,7 +42,7 @@ namespace CustomerChurmPrediction.Utils
         }
 
         /// <summary>
-        /// Добавить сервисы аутентификации и авторизации
+        /// Подключает сервисы аутентификации и авторизации
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
@@ -96,7 +95,7 @@ namespace CustomerChurmPrediction.Utils
         }
 
         /// <summary>
-        /// Добавить MongoDb сервис
+        /// Подключает MongoDb сервис
         /// </summary>
         /// <param name="services"></param>
         /// <param name="configuration"></param>
@@ -108,20 +107,9 @@ namespace CustomerChurmPrediction.Utils
 
             return services;
         }
-        
-        /// <summary>
-        /// Добавление сервисов RabbitMQ
-        /// </summary>
-        /// <param name="services"></param>
-        /// <returns></returns>
-        public static IServiceCollection AddRabbitMQServices(this IServiceCollection services)
-        {
-            services.AddSingleton<IRabbitMQService, RabbitMQService>();
-            return services;
-        }
 
         /// <summary>
-        /// Добавление инфраструктурных сервисов
+        /// Подключает инфраструктурные сервисы
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
@@ -140,7 +128,7 @@ namespace CustomerChurmPrediction.Utils
         }
 
         /// <summary>
-        /// Добавить CRUD-сервисы
+        /// Подключает CRUD-сервисы
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
@@ -150,29 +138,19 @@ namespace CustomerChurmPrediction.Utils
             services.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
 
             services.AddScoped<IOrderService, OrderService>();
-            services.AddScoped<IPromotionService, PromotionService>();
             services.AddScoped<IReviewService, ReviewService>();
             services.AddScoped<ICartService, CartService>();
             services.AddScoped<ICategoryService, CategoryService>();
-            services.AddScoped<ICouponService, CouponService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<ITeaService, TeaService>();
             services.AddScoped<IPersonalUserBidService, PersonalUserBidService>();
-
-            return services;
-        }
-
-        public static IServiceCollection AddMLModelServices(this IServiceCollection services)
-        {
-            // Сервис для работы с предсказаниями оттока пользователей
-            services.AddScoped<IChurnPredictionService, ChurnPredictionService>();
-            services.AddScoped<IMLModelInputService, MLModelInputService>();
+            services.AddTransient<IInvoiceService, InvoiceService>();
 
             return services;
         }
 
         /// <summary>
-        /// Добавить сервисы уведомлений
+        /// Подключает сервисы уведомлений
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
@@ -184,7 +162,7 @@ namespace CustomerChurmPrediction.Utils
         }
 
         /// <summary>
-        /// Добавить сервисы для отслеживания посещённых пользователем страниц
+        /// Подключает сервисы для отслеживания посещённых пользователем страниц
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
@@ -196,7 +174,7 @@ namespace CustomerChurmPrediction.Utils
         }
 
         /// <summary>
-        /// Добавить сервисы для работы с пользователем
+        /// Подключает сервисы для работы с пользователем
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
@@ -210,7 +188,7 @@ namespace CustomerChurmPrediction.Utils
         }
 
         /// <summary>
-        /// Пождключение сервисов для работы с Telegram ботом
+        /// Подключает сервисы для работы с Telegram ботом
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
@@ -221,7 +199,7 @@ namespace CustomerChurmPrediction.Utils
         }
 
         /// <summary>
-        /// Подключение и настройка HSTS
+        /// Подключает и настраивает HSTS
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
@@ -234,6 +212,17 @@ namespace CustomerChurmPrediction.Utils
                 options.MaxAge = TimeSpan.FromDays(365);
             });
 
+            return services;
+        }
+
+        /// <summary>
+        /// Подключает фоновые сервисы
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddBackgroundServices(this IServiceCollection services)
+        {
+            services.AddHostedService<CleaningInvoicesBackgroundService>();
             return services;
         }
     }

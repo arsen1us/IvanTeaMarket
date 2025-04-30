@@ -114,6 +114,11 @@
         /// Коллекция с персоналными завяками пользователей
         /// </summary>
         public readonly static string PersonalUserBids = "PersonalUserBids";
+
+        /// <summary>
+        /// Коллекция с счетами к оплате
+        /// </summary>
+        public readonly static string Invoices = "Invoices";
     }
 
 

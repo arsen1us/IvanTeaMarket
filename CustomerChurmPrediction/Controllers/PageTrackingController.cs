@@ -1,5 +1,6 @@
 ﻿using CustomerChurmPrediction.Entities.PageEntity;
 using CustomerChurmPrediction.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CustomerChurmPrediction.Controllers
@@ -29,6 +30,16 @@ namespace CustomerChurmPrediction.Controllers
         //}
 
         // Добавить просмотр для текущего пользователя
+
+        /// <summary>
+        /// Создаёт запись с информацией о просмотренной пользователем страницей
+        /// </summary>
+        /// <param name="pageAdd"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        // POST: /api/page
+
+        [Authorize(Roles = "User, Admin")]
         [HttpPost]
         public async Task<IActionResult> AddViewAsync(PageAdd pageAdd)
         {
